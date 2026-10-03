@@ -658,7 +658,7 @@ function SwipeActionButton(props: {
       </View>
       <Animated.View
         style={[
-          { height: 14, justifyContent: "center", paddingTop: props.compact ? 0 : 2 },
+          { minHeight: 14, justifyContent: "center", paddingTop: props.compact ? 0 : 2 },
           labelStyle,
         ]}
       >

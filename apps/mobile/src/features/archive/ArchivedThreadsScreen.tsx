@@ -156,10 +156,7 @@ function ProjectGroupLabel(props: {
         size={18}
         workspaceRoot={props.project.workspaceRoot}
       />
-      <Text
-        className="flex-1 text-xs font-t3-medium tracking-[0.5px] uppercase text-foreground-muted"
-        numberOfLines={1}
-      >
+      <Text className="flex-1 text-xs font-t3-medium text-foreground-muted/70" numberOfLines={1}>
         {props.project.title}
       </Text>
       {props.environmentLabel ? (
@@ -169,7 +166,7 @@ function ProjectGroupLabel(props: {
             size={10}
             tintColorClassName="accent-foreground-tertiary"
           />
-          <Text className="shrink text-2xs text-foreground-tertiary" numberOfLines={1}>
+          <Text className="shrink text-2xs text-foreground-muted/60" numberOfLines={1}>
             {props.environmentLabel}
           </Text>
         </View>
@@ -243,7 +240,7 @@ function ArchivedThreadRow(props: {
               >
                 {props.thread.title}
               </Text>
-              <Text className="min-w-[30px] text-right text-xs tabular-nums text-foreground-tertiary">
+              <Text className="min-w-[30px] text-right text-xs tabular-nums text-foreground-muted/60">
                 {timestamp}
               </Text>
             </View>
@@ -256,7 +253,7 @@ function ArchivedThreadRow(props: {
                   type="monochrome"
                 />
                 <Text
-                  className="min-w-0 flex-1 font-mono text-2xs text-foreground-tertiary"
+                  className="min-w-0 flex-1 font-mono text-2xs text-foreground-muted/60"
                   numberOfLines={1}
                 >
                   {subtitle.join(" · ")}
