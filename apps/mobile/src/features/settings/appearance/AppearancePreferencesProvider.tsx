@@ -22,6 +22,8 @@ import {
   resolveAppearancePreferences,
   type ResolvedAppearance,
 } from "../../../lib/appearancePreferences";
+import { fontFamilyStore } from "../../../lib/fontFamilyStore";
+import { restoreCachedServerFonts } from "../../../lib/serverFonts";
 import { mobilePreferencesAtom, updateMobilePreferencesAtom } from "../../../state/preferences";
 import type { Preferences } from "../../../persistence/mobile-preferences";
 import { isSystemColorsAvailable, readSystemColorPalettes } from "../../../lib/materialYouPalette";
@@ -136,21 +138,32 @@ export function AppearancePreferencesProvider(props: { readonly children: ReactN
   // Preference patches are optimistic. Keep controls interactive while a save is
   // in flight so rapid theme choices can supersede one another immediately.
   const isReady = AsyncResult.isSuccess(preferencesResult);
+  const fontFamilies = fontFamilyStore.use();
   const runtimeState = useMemo<MobileThemeRuntimeState>(
     () => ({
       baseFontSize,
+      fontFamilies,
       themeAppearance,
       themeMode,
     }),
-    [baseFontSize, themeAppearance, themeMode],
+    [baseFontSize, fontFamilies, themeAppearance, themeMode],
   );
+  const restoredFontsRef = useRef(false);
+  useEffect(() => {
+    if (!isReady || restoredFontsRef.current) return;
+    restoredFontsRef.current = true;
+    void restoreCachedServerFonts(storedPreferences?.fonts);
+  }, [isReady, storedPreferences]);
   const appliedRuntimeStateRef = useRef<MobileThemeRuntimeState | null>(null);
   const selectedThemeIdsRef = useRef(themeIds);
 
   const applyThemeRuntime = useCallback((next: MobileThemeRuntimeState) => {
     const operations = createMobileThemeRuntimeOperations(appliedRuntimeStateRef.current, next);
     for (const operation of operations) {
-      if (operation.kind === "update-text-variables") {
+      if (
+        operation.kind === "update-text-variables" ||
+        operation.kind === "update-font-variables"
+      ) {
         Uniwind.updateCSSVariables(operation.themeName, operation.variables);
         continue;
       }

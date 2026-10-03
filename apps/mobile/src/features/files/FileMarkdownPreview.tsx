@@ -11,7 +11,7 @@ import {
 import { RefreshControl, ScrollView, Text as NativeText, View } from "react-native";
 
 import { tryOpenExternalUrl } from "../../lib/openExternalUrl";
-import { MONO_FONT_FAMILY, useFontFamily } from "../../lib/useFontFamily";
+import { useFontFamily } from "../../lib/useFontFamily";
 import {
   resolveMarkdownFontSizes,
   resolveNativeMarkdownTypography,
@@ -60,6 +60,7 @@ function useMarkdownPreviewStyles(renderImage?: MarkdownImageRenderer): Markdown
   const regularFontFamily = useFontFamily("regular");
   const mediumFontFamily = useFontFamily("medium");
   const boldFontFamily = useFontFamily("bold");
+  const monoFontFamily = useFontFamily("mono");
 
   return useMemo(() => {
     const renderers: CustomRenderers = {
@@ -137,13 +138,13 @@ function useMarkdownPreviewStyles(renderImage?: MarkdownImageRenderer): Markdown
         code: {
           backgroundColor: codeBackground,
           color: codeText,
-          fontFamily: MONO_FONT_FAMILY,
+          fontFamily: monoFontFamily,
         },
         codeBlock: {
           backgroundColor: codeBackground,
           borderRadius: MOBILE_RADIUS.md,
           color: codeText,
-          fontFamily: MONO_FONT_FAMILY,
+          fontFamily: monoFontFamily,
           padding: 12,
         },
         hr: {
@@ -187,6 +188,7 @@ function useMarkdownPreviewStyles(renderImage?: MarkdownImageRenderer): Markdown
     renderImage,
     strong,
     boldFontFamily,
+    monoFontFamily,
   ]);
 }
 
