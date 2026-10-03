@@ -21,11 +21,9 @@ const FIXTURE = [
   "",
 ].join("\n");
 
-const posixPath = Effect.runSync(
-  Effect.gen(function* () {
-    return yield* Path.Path;
-  }).pipe(Effect.provide(Path.layer)),
-);
+const parsedFixture = Effect.gen(function* () {
+  return ServerFontCatalog.parseFontCatalog(FIXTURE, yield* Path.Path);
+}).pipe(Effect.provide(Path.layer));
 
 function spawnerPrinting(output: string) {
   return ChildProcessSpawner.make(() =>
@@ -58,35 +56,46 @@ function catalogLayerPrinting(output: string) {
 }
 
 describe("parseFontCatalog", () => {
-  const entries = ServerFontCatalog.parseFontCatalog(FIXTURE, posixPath);
+  it.effect("keeps only ttf and otf files and skips malformed rows", () =>
+    Effect.map(parsedFixture, (entries) => {
+      expect(entries.map((entry) => entry.fileName)).toEqual([
+        "GeistMono-Regular.otf",
+        "GeistMono-Italic.otf",
+        "NotoSans-Medium.ttf",
+      ]);
+    }),
+  );
 
-  it("keeps only ttf and otf files and skips malformed rows", () => {
-    expect(entries.map((entry) => entry.fileName)).toEqual([
-      "GeistMono-Regular.otf",
-      "GeistMono-Italic.otf",
-      "NotoSans-Medium.ttf",
-    ]);
-  });
+  it.effect("dedupes repeated files and sorts by family then weight", () =>
+    Effect.map(parsedFixture, (entries) => {
+      expect(entries.map((entry) => entry.family)).toEqual([
+        "Geist Mono",
+        "Geist Mono",
+        "Noto Sans",
+      ]);
+    }),
+  );
 
-  it("dedupes repeated files and sorts by family then weight", () => {
-    expect(entries.map((entry) => entry.family)).toEqual(["Geist Mono", "Geist Mono", "Noto Sans"]);
-  });
+  it.effect("uses the first family and style and converts weight and slant", () =>
+    Effect.map(parsedFixture, (entries) => {
+      const noto = entries.find((entry) => entry.family === "Noto Sans");
+      expect(noto).toMatchObject({ style: "Medium", weight: 500, italic: false, format: "ttf" });
+      const italic = entries.find((entry) => entry.fileName === "GeistMono-Italic.otf");
+      expect(italic).toMatchObject({ italic: true, weight: 400, format: "otf" });
+    }),
+  );
 
-  it("uses the first family and style and converts weight and slant", () => {
-    const noto = entries.find((entry) => entry.family === "Noto Sans");
-    expect(noto).toMatchObject({ style: "Medium", weight: 500, italic: false, format: "ttf" });
-    const italic = entries.find((entry) => entry.fileName === "GeistMono-Italic.otf");
-    expect(italic).toMatchObject({ italic: true, weight: 400, format: "otf" });
-  });
-
-  it("derives a stable sixteen character id that carries no path", () => {
-    const again = ServerFontCatalog.parseFontCatalog(FIXTURE, posixPath);
-    expect(again.map((entry) => entry.fontId)).toEqual(entries.map((entry) => entry.fontId));
-    for (const entry of entries) {
-      expect(entry.fontId).toMatch(/^[0-9a-f]{16}$/);
-      expect(entry.fontId).toBe(ServerFontCatalog.fontIdForPath(entry.absolutePath));
-    }
-  });
+  it.effect("derives a stable sixteen character id that carries no path", () =>
+    Effect.gen(function* () {
+      const entries = yield* parsedFixture;
+      const again = yield* parsedFixture;
+      expect(again.map((entry) => entry.fontId)).toEqual(entries.map((entry) => entry.fontId));
+      for (const entry of entries) {
+        expect(entry.fontId).toMatch(/^[0-9a-f]{16}$/);
+        expect(entry.fontId).toBe(ServerFontCatalog.fontIdForPath(entry.absolutePath));
+      }
+    }),
+  );
 });
 
 describe("cssWeightFromFontconfig", () => {
