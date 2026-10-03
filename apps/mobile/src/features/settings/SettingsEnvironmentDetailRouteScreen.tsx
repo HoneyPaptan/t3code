@@ -207,11 +207,11 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
               }
             />
             {!connected ? (
-              <Text className="px-2 text-sm text-foreground-muted">
+              <Text className="px-2 text-sm text-foreground-muted/60">
                 Connect this environment to manage it.
               </Text>
             ) : !allowed ? (
-              <Text className="px-2 text-sm text-foreground-muted">
+              <Text className="px-2 text-sm text-foreground-muted/60">
                 {AsyncResult.isFailure(sessionResult)
                   ? "Could not verify your permissions. Reconnect to try again."
                   : session === null
@@ -224,14 +224,16 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                 {error}
               </Text>
             ) : null}
-            {notice ? <Text className="px-2 text-sm text-foreground-muted">{notice}</Text> : null}
+            {notice ? (
+              <Text className="px-2 text-sm text-foreground-muted/60">{notice}</Text>
+            ) : null}
             {config ? (
               <>
                 <SettingsSection title="T3 Code">
                   <View className="gap-1 p-4">
                     <Text className="text-base text-foreground">Version {version}</Text>
                     {running ? (
-                      <Text className="text-sm text-foreground-muted">
+                      <Text className="text-sm text-foreground-muted/60">
                         {updateState.stage === "resuming"
                           ? "Restarting and reconnecting…"
                           : "Downloading update…"}
@@ -242,14 +244,14 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                       </Text>
                     ) : null}
                     {checkedRelease ? (
-                      <Text className="text-sm text-foreground-muted">
+                      <Text className="text-sm text-foreground-muted/60">
                         {checkedRelease.targetVersion
                           ? `Version ${checkedRelease.targetVersion} is available.`
                           : "You are up to date."}
                       </Text>
                     ) : null}
                     {!supportsEnvironmentUpdate(config.environment.capabilities) ? (
-                      <Text className="text-sm text-foreground-muted">
+                      <Text className="text-sm text-foreground-muted/60">
                         {capabilities?.serverSelfUpdate === "desktop-managed"
                           ? "Update the desktop app on this machine."
                           : "Update and restart T3 Code on this machine."}

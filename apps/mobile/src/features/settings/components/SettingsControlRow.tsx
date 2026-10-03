@@ -27,10 +27,12 @@ export function SettingsControlRow(props: {
         type="monochrome"
         weight="regular"
       />
-      <View className="min-w-0 flex-1 android:gap-1">
-        <Text className="text-lg text-foreground android:text-base">{props.label}</Text>
+      <View className="min-w-0 flex-1 gap-1">
+        <Text className="text-lg font-t3-medium text-foreground android:text-base">
+          {props.label}
+        </Text>
         {props.subtitle ? (
-          <Text className="text-sm text-foreground-muted">{props.subtitle}</Text>
+          <Text className="text-sm text-foreground-muted/60">{props.subtitle}</Text>
         ) : null}
       </View>
       {props.children}

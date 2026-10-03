@@ -21,13 +21,7 @@ export function SettingsSection(props: {
             }
           >
             {props.titleIcon}
-            <Text
-              className={
-                Platform.OS === "android"
-                  ? "shrink text-sm font-t3-medium text-primary-text"
-                  : "shrink text-sm font-t3-medium text-foreground-muted"
-              }
-            >
+            <Text className="shrink text-sm font-t3-medium text-foreground-muted/70">
               {props.title}
             </Text>
           </View>
