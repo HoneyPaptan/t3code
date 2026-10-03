@@ -8,5 +8,15 @@
   "ember-light",
   "ember-dark",
   "iris-light",
-  "iris-dark"
+  "iris-dark",
+  "gruvbox-light",
+  "gruvbox-dark",
+  "default-light",
+  "default-dark",
+  "catppuccin-light",
+  "catppuccin-dark",
+  "one-dark-pro-light",
+  "one-dark-pro-dark",
+  "cobalt2-light",
+  "cobalt2-dark"
 ]

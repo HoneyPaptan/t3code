@@ -3,13 +3,15 @@
 import * as NodeFS from "node:fs";
 import * as NodePath from "node:path";
 import tailwindColors from "tailwindcss/colors";
-import { BUILT_IN_THEME_IDS, type BuiltInThemeId } from "@t3tools/shared/themePalettes";
+import { BUILT_IN_THEME_IDS } from "@t3tools/shared/themePalettes";
 
+import { DRAY_THEME_IDS } from "../src/lib/drayTokens.ts";
 import {
   createMobileThemeVariables,
   getMobileThemeColors,
   getMobileThemeVariables,
-  DEFAULT_MOBILE_THEME_ID,
+  STOCK_MOBILE_THEME_ID,
+  type MobilePaletteThemeId,
   type MobileThemeAppearance,
 } from "../src/lib/mobileTheme.ts";
 
@@ -154,7 +156,12 @@ const ADAPTIVE_COLORS: Readonly<Record<string, readonly [light: string, dark: st
   "--color-adaptive-zinc-600-300": [color("zinc", 600), color("zinc", 300)],
 };
 
-export const customThemeNames = BUILT_IN_THEME_IDS.flatMap((themeId) =>
+const NAMED_THEME_IDS: ReadonlyArray<MobilePaletteThemeId> = [
+  ...BUILT_IN_THEME_IDS,
+  ...DRAY_THEME_IDS,
+];
+
+export const customThemeNames = NAMED_THEME_IDS.flatMap((themeId) =>
   APPEARANCES.map((appearance) => `${themeId}-${appearance}`),
 );
 
@@ -166,7 +173,7 @@ const adaptiveVariablesFor = (appearance: MobileThemeAppearance) =>
     ]),
   );
 
-const variablesFor = (themeId: BuiltInThemeId, appearance: MobileThemeAppearance) => ({
+const variablesFor = (themeId: MobilePaletteThemeId, appearance: MobileThemeAppearance) => ({
   ...getMobileThemeVariables(themeId, appearance),
   ...adaptiveVariablesFor(appearance),
   ...clerkVariablesFor(appearance),
@@ -177,7 +184,7 @@ const variablesFor = (themeId: BuiltInThemeId, appearance: MobileThemeAppearance
 const clerkColorsFor = (appearance: MobileThemeAppearance) => {
   // Native authentication uses plain cards, rather than tonal settings groups.
   const variables = createMobileThemeVariables(
-    getMobileThemeColors(DEFAULT_MOBILE_THEME_ID, appearance),
+    getMobileThemeColors(STOCK_MOBILE_THEME_ID, appearance),
     appearance,
   );
   return {
@@ -221,12 +228,12 @@ export const renderUniwindThemesCSS = () => {
   const variants = [
     ...APPEARANCES.map((appearance) =>
       renderVariant(appearance, {
-        ...getMobileThemeVariables(DEFAULT_MOBILE_THEME_ID, appearance),
+        ...getMobileThemeVariables(STOCK_MOBILE_THEME_ID, appearance),
         ...adaptiveVariablesFor(appearance),
         ...clerkVariablesFor(appearance),
       }),
     ),
-    ...BUILT_IN_THEME_IDS.flatMap((themeId) =>
+    ...NAMED_THEME_IDS.flatMap((themeId) =>
       APPEARANCES.map((appearance) =>
         renderVariant(`${themeId}-${appearance}`, variablesFor(themeId, appearance)),
       ),
@@ -248,7 +255,7 @@ export const renderDefaultThemeVariablesJSON = () =>
     Object.fromEntries(
       APPEARANCES.map((appearance) => [
         appearance,
-        getMobileThemeVariables(DEFAULT_MOBILE_THEME_ID, appearance),
+        getMobileThemeVariables(STOCK_MOBILE_THEME_ID, appearance),
       ]),
     ),
     null,

@@ -16,6 +16,7 @@ import {
   createMobileThemeSelectionPatch,
   createMobileThemeVariables,
   DEFAULT_MOBILE_THEME_ID,
+  STOCK_MOBILE_THEME_ID,
   flattenThemeColor,
   getMobileThemePreviewColors,
   getMobileThemeVariables,
@@ -57,6 +58,33 @@ function compositeOver(overlay: string, background: string): string {
   return `#${channels.map((channel) => channel.toString(16).padStart(2, "0")).join("")}`;
 }
 
+const READABLE_PAIRS = [
+  ["--color-drawer-foreground", "--color-drawer"],
+  ["--color-drawer-foreground-muted", "--color-drawer"],
+  ["--color-drawer-foreground", "--color-thread-hover"],
+  ["--color-drawer-foreground-muted", "--color-thread-hover"],
+  ["--color-thread-selected-foreground-muted", "--color-thread-selected"],
+  ["--color-primary-foreground", "--color-primary"],
+  ["--color-primary-text", "--color-screen"],
+  ["--color-primary-text", "--color-card"],
+  ["--color-primary-text", "--color-card-alt"],
+  ["--color-primary-text", "--color-sheet-solid"],
+  ["--color-foreground", "--color-sheet-solid"],
+  ["--color-foreground-muted", "--color-sheet-solid"],
+  ["--color-primary-text", "--color-grouped-card"],
+  ["--color-foreground", "--color-grouped-card"],
+  ["--color-foreground-muted", "--color-grouped-card"],
+  ["--color-placeholder", "--color-grouped-card"],
+  ["--color-secondary-foreground", "--color-secondary"],
+  ["--color-user-bubble-foreground", "--color-user-bubble"],
+  ["--color-warning-foreground", "--color-warning"],
+  ["--color-danger-foreground", "--color-danger"],
+  ["--color-md-body", "--color-screen"],
+  ["--color-md-strong", "--color-screen"],
+  ["--color-md-link", "--color-screen"],
+  ["--color-md-code-text", "--color-md-code-bg"],
+] as const;
+
 describe("mobile themes", () => {
   it("declares every runtime theme variable in the static stylesheet", () => {
     const generatedVariables = createMobileThemeVariables(T3_CHAT_THEME.colors, "light");
@@ -85,7 +113,7 @@ describe("mobile themes", () => {
           ? T3_CODE_DARK_THEME_COLORS
           : T3_CODE_LIGHT_THEME_COLORS;
       const variables =
-        themeId === DEFAULT_MOBILE_THEME_ID
+        themeId === STOCK_MOBILE_THEME_ID
           ? readDefaultMobileThemeVariables(appearance)
           : getMobileThemeVariables(themeId, appearance);
       expect(variables["--color-screen"]).toBe(themeColorToNativeColor(colors.canvas));
@@ -97,7 +125,7 @@ describe("mobile themes", () => {
       expect(variables["--color-card"]).toBe(themeColorToNativeColor(colors.surface));
       expect(variables["--color-composer-surface"]).toBe(
         themeColorWithAlpha(
-          themeId === DEFAULT_MOBILE_THEME_ID
+          themeId === STOCK_MOBILE_THEME_ID
             ? variables["--color-grouped-card"]
             : themeColorToNativeColor(colors.surface),
           appearance === "dark" ? 0.9 : 0.94,
@@ -110,7 +138,7 @@ describe("mobile themes", () => {
         themeColorToNativeColor(colors.sidebarForeground),
       );
       expect(variables["--color-primary"]).toBe(themeColorToNativeColor(colors.messageAction));
-      if (themeId !== DEFAULT_MOBILE_THEME_ID) {
+      if (themeId !== STOCK_MOBILE_THEME_ID) {
         expect(variables["--color-user-bubble"]).toBe(
           themeColorToNativeColor(colors.messageSurface),
         );
@@ -118,32 +146,7 @@ describe("mobile themes", () => {
       expect(
         contrastRatio(variables["--color-foreground"], variables["--color-screen"]),
       ).toBeGreaterThanOrEqual(4.5);
-      for (const [foreground, surface] of [
-        ["--color-drawer-foreground", "--color-drawer"],
-        ["--color-drawer-foreground-muted", "--color-drawer"],
-        ["--color-drawer-foreground", "--color-thread-hover"],
-        ["--color-drawer-foreground-muted", "--color-thread-hover"],
-        ["--color-thread-selected-foreground-muted", "--color-thread-selected"],
-        ["--color-primary-foreground", "--color-primary"],
-        ["--color-primary-text", "--color-screen"],
-        ["--color-primary-text", "--color-card"],
-        ["--color-primary-text", "--color-card-alt"],
-        ["--color-primary-text", "--color-sheet-solid"],
-        ["--color-foreground", "--color-sheet-solid"],
-        ["--color-foreground-muted", "--color-sheet-solid"],
-        ["--color-primary-text", "--color-grouped-card"],
-        ["--color-foreground", "--color-grouped-card"],
-        ["--color-foreground-muted", "--color-grouped-card"],
-        ["--color-placeholder", "--color-grouped-card"],
-        ["--color-secondary-foreground", "--color-secondary"],
-        ["--color-user-bubble-foreground", "--color-user-bubble"],
-        ["--color-warning-foreground", "--color-warning"],
-        ["--color-danger-foreground", "--color-danger"],
-        ["--color-md-body", "--color-screen"],
-        ["--color-md-strong", "--color-screen"],
-        ["--color-md-link", "--color-screen"],
-        ["--color-md-code-text", "--color-md-code-bg"],
-      ] as const) {
+      for (const [foreground, surface] of READABLE_PAIRS) {
         expect(
           contrastRatio(variables[foreground], variables[surface]),
           `${appearance}: ${foreground} on ${surface}`,
@@ -224,7 +227,7 @@ describe("mobile themes", () => {
   );
 
   it("uses the same preview roles and standard artwork as desktop", () => {
-    expect(getMobileThemePreviewColors(DEFAULT_MOBILE_THEME_ID, "light")).toEqual({
+    expect(getMobileThemePreviewColors(STOCK_MOBILE_THEME_ID, "light")).toEqual({
       canvas: "#fcfcfc",
       accent: "#f4f4f5",
       messageAction: "#4f46e5",

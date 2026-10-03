@@ -37,6 +37,16 @@ describe("generate mobile Uniwind themes", () => {
       "ember-dark",
       "iris-light",
       "iris-dark",
+      "gruvbox-light",
+      "gruvbox-dark",
+      "default-light",
+      "default-dark",
+      "catppuccin-light",
+      "catppuccin-dark",
+      "one-dark-pro-light",
+      "one-dark-pro-dark",
+      "cobalt2-light",
+      "cobalt2-dark",
     ]);
 
     const stylesheet = renderUniwindThemesCSS();
