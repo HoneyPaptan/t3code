@@ -254,11 +254,7 @@ export function ComposerActionButton(props: {
         style={{ width: circleSize, height: circleSize }}
         className={cn(
           "items-center justify-center rounded-full",
-          props.variant === "danger"
-            ? "bg-danger"
-            : props.disabled
-              ? "bg-primary/15"
-              : "bg-primary",
+          props.variant === "danger" ? "bg-danger" : props.disabled ? "bg-send/15" : "bg-send",
         )}
       >
         <SymbolView
@@ -266,7 +262,7 @@ export function ComposerActionButton(props: {
           size={smallIconSize}
           weight="semibold"
           tintColorClassName={
-            props.variant === "danger" ? "accent-danger-foreground" : "accent-primary-foreground"
+            props.variant === "danger" ? "accent-danger-foreground" : "accent-send-foreground"
           }
           type="monochrome"
         />
@@ -297,7 +293,7 @@ export function ComposerToolbarButton(props: {
     variant === "primary"
       ? props.disabled
         ? "accent-icon-subtle"
-        : "accent-primary-foreground"
+        : "accent-send-foreground"
       : variant === "danger"
         ? "accent-danger-foreground"
         : "accent-icon";
@@ -319,7 +315,7 @@ export function ComposerToolbarButton(props: {
         variant === "primary"
           ? props.disabled
             ? "bg-subtle-strong"
-            : "bg-primary"
+            : "bg-send"
           : variant === "danger"
             ? "bg-danger"
             : props.active
@@ -333,7 +329,7 @@ export function ComposerToolbarButton(props: {
             ? "border-danger-border"
             : props.disabled
               ? "border-border-subtle"
-              : "border-primary-foreground/20",
+              : "border-send-foreground/20",
         props.className,
       )}
       style={({ pressed }) => [
