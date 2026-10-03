@@ -68,7 +68,7 @@ export function SettingsRow(props: {
         weight="regular"
       />
       <>
-        <Text className="shrink-0 text-lg text-foreground" numberOfLines={1}>
+        <Text className="shrink-0 text-lg font-t3-medium text-foreground" numberOfLines={1}>
           {props.label}
         </Text>
         <View className="min-w-0 flex-1 items-end">

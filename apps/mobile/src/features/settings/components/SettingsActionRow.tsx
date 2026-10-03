@@ -50,7 +50,7 @@ export function SettingsActionRow(props: {
       className="flex-row items-center gap-4 p-4 disabled:opacity-40"
     >
       {icon}
-      <Text className={cn("flex-1 text-lg", textClassName)}>{props.label}</Text>
+      <Text className={cn("flex-1 text-lg font-t3-medium", textClassName)}>{props.label}</Text>
       {spinner}
     </Pressable>
   );

@@ -24,8 +24,10 @@ export function SettingsChoiceRow(props: {
       onPress={props.onPress}
     >
       <View className="min-w-0 flex-1 gap-1">
-        <Text className="text-lg text-foreground android:text-base">{props.label}</Text>
-        <Text className="text-sm leading-normal text-foreground-muted">{props.description}</Text>
+        <Text className="text-lg font-t3-medium text-foreground android:text-base">
+          {props.label}
+        </Text>
+        <Text className="text-sm leading-normal text-foreground-muted/60">{props.description}</Text>
       </View>
       {props.selected ? (
         <SymbolView
