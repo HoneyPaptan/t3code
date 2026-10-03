@@ -8,6 +8,7 @@ import {
   DEFAULT_MOBILE_THEME_ID,
   MOBILE_THEME_OPTIONS,
   getMobileThemeVariables,
+  isDarkOnlyMobileTheme,
   normalizeMobileThemeId,
 } from "./mobileTheme.ts";
 import { getMobileUniwindThemeName } from "./mobileThemeRuntime.ts";
@@ -34,11 +35,39 @@ describe("Dray themes", () => {
   it("makes Gruvbox the mobile default and keeps Gruvbox first in the picker", () => {
     expect(DEFAULT_MOBILE_THEME_ID).toBe("gruvbox");
     expect(normalizeMobileThemeId("missing-theme")).toBe("gruvbox");
-    expect(MOBILE_THEME_OPTIONS[0]).toEqual({ id: "gruvbox", label: "Gruvbox" });
-    for (const id of DRAY_THEME_IDS) {
-      expect(MOBILE_THEME_OPTIONS.some((option) => option.id === id)).toBe(true);
+    expect(MOBILE_THEME_OPTIONS[0]).toEqual({ id: "gruvbox", label: "Gruvbox", darkOnly: false });
+  });
+
+  it("lists only the Dray set in the picker, in order", () => {
+    expect(MOBILE_THEME_OPTIONS.map((option) => option.id)).toEqual([
+      "gruvbox",
+      "default",
+      "catppuccin",
+      "one-dark-pro",
+      "cobalt2",
+    ]);
+    expect(MOBILE_THEME_OPTIONS.map((option) => option.id)).toEqual(DRAY_THEME_IDS);
+    for (const hidden of [
+      "t3-code",
+      "t3-chat",
+      "grove",
+      "ocean",
+      "ember",
+      "iris",
+      "material-you",
+    ]) {
+      expect(MOBILE_THEME_OPTIONS.some((option) => option.id === hidden)).toBe(false);
+      expect(normalizeMobileThemeId(hidden)).toBe("gruvbox");
     }
-    expect(MOBILE_THEME_OPTIONS.some((option) => option.id === "t3-code")).toBe(true);
+  });
+
+  it("flags the dark only themes so the picker can say so", () => {
+    expect(
+      MOBILE_THEME_OPTIONS.filter((option) => option.darkOnly).map((option) => option.id),
+    ).toEqual(["one-dark-pro", "cobalt2"]);
+    expect(isDarkOnlyMobileTheme("cobalt2")).toBe(true);
+    expect(isDarkOnlyMobileTheme("gruvbox")).toBe(false);
+    expect(isDarkOnlyMobileTheme("ocean")).toBe(false);
   });
 
   it("maps every theme colour role to a Dray token", () => {

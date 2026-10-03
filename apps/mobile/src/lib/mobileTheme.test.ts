@@ -241,24 +241,44 @@ describe("mobile themes", () => {
   });
 
   it("normalizes persisted theme preferences", () => {
-    expect(normalizeMobileThemeId("ocean")).toBe("ocean");
+    expect(normalizeMobileThemeId("cobalt2")).toBe("cobalt2");
+    expect(normalizeMobileThemeId("ocean")).toBe(DEFAULT_MOBILE_THEME_ID);
+    expect(normalizeMobileThemeId("material-you")).toBe(DEFAULT_MOBILE_THEME_ID);
     expect(normalizeMobileThemeId("missing-theme")).toBe(DEFAULT_MOBILE_THEME_ID);
     expect(normalizeMobileThemeMode("dark")).toBe("dark");
     expect(normalizeMobileThemeMode("sepia")).toBe("system");
   });
 
   it("migrates one theme choice to both appearances and preserves independent choices", () => {
-    expect(resolveMobileThemeIds({ themeId: "grove" })).toEqual({
-      light: "grove",
-      dark: "grove",
+    expect(resolveMobileThemeIds({ themeId: "catppuccin" })).toEqual({
+      light: "catppuccin",
+      dark: "catppuccin",
     });
     expect(
-      resolveMobileThemeIds({ themeId: "grove", lightThemeId: "iris", darkThemeId: "ocean" }),
-    ).toEqual({ light: "iris", dark: "ocean" });
-    expect(resolveMobileThemeIds({ themeId: "grove", lightThemeId: "missing" })).toEqual({
+      resolveMobileThemeIds({
+        themeId: "catppuccin",
+        lightThemeId: "default",
+        darkThemeId: "cobalt2",
+      }),
+    ).toEqual({ light: "default", dark: "cobalt2" });
+    expect(resolveMobileThemeIds({ themeId: "catppuccin", lightThemeId: "missing" })).toEqual({
       light: DEFAULT_MOBILE_THEME_ID,
-      dark: "grove",
+      dark: "catppuccin",
     });
+  });
+
+  it("falls back to the default theme when a stored preference names a hidden theme", () => {
+    expect(resolveMobileThemeIds({ themeId: "grove" })).toEqual({
+      light: DEFAULT_MOBILE_THEME_ID,
+      dark: DEFAULT_MOBILE_THEME_ID,
+    });
+    expect(
+      resolveMobileThemeIds({
+        themeId: "t3-code",
+        lightThemeId: "iris",
+        darkThemeId: "one-dark-pro",
+      }),
+    ).toEqual({ light: DEFAULT_MOBILE_THEME_ID, dark: "one-dark-pro" });
   });
 
   it("changes either theme without switching the active appearance", () => {

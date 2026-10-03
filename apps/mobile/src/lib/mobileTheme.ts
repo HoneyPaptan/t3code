@@ -31,15 +31,17 @@ export type MobileThemeAppearance = ThemeAppearance;
 export type MobileThemeMode = MobileThemeAppearance | "system";
 export type MobileThemeIds = Readonly<Record<MobileThemeAppearance, MobileThemeId>>;
 
-export const MOBILE_THEME_OPTIONS: ReadonlyArray<{
-  readonly id: MobileThemeId;
+export interface MobileThemeOption {
+  readonly id: DrayThemeId;
   readonly label: string;
-}> = [
-  ...DRAY_THEMES.map((theme) => ({ id: theme.id, label: theme.label })),
-  { id: STOCK_MOBILE_THEME_ID, label: "T3 Code" },
-  { id: "material-you", label: "Material You" },
-  ...BUILT_IN_THEMES.map((theme) => ({ id: theme.id as MobileThemeId, label: theme.label })),
-];
+  readonly darkOnly: boolean;
+}
+
+export const MOBILE_THEME_OPTIONS: ReadonlyArray<MobileThemeOption> = DRAY_THEMES.map((theme) => ({
+  id: theme.id,
+  label: theme.label,
+  darkOnly: theme.darkOnly,
+}));
 
 // Closed set: every key `createMobileThemeVariables` writes. Reads of a
 // misspelled variable then fail to compile instead of yielding undefined.
@@ -47,9 +49,11 @@ export type MobileThemeVariable = keyof ReturnType<typeof createMobileThemeVaria
 export type MobileThemeVariables = Readonly<Record<MobileThemeVariable, string>>;
 
 export function normalizeMobileThemeId(value: unknown): MobileThemeId {
-  return typeof value === "string" && (MOBILE_THEME_IDS as readonly string[]).includes(value)
-    ? (value as MobileThemeId)
-    : DEFAULT_MOBILE_THEME_ID;
+  return isDrayThemeId(value) ? value : DEFAULT_MOBILE_THEME_ID;
+}
+
+export function isDarkOnlyMobileTheme(themeId: MobileThemeId): boolean {
+  return MOBILE_THEME_OPTIONS.some((option) => option.id === themeId && option.darkOnly);
 }
 
 export function normalizeMobileThemeMode(value: unknown): MobileThemeMode {
@@ -410,8 +414,8 @@ export const MOBILE_THEME_VARIABLE_NAMES = Object.keys(
   createMobileThemeVariables(T3_CHAT_THEME.colors, "light"),
 ) as ReadonlyArray<MobileThemeVariable>;
 
-function isDrayThemeId(themeId: MobilePaletteThemeId): themeId is DrayThemeId {
-  return (DRAY_THEME_IDS as readonly string[]).includes(themeId);
+function isDrayThemeId(value: unknown): value is DrayThemeId {
+  return typeof value === "string" && (DRAY_THEME_IDS as readonly string[]).includes(value);
 }
 
 export function getMobileThemeColors(
