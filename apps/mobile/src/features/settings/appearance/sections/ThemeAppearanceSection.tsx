@@ -1,14 +1,9 @@
-import { memo, useId } from "react";
 import { Pressable, View } from "react-native";
-import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { ScopedTheme, ScopedVariables } from "uniwind";
-
-import { mixThemePreviewBase, THEME_PREVIEW_RENDER_SPECS } from "@t3tools/shared/themePreview";
 
 import { SymbolView } from "../../../../components/AppSymbol";
 import { AppText as Text } from "../../../../components/AppText";
 import {
-  getMobileThemePreviewColors,
   MOBILE_THEME_OPTIONS,
   type MobileThemeAppearance,
   type MobileThemeId,
@@ -18,6 +13,7 @@ import {
 import { getMobileUniwindThemeName } from "../../../../lib/mobileThemeRuntime";
 import { cn } from "../../../../lib/cn";
 import { useAppearancePreferences } from "../AppearancePreferencesProvider";
+import { ThemeSwatch } from "../components/ThemeSwatch";
 
 const APPEARANCE_MODES: ReadonlyArray<{
   readonly id: MobileThemeMode;
@@ -28,88 +24,50 @@ const APPEARANCE_MODES: ReadonlyArray<{
   { id: "dark", label: "Dark" },
 ];
 
-const previewPercentage = (value: number) => `${value * 100}%`;
-
-const PreviewOrb = memo(function PreviewOrb(props: {
+const appearanceChoices: ReadonlyArray<{
   readonly appearance: MobileThemeAppearance;
-  readonly compact?: boolean;
-  readonly themeId: MobileThemeId;
+  readonly symbol: "sun.max" | "moon";
+}> = [
+  { appearance: "light", symbol: "sun.max" },
+  { appearance: "dark", symbol: "moon" },
+];
+
+const themeHint = (darkOnly: boolean) =>
+  darkOnly ? "Always dark, also in light mode" : "Light and dark";
+
+function AppearanceChoice(props: {
+  readonly appearance: MobileThemeAppearance;
+  readonly disabled: boolean;
+  readonly label: string;
+  readonly onPress: () => void;
+  readonly selected: boolean;
+  readonly symbol: "sun.max" | "moon";
 }) {
-  const idPrefix = useId().replaceAll(":", "");
-  const accentGradientId = `${idPrefix}-accent-glow`;
-  const actionGradientId = `${idPrefix}-action-glow`;
-  const { systemColorPalettes } = useAppearancePreferences();
-  const palette = systemColorPalettes?.[props.appearance];
-  const colors =
-    props.themeId === "material-you" && palette
-      ? { canvas: palette.surface, accent: palette.primary, messageAction: palette.tertiary }
-      : getMobileThemePreviewColors(props.themeId, props.appearance);
-  const spec = THEME_PREVIEW_RENDER_SPECS[props.appearance];
-  const accentRadius = Math.hypot(
-    Math.max(spec.accent.center[0], 1 - spec.accent.center[0]),
-    Math.max(spec.accent.center[1], 1 - spec.accent.center[1]),
-  );
-  const actionRadius = Math.hypot(
-    Math.max(spec.action.center[0], 1 - spec.action.center[0]),
-    Math.max(spec.action.center[1], 1 - spec.action.center[1]),
-  );
   return (
-    <View
-      className={`${props.compact ? "size-14" : "size-16"} overflow-hidden rounded-full border border-border`}
+    <Pressable
+      accessibilityHint={`Sets the ${props.appearance} appearance only`}
+      accessibilityLabel={`${props.label} ${props.appearance} theme`}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: props.disabled, selected: props.selected }}
+      className={cn("size-7 items-center justify-center rounded-md", props.selected && "bg-card")}
+      disabled={props.disabled}
+      hitSlop={8}
+      onPress={props.onPress}
     >
-      <Svg accessibilityElementsHidden height="100%" viewBox="0 0 64 64" width="100%">
-        <Defs>
-          <RadialGradient
-            cx={previewPercentage(spec.accent.center[0])}
-            cy={previewPercentage(spec.accent.center[1])}
-            fx={previewPercentage(spec.accent.center[0])}
-            fy={previewPercentage(spec.accent.center[1])}
-            id={accentGradientId}
-            r={previewPercentage(accentRadius)}
-          >
-            <Stop offset="0%" stopColor={colors.accent} stopOpacity={1} />
-            <Stop
-              offset={previewPercentage(spec.accent.middleOffset)}
-              stopColor={colors.accent}
-              stopOpacity={spec.accent.middleOpacity}
-            />
-            <Stop
-              offset={previewPercentage(spec.accent.endOffset)}
-              stopColor={colors.accent}
-              stopOpacity={0}
-            />
-            <Stop offset="100%" stopColor={colors.accent} stopOpacity={0} />
-          </RadialGradient>
-          <RadialGradient
-            cx={previewPercentage(spec.action.center[0])}
-            cy={previewPercentage(spec.action.center[1])}
-            fx={previewPercentage(spec.action.center[0])}
-            fy={previewPercentage(spec.action.center[1])}
-            id={actionGradientId}
-            r={previewPercentage(actionRadius)}
-          >
-            <Stop
-              offset="0%"
-              stopColor={colors.messageAction}
-              stopOpacity={spec.action.startOpacity}
-            />
-            <Stop
-              offset={previewPercentage(spec.action.endOffset)}
-              stopColor={colors.messageAction}
-              stopOpacity={0}
-            />
-            <Stop offset="100%" stopColor={colors.messageAction} stopOpacity={0} />
-          </RadialGradient>
-        </Defs>
-        <Circle cx="32" cy="32" fill={mixThemePreviewBase(colors, props.appearance)} r="32" />
-        <Circle cx="32" cy="32" fill={`url(#${actionGradientId})`} r="32" />
-        <Circle cx="32" cy="32" fill={`url(#${accentGradientId})`} r="32" />
-      </Svg>
-    </View>
+      <SymbolView
+        name={props.symbol}
+        size={14}
+        tintColorClassName={props.selected ? "accent-icon" : "accent-icon-muted"}
+        type="monochrome"
+        weight="medium"
+      />
+    </Pressable>
   );
-});
+}
 
 function ThemeCard(props: {
+  readonly appearance: MobileThemeAppearance;
+  readonly darkOnly: boolean;
   readonly disabled: boolean;
   readonly darkSelected: boolean;
   readonly label: string;
@@ -118,36 +76,16 @@ function ThemeCard(props: {
   readonly onSelect: (appearance: MobileThemeAppearance) => void;
   readonly themeId: MobileThemeId;
 }) {
-  const choice = (appearance: MobileThemeAppearance, selected: boolean) => (
-    <Pressable
-      accessibilityHint={`Sets the ${appearance} appearance only`}
-      accessibilityLabel={`${props.label} ${appearance} theme`}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: props.disabled, selected }}
-      className={cn(
-        "size-[66px] items-center justify-center rounded-full border-[3px] active:scale-[0.94]",
-        selected ? "border-primary" : "border-transparent",
-      )}
-      disabled={props.disabled}
-      onPress={() => props.onSelect(appearance)}
-    >
-      <PreviewOrb appearance={appearance} compact themeId={props.themeId} />
-      {selected ? (
-        <View className="absolute -bottom-0.5 -right-0.5 size-5 items-center justify-center rounded-full border border-border bg-card">
-          <SymbolView
-            name={appearance === "light" ? "sun.max" : "moon"}
-            size={12}
-            tintColorClassName="accent-icon"
-            type="monochrome"
-            weight="medium"
-          />
-        </View>
-      ) : null}
-    </Pressable>
-  );
+  const selected = props.lightSelected || props.darkSelected;
+  const selectedByAppearance = { light: props.lightSelected, dark: props.darkSelected };
 
   return (
-    <View className="min-w-36 flex-1 basis-[47%] gap-3 rounded-xl border border-border bg-grouped-card px-2 py-4">
+    <View
+      className={cn(
+        "flex-row items-center gap-3 rounded-md px-2 py-2",
+        selected && "bg-thread-selected",
+      )}
+    >
       <Pressable
         accessibilityHint="Sets both light and dark appearances"
         accessibilityLabel={`${props.label} theme`}
@@ -156,21 +94,46 @@ function ThemeCard(props: {
           disabled: props.disabled,
           selected: props.lightSelected && props.darkSelected,
         }}
-        className="absolute inset-0 rounded-xl active:bg-subtle"
+        className="absolute inset-0 rounded-md active:bg-thread-hover"
         disabled={props.disabled}
         onPress={props.onSelectBoth}
       />
-      <View className="flex-row items-center justify-center gap-2 py-1" pointerEvents="box-none">
-        {choice("light", props.lightSelected)}
-        {choice("dark", props.darkSelected)}
+      <View pointerEvents="none">
+        <ThemeSwatch appearance={props.appearance} themeId={props.themeId} />
       </View>
-      <Text
-        className="min-w-0 flex-1 px-1 text-lg font-t3-medium"
-        numberOfLines={1}
-        pointerEvents="none"
-      >
-        {props.label}
-      </Text>
+      <View className="min-w-0 flex-1 gap-0.5" pointerEvents="none">
+        <Text
+          className={cn(
+            "text-sm font-t3-medium",
+            selected ? "text-thread-selected-foreground" : "text-foreground",
+          )}
+          numberOfLines={1}
+        >
+          {props.label}
+        </Text>
+        <Text
+          className={cn(
+            "text-xs",
+            selected ? "text-thread-selected-foreground-muted" : "text-foreground-muted/60",
+          )}
+          numberOfLines={1}
+        >
+          {themeHint(props.darkOnly)}
+        </Text>
+      </View>
+      <View className="flex-row items-center gap-0.5">
+        {appearanceChoices.map((choice) => (
+          <AppearanceChoice
+            appearance={choice.appearance}
+            disabled={props.disabled}
+            key={choice.appearance}
+            label={props.label}
+            onPress={() => props.onSelect(choice.appearance)}
+            selected={selectedByAppearance[choice.appearance]}
+            symbol={choice.symbol}
+          />
+        ))}
+      </View>
     </View>
   );
 }
@@ -286,6 +249,7 @@ export function ThemeAppearanceSection() {
     setThemeIdForAppearance,
     setThemeIdForBothAppearances,
     setThemeMode,
+    themeAppearance,
     themeIds,
     themeMode,
   } = useAppearancePreferences();
@@ -311,9 +275,11 @@ export function ThemeAppearanceSection() {
 
       <View className="gap-3">
         <SectionLabel>Themes</SectionLabel>
-        <View className="flex-row flex-wrap gap-3">
+        <View className="gap-px">
           {MOBILE_THEME_OPTIONS.map((theme) => (
             <ThemeCard
+              appearance={themeAppearance}
+              darkOnly={theme.darkOnly}
               disabled={!isReady}
               key={theme.id}
               label={theme.label}
