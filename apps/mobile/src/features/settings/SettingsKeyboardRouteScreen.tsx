@@ -70,7 +70,7 @@ export function SettingsKeyboardRouteScreen() {
             />
           ))}
         </SettingsSection>
-        <Text className="px-2 text-sm text-foreground-muted">
+        <Text className="px-2 text-sm text-foreground-muted/60">
           Applies to the composer when a hardware keyboard is connected.
         </Text>
       </ScrollView>

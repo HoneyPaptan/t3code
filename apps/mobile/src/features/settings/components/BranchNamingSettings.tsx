@@ -31,7 +31,7 @@ export function BranchNamingSettings(props: {
     <SettingsSection
       title="Worktree branch naming"
       trailing={
-        props.mode === null ? <Text className="text-xs text-foreground-muted">Mixed</Text> : null
+        props.mode === null ? <Text className="text-xs text-foreground-muted/60">Mixed</Text> : null
       }
     >
       {BranchNamingMode.literals.map((mode, index) => (
@@ -47,7 +47,7 @@ export function BranchNamingSettings(props: {
       ))}
       {props.mode === "static" ? (
         <View className="gap-2 px-4 py-3">
-          <Text className="text-sm text-foreground-muted">
+          <Text className="text-sm text-foreground-muted/60">
             Use t3code or t3code/ for t3code/add-search. Leave empty for no prefix.
           </Text>
           <AppTextInput
@@ -77,7 +77,7 @@ export function BranchNamingSettings(props: {
       ) : null}
       {props.mode === "custom" ? (
         <View className="gap-2 px-4 py-3">
-          <Text className="text-sm text-foreground-muted">
+          <Text className="text-sm text-foreground-muted/60">
             Append instructions to the naming prompt.
           </Text>
           <AppTextInput

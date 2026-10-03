@@ -217,10 +217,8 @@ function ModeCard(props: {
       accessibilityRole="radio"
       accessibilityState={{ checked: props.selected, disabled: props.disabled }}
       className={cn(
-        "min-w-0 flex-1 gap-2 rounded-xl p-2 active:scale-[0.97]",
-        props.selected
-          ? "border-2 border-primary bg-subtle"
-          : "border border-border bg-grouped-card",
+        "min-w-0 flex-1 gap-2 rounded-lg border border-border p-3 active:scale-[0.97]",
+        props.selected ? "bg-thread-selected" : "bg-grouped-card",
       )}
       disabled={props.disabled}
       onPress={props.onPress}
@@ -229,8 +227,8 @@ function ModeCard(props: {
       <Text
         className={
           props.selected
-            ? "text-center text-base font-t3-bold text-foreground"
-            : "text-center text-base text-foreground-muted"
+            ? "text-center text-sm font-t3-medium text-thread-selected-foreground"
+            : "text-center text-sm text-foreground-muted"
         }
       >
         {props.label}
@@ -240,7 +238,7 @@ function ModeCard(props: {
 }
 
 function SectionLabel({ children }: { readonly children: string }) {
-  return <Text className="px-2 text-sm font-t3-medium text-foreground-muted">{children}</Text>;
+  return <Text className="px-2 text-sm font-t3-medium text-foreground-muted/70">{children}</Text>;
 }
 
 export function ThemeAppearanceSection() {
