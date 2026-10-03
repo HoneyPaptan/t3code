@@ -4,7 +4,6 @@ import { Platform, Pressable } from "react-native";
 import { AppText as Text } from "../../components/AppText";
 import { cn } from "../../lib/cn";
 import { MaterialButton } from "../../components/MaterialButton";
-import { useUniwindTheme } from "../../lib/useUniwindTheme";
 
 export function ConnectionSheetButton(props: {
   readonly icon: React.ComponentProps<typeof SymbolView>["name"];
@@ -15,7 +14,6 @@ export function ConnectionSheetButton(props: {
   readonly fullWidth?: boolean;
   readonly onPress: () => void;
 }) {
-  const colors = useUniwindTheme();
   if (Platform.OS === "android")
     return (
       <MaterialButton
@@ -35,19 +33,6 @@ export function ConnectionSheetButton(props: {
         ? "accent-danger-foreground"
         : "accent-secondary-foreground";
 
-  const primaryShadow =
-    tone === "primary"
-      ? Platform.select({
-          ios: {
-            shadowColor: colors["--color-primary-shadow"],
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.14,
-            shadowRadius: 6,
-          },
-          android: { elevation: 3 },
-        })
-      : undefined;
-
   return (
     <Pressable
       accessibilityLabel={props.label}
@@ -59,14 +44,13 @@ export function ConnectionSheetButton(props: {
           : "min-h-[48px] flex-row items-center justify-center gap-2 rounded-lg px-4 py-3",
         "disabled:opacity-50",
         tone === "primary"
-          ? "bg-primary"
+          ? "bg-primary shadow-md shadow-primary-shadow/15"
           : tone === "danger"
             ? "border border-danger-border bg-danger"
             : "border border-border bg-secondary",
       )}
       disabled={props.disabled}
       onPress={props.onPress}
-      style={primaryShadow}
     >
       <SymbolView
         name={props.icon}
