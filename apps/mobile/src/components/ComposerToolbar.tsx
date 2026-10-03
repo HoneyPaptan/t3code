@@ -51,7 +51,7 @@ export function ComposerInlineControl(props: {
       accessibilityState={
         props.static ? undefined : { disabled: props.disabled, selected: props.selected }
       }
-      className="h-11 flex-row items-center gap-2 rounded-xl px-2 active:bg-subtle"
+      className="h-11 flex-row items-center gap-1.5 rounded-md px-1.5 active:bg-subtle"
       disabled={props.disabled || props.static}
       onPress={props.onPress}
       style={{ maxWidth: props.maxWidth ?? 190, opacity: props.disabled ? 0.45 : 1 }}
@@ -75,7 +75,7 @@ export function ComposerInlineControl(props: {
       ) : null}
       <Text
         className={cn(
-          "shrink text-sm font-t3-medium",
+          "shrink text-[13.5px] font-t3-medium",
           props.emphasized || props.selected ? "text-foreground" : "text-foreground-muted",
         )}
         numberOfLines={1}
