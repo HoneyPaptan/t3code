@@ -279,7 +279,7 @@ export function FloatingWorkingControl(props: {
         <View pointerEvents="box-none" className="flex-row items-center gap-4">
           <Animated.View
             pointerEvents={capsuleInteractive ? "box-none" : "none"}
-            className="h-11 items-center justify-center overflow-hidden rounded-lg border border-border bg-glass-fallback shadow-md shadow-black/10"
+            className="h-11 items-center justify-center overflow-hidden rounded-lg border border-border bg-glass-fallback shadow-md shadow-primary-shadow/10"
             style={capsuleStyle}
           >
             {capsuleContent}
@@ -294,7 +294,7 @@ export function FloatingWorkingControl(props: {
             <ControlPill
               accessibilityLabel="Scroll to end"
               activateOnPressIn
-              className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-black/10"
+              className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-primary-shadow/10"
               disabled={!props.showScrollToEnd}
               icon={{ ios: "chevron.down", android: "keyboard_arrow_down" }}
               onPress={props.onScrollToEnd}
@@ -314,7 +314,7 @@ export function FloatingWorkingControl(props: {
         <ControlPill
           accessibilityLabel="Scroll to end"
           activateOnPressIn
-          className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-black/10"
+          className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-primary-shadow/10"
           icon={{ ios: "chevron.down", android: "keyboard_arrow_down" }}
           onPress={props.onScrollToEnd}
         />

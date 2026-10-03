@@ -4,28 +4,7 @@ import { Platform, Pressable } from "react-native";
 import { AppText as Text } from "../../components/AppText";
 import { cn } from "../../lib/cn";
 import { MaterialButton } from "../../components/MaterialButton";
-
-const CARD_SHADOW = Platform.select({
-  ios: {
-    shadowColor: "rgba(23,23,23,0.08)",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 16,
-  },
-  android: { elevation: 3 },
-});
-
-const CARD_SHADOW_DARK = Platform.select({
-  ios: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-  },
-  android: { elevation: 4 },
-});
-
-export { CARD_SHADOW, CARD_SHADOW_DARK };
+import { useUniwindTheme } from "../../lib/useUniwindTheme";
 
 export function ConnectionSheetButton(props: {
   readonly icon: React.ComponentProps<typeof SymbolView>["name"];
@@ -36,6 +15,7 @@ export function ConnectionSheetButton(props: {
   readonly fullWidth?: boolean;
   readonly onPress: () => void;
 }) {
+  const colors = useUniwindTheme();
   if (Platform.OS === "android")
     return (
       <MaterialButton
@@ -59,7 +39,7 @@ export function ConnectionSheetButton(props: {
     tone === "primary"
       ? Platform.select({
           ios: {
-            shadowColor: "#000",
+            shadowColor: colors["--color-primary-shadow"],
             shadowOffset: { width: 0, height: 3 },
             shadowOpacity: 0.14,
             shadowRadius: 6,
