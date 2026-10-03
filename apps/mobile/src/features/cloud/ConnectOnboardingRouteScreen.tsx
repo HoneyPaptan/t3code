@@ -131,7 +131,7 @@ function ConfiguredConnectOnboardingRouteScreen() {
             onPress={handleDontShowAgain}
             className="items-center py-1 active:opacity-70"
           >
-            <Text className="text-xs text-foreground-muted">{"Don't show this again"}</Text>
+            <Text className="text-xs text-foreground-muted/60">{"Don't show this again"}</Text>
           </Pressable>
         ) : null}
       </ScrollView>
