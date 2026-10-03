@@ -975,7 +975,7 @@ function TaskForm({
                 Intervals must be at least 1 minute. Update this interval before saving.
               </Text>
             ) : draft.task?.schedule.type === "interval" && draft.task.schedule.everyMs < 60_000 ? (
-              <Text className="px-4 pb-3 text-sm text-foreground-muted">
+              <Text className="px-4 pb-3 text-sm text-foreground-muted/60">
                 This task previously ran more than once per minute. Saving requires an interval of
                 at least 1 minute.
               </Text>
@@ -992,7 +992,7 @@ function TaskForm({
         </View>
       </SettingsSection>
       {draft.schedule.mode === "fixed_time" ? (
-        <Text className="px-2 text-sm text-foreground-muted">
+        <Text className="px-2 text-sm text-foreground-muted/60">
           Time uses the environment's time zone, which may differ from your phone's.
         </Text>
       ) : null}

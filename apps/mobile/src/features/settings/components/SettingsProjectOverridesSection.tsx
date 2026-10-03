@@ -30,7 +30,7 @@ export function SettingsProjectOverridesSection(props: {
         ) : null}
       </View>
       {!props.supportsOverrides ? (
-        <Text className="px-4 pb-3 text-sm text-foreground-muted">
+        <Text className="px-4 pb-3 text-sm text-foreground-muted/60">
           Update the selected environments to edit project overrides.
         </Text>
       ) : null}

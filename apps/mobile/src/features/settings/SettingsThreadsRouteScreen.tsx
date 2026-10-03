@@ -310,7 +310,7 @@ function LegacySettingsSection() {
           onValueChange={(value) => savePreferences({ planModeEnabled: value })}
         />
       </SettingsSection>
-      <Text className="px-2 text-sm text-foreground-muted">
+      <Text className="px-2 text-sm text-foreground-muted/60">
         Opt into retired interfaces kept for compatibility. Plan Mode restores the Build/Plan
         control; otherwise every task runs in Build mode.
       </Text>

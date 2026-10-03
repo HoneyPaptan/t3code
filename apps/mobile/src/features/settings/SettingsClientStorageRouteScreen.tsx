@@ -149,7 +149,7 @@ export function SettingsClientStorageRouteScreen() {
               onPress={confirmClearAll}
             />
           </SettingsSection>
-          <Text className="px-2 text-sm leading-normal text-foreground-muted">
+          <Text className="px-2 text-sm leading-normal text-foreground-muted/60">
             Clearing caches never removes environment connections, credentials, account data, or
             appearance preferences.
           </Text>
