@@ -90,8 +90,8 @@ function WindowRow(props: {
       </View>
       {pace || resetsIn ? (
         <View className="flex-row justify-between gap-3">
-          <Text className="text-xs text-foreground-tertiary">{pace ? PACE_LABEL[pace] : ""}</Text>
-          <Text className="text-xs tabular-nums text-foreground-tertiary">{resetsIn ?? ""}</Text>
+          <Text className="text-xs text-foreground-muted/60">{pace ? PACE_LABEL[pace] : ""}</Text>
+          <Text className="text-xs tabular-nums text-foreground-muted/60">{resetsIn ?? ""}</Text>
         </View>
       ) : null}
     </View>
@@ -102,7 +102,7 @@ function AccountInstanceLabel({ value }: { readonly value: string }) {
   const [revealed, setRevealed] = useState(false);
   if (!value.includes("@")) {
     return (
-      <Text className="shrink text-xs text-foreground-tertiary" numberOfLines={1}>
+      <Text className="shrink text-xs text-foreground-muted/60" numberOfLines={1}>
         · {value}
       </Text>
     );
@@ -114,7 +114,7 @@ function AccountInstanceLabel({ value }: { readonly value: string }) {
       accessibilityLabel={revealed ? "Hide account label" : "Reveal account label"}
       onPress={() => setRevealed((current) => !current)}
     >
-      <Text className="text-xs text-foreground-tertiary" numberOfLines={1}>
+      <Text className="text-xs text-foreground-muted/60" numberOfLines={1}>
         · {revealed ? value : "••••••@••••••"}
       </Text>
     </Pressable>
@@ -253,7 +253,7 @@ export function ResetCredits(props: {
 
   return (
     <View className="flex-row flex-wrap items-center gap-x-3 gap-y-1">
-      <Text className="text-xs tabular-nums text-foreground-tertiary">{summary}</Text>
+      <Text className="text-xs tabular-nums text-foreground-muted/60">{summary}</Text>
       {credits.availableCount > 0 ? (
         <Pressable
           accessibilityRole="button"

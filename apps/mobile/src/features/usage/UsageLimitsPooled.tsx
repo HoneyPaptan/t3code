@@ -112,10 +112,10 @@ function PoolWindowCard({
           </View>
         </View>
         {pool.pace ? (
-          <Text className="text-xs text-foreground-tertiary">{PACE_LABEL[pool.pace]}</Text>
+          <Text className="text-xs text-foreground-muted/60">{PACE_LABEL[pool.pace]}</Text>
         ) : null}
       </View>
-      {description ? <Text className="text-xs text-foreground-muted">{description}</Text> : null}
+      {description ? <Text className="text-xs text-foreground-muted/60">{description}</Text> : null}
       {nextRefill ? (
         <Text className="text-xs tabular-nums text-foreground-muted">
           ↻ +{nextRefill.restoresPercent}%{" "}
@@ -184,7 +184,7 @@ function PoolWindowCard({
                 ) : null}
                 {credits ? (
                   <>
-                    {resetsIn ? <Text className="text-xs text-foreground-tertiary">·</Text> : null}
+                    {resetsIn ? <Text className="text-xs text-foreground-muted/60">·</Text> : null}
                     <SymbolView name="ticket" size={13} tintColorClassName="accent-icon" />
                     <Text className="text-xs font-t3-medium tabular-nums text-foreground">
                       {credits}
@@ -275,7 +275,7 @@ export function UsageLimitsSection({
       {externalLinks.map((link) => (
         <View key={link.url} className="gap-3 rounded-xl border border-border-subtle p-4">
           <Text className="text-base font-t3-medium text-foreground">{link.label}</Text>
-          <Text className="text-xs text-foreground-muted">{link.accounts.join(", ")}</Text>
+          <Text className="text-xs text-foreground-muted/60">{link.accounts.join(", ")}</Text>
           {link.message ? (
             <Text className="text-sm text-foreground-muted">{link.message}</Text>
           ) : null}

@@ -459,7 +459,7 @@ function CursorEnableLimits({
         <Text className="text-base font-t3-medium text-foreground">Cursor</Text>
       </View>
       <View className="items-start gap-3 rounded-xl border-continuous bg-grouped-card p-4">
-        <Text className="text-xs text-foreground-muted">{CURSOR_KEYCHAIN_COPY}</Text>
+        <Text className="text-xs text-foreground-muted/60">{CURSOR_KEYCHAIN_COPY}</Text>
         <View className="flex-row flex-wrap gap-2">
           {environments.map((environment) => (
             <CursorEnableAction
@@ -521,7 +521,7 @@ function ChartCard(props: {
       )}
 
       <View className="flex-row items-center justify-between">
-        <Text className="text-xs text-foreground-tertiary">
+        <Text className="text-xs text-foreground-muted/60">
           {props.isPast24Hours
             ? formatHourShort(props.days[0] ?? "", props.timeZone)
             : formatDayShort(props.sinceDay)}
@@ -539,7 +539,7 @@ function ChartCard(props: {
             </View>
           ))}
         </View>
-        <Text className="text-xs text-foreground-tertiary">
+        <Text className="text-xs text-foreground-muted/60">
           {props.isPast24Hours
             ? formatHourShort(props.days[props.days.length - 1] ?? "", props.timeZone)
             : formatDayShort(props.untilDay)}
@@ -776,7 +776,7 @@ function MetricCell(props: {
     <View className="w-1/2 gap-0.5 p-4">
       <Text className="text-sm text-foreground-muted">{props.label}</Text>
       <Text className="text-xl font-t3-medium tabular-nums text-foreground">{props.value}</Text>
-      <Text className="text-xs text-foreground-tertiary">{props.detail}</Text>
+      <Text className="text-xs text-foreground-muted/60">{props.detail}</Text>
     </View>
   );
 }
