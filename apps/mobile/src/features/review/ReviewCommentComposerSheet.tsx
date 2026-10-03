@@ -182,18 +182,18 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
           {!target ? (
             <View className="rounded-xl border border-border bg-card px-4 py-5">
               <Text className="text-base font-t3-bold text-foreground">No selection</Text>
-              <Text className="mt-1 text-sm leading-normal text-foreground-muted">
+              <Text className="mt-1 text-sm leading-normal text-foreground-muted/60">
                 Select a diff line or range first.
               </Text>
             </View>
           ) : (
             <View className="min-h-0 flex-1 gap-4">
               <View className="gap-1 px-1">
-                <Text className="text-2xs font-t3-bold uppercase text-foreground-muted">
+                <Text className="text-2xs font-t3-bold uppercase text-foreground-muted/70">
                   {selectionLabel}
                 </Text>
                 <Text
-                  className="font-mono text-xs leading-snug text-foreground-muted"
+                  className="font-mono text-xs leading-snug text-foreground-muted/60"
                   ellipsizeMode="middle"
                   numberOfLines={2}
                 >

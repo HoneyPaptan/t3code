@@ -210,13 +210,13 @@ function ReviewSelectionActionBar(props: {
     >
       {props.onOpenComment ? (
         <Pressable
-          className="h-12 flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-primary px-5"
+          className="min-h-12 flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-primary px-5"
           onPress={props.onOpenComment}
         >
           {content}
         </Pressable>
       ) : (
-        <View className="h-12 flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-primary px-5">
+        <View className="min-h-12 flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-primary px-5">
           {content}
         </View>
       )}
@@ -265,8 +265,8 @@ const ReviewFileNavigatorRow = memo(function ReviewFileNavigatorRow(props: {
               selected && "bg-subtle-strong",
             )
           : selected
-            ? "mt-1 min-h-12 justify-center rounded-xl bg-subtle-strong px-3 py-2"
-            : "mt-1 min-h-12 justify-center rounded-xl px-3 py-2 active:bg-subtle"
+            ? "mt-1 min-h-12 justify-center rounded-md bg-subtle-strong px-3 py-2"
+            : "mt-1 min-h-12 justify-center rounded-md px-3 py-2 active:bg-subtle"
       }
       onPress={handlePress}
     >
@@ -428,7 +428,7 @@ function ReviewFileNavigator({
         <View className="border-b border-border" style={{ paddingTop: headerInset }}>
           <View className="px-4 py-3">
             <Text className="text-sm font-t3-bold text-foreground">Changed files</Text>
-            <Text className="text-xs text-foreground-muted">
+            <Text className="text-xs text-foreground-muted/60">
               {files.length} {files.length === 1 ? "file" : "files"}
             </Text>
           </View>
@@ -687,7 +687,7 @@ export function ReviewSheet(props: ReviewSheetProps) {
           )}
         >
           <Text className="text-sm font-t3-bold text-foreground">Review unavailable</Text>
-          <Text className="text-xs leading-normal text-foreground-muted">{error}</Text>
+          <Text className="text-xs leading-normal text-foreground-muted/60">{error}</Text>
         </View>,
       );
     }
@@ -834,7 +834,7 @@ export function ReviewSheet(props: ReviewSheetProps) {
                     <Text className="text-sm font-t3-bold text-foreground">No review diffs</Text>
                     <Text
                       className={cn(
-                        "text-xs leading-normal text-foreground-muted",
+                        "text-xs leading-normal text-foreground-muted/60",
                         Platform.OS === "android" && "mt-2 text-center",
                       )}
                     >
@@ -850,7 +850,7 @@ export function ReviewSheet(props: ReviewSheetProps) {
                   )}
                 >
                   <ActivityIndicator size="small" />
-                  <Text className="text-xs text-foreground-muted">Loading diff…</Text>
+                  <Text className="text-xs text-foreground-muted/60">Loading diff…</Text>
                 </View>
               ) : parsedDiff.kind === "empty" ? (
                 <View
@@ -863,7 +863,7 @@ export function ReviewSheet(props: ReviewSheetProps) {
                   <Text className="text-sm font-t3-bold text-foreground">No changes</Text>
                   <Text
                     className={cn(
-                      "text-xs leading-normal text-foreground-muted",
+                      "text-xs leading-normal text-foreground-muted/60",
                       Platform.OS === "android" && "mt-2 text-center",
                     )}
                   >
