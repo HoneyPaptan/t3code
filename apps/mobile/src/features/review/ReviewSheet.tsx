@@ -34,6 +34,7 @@ import { AppText as Text } from "../../components/AppText";
 import { SymbolView } from "../../components/AppSymbol";
 import { AndroidScreenHeader } from "../../components/AndroidScreenHeader";
 import { MaterialScreenContent } from "../../components/MaterialScreenContent";
+import { EmptyState } from "../../components/EmptyState";
 import { cn } from "../../lib/cn";
 import { environmentCatalog } from "../../connection/catalog";
 import { useEnvironmentPresentation } from "../../state/presentation";
@@ -687,7 +688,7 @@ export function ReviewSheet(props: ReviewSheetProps) {
           )}
         >
           <Text className="text-sm font-t3-bold text-foreground">Review unavailable</Text>
-          <Text className="text-xs leading-normal text-foreground-muted/60">{error}</Text>
+          <Text className="text-xs leading-normal text-danger-foreground">{error}</Text>
         </View>,
       );
     }
@@ -824,23 +825,11 @@ export function ReviewSheet(props: ReviewSheetProps) {
               {listHeader}
               {!selectedSection ? (
                 error ? null : (
-                  <View
-                    className={
-                      Platform.OS === "android"
-                        ? "items-center px-6 py-5"
-                        : "border-b border-border bg-card px-4 py-5"
-                    }
-                  >
-                    <Text className="text-sm font-t3-bold text-foreground">No review diffs</Text>
-                    <Text
-                      className={cn(
-                        "text-xs leading-normal text-foreground-muted/60",
-                        Platform.OS === "android" && "mt-2 text-center",
-                      )}
-                    >
-                      This thread has no ready turn diffs and the worktree diff is empty.
-                    </Text>
-                  </View>
+                  <EmptyState
+                    variant="plain"
+                    title="No review diffs"
+                    detail="This thread has no ready turn diffs and the worktree diff is empty."
+                  />
                 )
               ) : selectedSection.isLoading && selectedSection.diff === null ? (
                 <View
@@ -853,23 +842,11 @@ export function ReviewSheet(props: ReviewSheetProps) {
                   <Text className="text-xs text-foreground-muted/60">Loading diff…</Text>
                 </View>
               ) : parsedDiff.kind === "empty" ? (
-                <View
-                  className={
-                    Platform.OS === "android"
-                      ? "items-center px-6 py-5"
-                      : "border-b border-border bg-card px-4 py-5"
-                  }
-                >
-                  <Text className="text-sm font-t3-bold text-foreground">No changes</Text>
-                  <Text
-                    className={cn(
-                      "text-xs leading-normal text-foreground-muted/60",
-                      Platform.OS === "android" && "mt-2 text-center",
-                    )}
-                  >
-                    {selectedSection.subtitle ?? "This diff is empty."}
-                  </Text>
-                </View>
+                <EmptyState
+                  variant="plain"
+                  title="No changes"
+                  detail={selectedSection.subtitle ?? "This diff is empty."}
+                />
               ) : parsedDiff.kind === "raw" ? (
                 <View
                   className={cn(

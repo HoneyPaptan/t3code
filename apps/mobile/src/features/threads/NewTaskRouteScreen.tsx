@@ -377,7 +377,7 @@ export function NewTaskRouteScreen({ route }: StaticScreenProps<NewTaskRoutePara
               <Text className="text-center text-lg font-t3-bold text-foreground">
                 {projectEmptyState.title}
               </Text>
-              <Text className="text-center text-sm leading-normal text-foreground-muted">
+              <Text className="text-center text-sm leading-normal text-foreground-muted/60">
                 {projectEmptyState.detail}
               </Text>
               {Platform.OS === "android" ? (
@@ -436,7 +436,7 @@ export function NewTaskRouteScreen({ route }: StaticScreenProps<NewTaskRoutePara
               <Text className="text-center text-lg font-t3-bold text-foreground">
                 No matching projects
               </Text>
-              <Text className="text-center text-sm leading-normal text-foreground-muted">
+              <Text className="text-center text-sm leading-normal text-foreground-muted/60">
                 Try a different project name or workspace path.
               </Text>
             </View>

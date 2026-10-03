@@ -205,7 +205,7 @@ export function ThreadQueueSheet({ route }: StaticScreenProps<QueueTarget>) {
         </View>
       ) : null}
       {queuedRuns.length === 0 ? (
-        <Text className="pt-6 text-center text-sm text-foreground-muted">
+        <Text className="pt-6 text-center text-sm text-foreground-muted/60">
           No messages waiting in this queue.
         </Text>
       ) : null}

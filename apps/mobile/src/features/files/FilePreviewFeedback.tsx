@@ -15,7 +15,7 @@ export function FilePreviewLoading(props: {
       )}
     >
       <ActivityIndicator />
-      <Text className="text-center text-sm text-foreground-muted">{props.message}</Text>
+      <Text className="text-center text-sm text-foreground-muted/60">{props.message}</Text>
     </View>
   );
 }

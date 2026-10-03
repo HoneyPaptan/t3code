@@ -283,7 +283,7 @@ function DevicePreviewScreen({
         <View className="flex-1 items-center justify-center gap-4 px-6">
           {state.error ? (
             <>
-              <AppText selectable className="text-center text-sm text-foreground-muted">
+              <AppText selectable className="text-center text-sm text-danger-foreground">
                 {state.error}
               </AppText>
               <Pressable
@@ -415,7 +415,7 @@ function OpenDevicePreview({
     <View className="flex-1 items-center justify-center gap-4 px-6">
       {error ? (
         <>
-          <AppText selectable className="text-center text-sm text-foreground-muted">
+          <AppText selectable className="text-center text-sm text-danger-foreground">
             {error}
           </AppText>
           <Pressable

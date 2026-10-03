@@ -33,7 +33,7 @@ export function LocalEnvironmentList({
             type="monochrome"
           />
         </View>
-        <Text className="text-center text-sm leading-normal text-foreground-muted">
+        <Text className="text-center text-sm leading-normal text-foreground-muted/60">
           No environments connected yet.{"\n"}Tap{" "}
           <Text className="font-t3-bold text-foreground">+</Text> to add one.
         </Text>
