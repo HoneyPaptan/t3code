@@ -194,7 +194,7 @@ export function FloatingWorkingControl(props: {
       {statusContent}
       {hasPreview ? (
         <View
-          className="h-11 flex-row items-center"
+          className="min-h-11 flex-row items-center"
           onLayout={(event) => setPreviewWidth(event.nativeEvent.layout.width)}
         >
           {hasStatus ? <View className="h-4 w-px bg-border" /> : null}
@@ -213,7 +213,7 @@ export function FloatingWorkingControl(props: {
           accessibilityHint="Opens this turn's subagents"
           onPress={props.onOpenAgents}
           onLayout={(event) => setAgentsWidth(event.nativeEvent.layout.width)}
-          className="h-11 flex-row items-center gap-1.5 px-3 active:opacity-70"
+          className="min-h-11 flex-row items-center gap-1.5 px-3 active:opacity-70"
         >
           {hasStatus || hasPreview ? <View className="mr-1 h-4 w-px bg-border" /> : null}
           <SymbolView name="person.2" size={13} tintColorClassName="accent-foreground-muted" />
@@ -230,7 +230,7 @@ export function FloatingWorkingControl(props: {
           onPress={props.onOpenQueue}
           onLayout={(event) => setQueueWidth(event.nativeEvent.layout.width)}
           style={{ maxWidth: Math.min(overlayWidth, windowWidth) * 0.45 }}
-          className="h-11 flex-row items-center gap-2 px-3 active:opacity-70"
+          className="min-h-11 flex-row items-center gap-2 px-3 active:opacity-70"
         >
           {hasStatus || hasPreview || hasAgents ? (
             <View className="mr-1 h-4 w-px bg-border" />
@@ -472,7 +472,7 @@ function StatusLabelRow(props: {
   readonly onLayout: (event: LayoutChangeEvent) => void;
   readonly onPress?: () => void;
 }) {
-  const rowClassName = `h-11 flex-row items-center px-4 ${props.className ?? ""}`;
+  const rowClassName = `min-h-11 flex-row items-center px-4 ${props.className ?? ""}`;
   return (
     <Animated.View
       className="absolute max-w-full"

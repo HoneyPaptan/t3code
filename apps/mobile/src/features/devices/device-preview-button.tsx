@@ -18,7 +18,7 @@ export function DevicePreviewButton(props: {
       className={
         compact
           ? "size-11 shrink-0 items-center justify-center rounded-lg active:bg-subtle"
-          : "h-11 shrink-0 flex-row items-center justify-center gap-2 rounded-lg px-4 active:bg-subtle"
+          : "min-h-11 shrink-0 flex-row items-center justify-center gap-2 rounded-lg px-4 active:bg-subtle"
       }
     >
       <SymbolView
