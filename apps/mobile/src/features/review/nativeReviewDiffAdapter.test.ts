@@ -256,11 +256,7 @@ describe("createNativeReviewDiffTheme", () => {
   it("serializes every native color as cross-platform opaque hex", () => {
     for (const themeId of MOBILE_THEME_IDS) {
       for (const appearance of ["light", "dark"] as const) {
-        const theme = createNativeReviewDiffTheme(
-          appearance,
-          themeId,
-          appTheme(themeId, appearance),
-        );
+        const theme = createNativeReviewDiffTheme(appearance, appTheme(themeId, appearance));
         for (const color of Object.values(theme)) {
           expect(color, `${themeId}/${appearance}`).toMatch(/^#[\da-f]{6}$/i);
         }
@@ -284,7 +280,7 @@ describe("createNativeReviewDiffTheme", () => {
         "--color-border": "#44464F80",
         "--color-primary": "#A8C7FAFF",
       };
-      const theme = createNativeReviewDiffTheme(appearance, "material-you", variables);
+      const theme = createNativeReviewDiffTheme(appearance, variables);
       expect(theme.background).toBe("#181a1c");
       expect(theme.headerBackground).toBe(theme.background);
       expect(theme.text).toBe("#e3e2e6");
@@ -298,8 +294,8 @@ describe("createNativeReviewDiffTheme", () => {
   );
 
   it("uses the selected app palette for native code surfaces", () => {
-    const standard = createNativeReviewDiffTheme("dark", "t3-code", appTheme("t3-code", "dark"));
-    const iris = createNativeReviewDiffTheme("dark", "iris", appTheme("iris", "dark"));
+    const standard = createNativeReviewDiffTheme("dark", appTheme("t3-code", "dark"));
+    const iris = createNativeReviewDiffTheme("dark", appTheme("iris", "dark"));
 
     expect(iris.background).not.toBe(standard.background);
     expect(iris.hunkText).not.toBe(standard.hunkText);

@@ -16,6 +16,7 @@ import { SymbolView } from "../../components/AppSymbol";
 import { ProviderIcon } from "../../components/ProviderIcon";
 import { environmentThreadDetails } from "../../state/threads";
 import { serverEnvironment } from "../../state/server";
+import { useUniwindTheme } from "../../lib/useUniwindTheme";
 import { ThreadContextDivider } from "./thread-context-divider";
 
 function handoffEndpointsAtom(
@@ -40,6 +41,7 @@ export function ThreadHandoffRow(props: {
   iconColor: ColorValue;
 }) {
   const { item } = props.projectedItem;
+  const colors = useUniwindTheme();
   const endpointsAtom = useMemo(
     () => handoffEndpointsAtom(props.environmentId, props.projectedItem),
     [props.environmentId, props.projectedItem],
@@ -47,7 +49,7 @@ export function ThreadHandoffRow(props: {
   const endpoints = useAtomValue(endpointsAtom);
   const config = useAtomValue(serverEnvironment.configValueAtom(props.environmentId));
   if (item.type !== "handoff" || endpoints === null) return null;
-  const color = item.status === "failed" ? "#e11d48" : props.iconColor;
+  const color = item.status === "failed" ? colors["--color-danger-foreground"] : props.iconColor;
   return (
     <ThreadContextDivider
       label="Context handoff"

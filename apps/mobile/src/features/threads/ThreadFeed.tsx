@@ -839,11 +839,11 @@ function ArtifactTemplateCard(props: {
           tintColorClassName="accent-foreground-muted"
           type="monochrome"
         />
-        <View className="absolute -right-1 -bottom-1 h-4 w-4 items-center justify-center rounded-full bg-fuchsia-500">
+        <View className="absolute -right-1 -bottom-1 h-4 w-4 items-center justify-center rounded-full bg-merged">
           <SymbolView
             name={{ ios: "sparkles", android: "auto_awesome" }}
             size={9}
-            tintColor="white"
+            tintColorClassName="accent-scrim-foreground"
             type="monochrome"
           />
         </View>
@@ -1750,16 +1750,16 @@ function renderFeedEntry(
                 className={cn(
                   "rounded-sm border px-1.5 py-0.5",
                   intentBadge.tone === "queued"
-                    ? "border-adaptive-amber-500-a25-400-a25 bg-adaptive-amber-500-a10-400-a10"
-                    : "border-adaptive-sky-500-a25-400-a25 bg-adaptive-sky-500-a10-400-a10",
+                    ? "border-warning-border bg-warning"
+                    : "border-update-foreground/25 bg-update",
                 )}
               >
                 <Text
                   className={cn(
                     "font-t3-medium text-2xs tracking-wide",
                     intentBadge.tone === "queued"
-                      ? "text-adaptive-amber-700-300"
-                      : "text-adaptive-sky-700-300",
+                      ? "text-warning-foreground"
+                      : "text-update-foreground",
                   )}
                 >
                   {intentBadge.label}

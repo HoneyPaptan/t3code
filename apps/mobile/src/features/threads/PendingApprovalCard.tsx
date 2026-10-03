@@ -46,7 +46,7 @@ export function PendingApprovalCard(props: PendingApprovalCardProps) {
         </Text>
       ) : null}
       {!canRespond ? (
-        <Text className="font-sans text-sm leading-5 text-adaptive-neutral-600-400">
+        <Text className="font-sans text-sm leading-5 text-foreground-secondary">
           The provider process for this request is no longer available. Interrupt or restart the run
           to continue.
         </Text>

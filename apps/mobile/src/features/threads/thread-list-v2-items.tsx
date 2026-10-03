@@ -67,8 +67,8 @@ const STATUS_LABEL_BY_STATUS: Partial<
   Record<ThreadListV2Status, { label: string; className: string }>
 > = {
   approval: { label: "Approval", className: "text-warning-foreground" },
-  input: { label: "Input", className: "text-adaptive-indigo-600-300" },
-  working: { label: "Working", className: "text-adaptive-sky-600-400" },
+  input: { label: "Input", className: "text-merged" },
+  working: { label: "Working", className: "text-update-foreground" },
   failed: { label: "Failed", className: "text-danger-foreground" },
   limited: { label: "Limited", className: "text-warning-foreground" },
 };
@@ -320,10 +320,10 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
             <SymbolView
               name="square.and.pencil"
               size={10}
-              tintColorClassName="accent-adaptive-amber-700-300"
+              tintColorClassName="accent-warning-foreground"
               type="monochrome"
             />
-            <Text className="text-xs text-adaptive-amber-700-300">Draft</Text>
+            <Text className="text-xs text-warning-foreground">Draft</Text>
           </View>
         ) : (
           <Text
@@ -582,7 +582,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
   const isUnread = status === "ready" && threadHasUnseenCompletion(thread);
   const statusLabel =
     STATUS_LABEL_BY_STATUS[status] ??
-    (isUnread ? { label: "Done", className: "text-adaptive-emerald-700-300" } : undefined);
+    (isUnread ? { label: "Done", className: "text-success" } : undefined);
   // The timestamp is precomputed on the list item (same stamps the settled
   // tail sorts by) so a minute tick only re-renders rows that draw it.
   const timeLabel = props.timeLabel;
@@ -1061,10 +1061,10 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
                 pr.state === null || pr.isDraft
                   ? rowAppearance.mutedIconTintClassName
                   : pr.state === "open"
-                    ? "accent-adaptive-emerald-600-400"
+                    ? "accent-success"
                     : pr.state === "closed"
-                      ? "accent-adaptive-rose-600-400"
-                      : "accent-adaptive-violet-600-400"
+                      ? "accent-danger-foreground"
+                      : "accent-merged"
               }
             />
             <Text

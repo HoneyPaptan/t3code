@@ -2,7 +2,9 @@ import { Text as NativeText, View } from "react-native";
 
 import { cn } from "../../lib/cn";
 import { MOBILE_CODE_SURFACE } from "../../lib/typography";
+import { themeColorWithAlpha, type MobileThemeVariables } from "../../lib/mobileTheme";
 import { MONO_FONT_FAMILY } from "../../lib/useFontFamily";
+import { useUniwindTheme } from "../../lib/useUniwindTheme";
 
 import type { ReviewRenderableLineRow } from "./reviewModel";
 import type { ReviewHighlightedToken } from "./reviewHighlightedToken.types";
@@ -17,20 +19,23 @@ export function renderVisibleWhitespace(value: string): string {
 }
 
 export function changeTone(change: ReviewRenderableLineRow["change"]): string {
-  if (change === "add") return "bg-emerald-500/10";
-  if (change === "delete") return "bg-rose-500/10";
+  if (change === "add") return "bg-diff-add/10";
+  if (change === "delete") return "bg-diff-delete/10";
   return "bg-card";
 }
 
 export function changeBarTone(change: ReviewRenderableLineRow["change"]): string {
-  if (change === "add") return "bg-emerald-400";
-  if (change === "delete") return "bg-rose-400";
+  if (change === "add") return "bg-diff-add";
+  if (change === "delete") return "bg-diff-delete";
   return "bg-border/50";
 }
 
-function diffHighlightColor(change: ReviewRenderableLineRow["change"]): string | undefined {
-  if (change === "add") return "rgba(16, 185, 129, 0.24)";
-  if (change === "delete") return "rgba(244, 63, 94, 0.24)";
+function diffHighlightColor(
+  change: ReviewRenderableLineRow["change"],
+  theme: MobileThemeVariables,
+): string | undefined {
+  if (change === "add") return themeColorWithAlpha(theme["--color-diff-add"], 0.24);
+  if (change === "delete") return themeColorWithAlpha(theme["--color-diff-delete"], 0.24);
   return undefined;
 }
 
@@ -45,7 +50,7 @@ export function ReviewChangeBar(props: {
         <View>
           {Array.from({ length: Math.ceil(height / 2) }, (_, index) => (
             <View key={index}>
-              <View className="h-px w-[5px] bg-rose-400" />
+              <View className="h-px w-[5px] bg-diff-delete" />
               <View className="h-px" />
             </View>
           ))}
@@ -69,6 +74,7 @@ export function DiffTokenText(props: {
   readonly fontSize?: number;
   readonly lineHeight?: number;
 }) {
+  const theme = useUniwindTheme();
   const fontSize = props.fontSize ?? MOBILE_CODE_SURFACE.fontSize;
   const lineHeight = props.lineHeight ?? MOBILE_CODE_SURFACE.rowHeight;
   if (!props.tokens || props.tokens.length === 0) {
@@ -126,7 +132,7 @@ export function DiffTokenText(props: {
                 fontStyle,
                 backgroundColor:
                   token.diffHighlight && props.change
-                    ? diffHighlightColor(props.change)
+                    ? diffHighlightColor(props.change, theme)
                     : undefined,
                 borderRadius: token.diffHighlight ? 4 : undefined,
               }}

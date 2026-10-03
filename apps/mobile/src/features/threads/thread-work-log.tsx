@@ -823,15 +823,13 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
               className={
                 warning
                   ? "min-w-0 flex-1 font-t3-medium text-sm text-warning-foreground"
-                  : "min-w-0 flex-1 font-t3-medium text-sm text-adaptive-rose-600-400"
+                  : "min-w-0 flex-1 font-t3-medium text-sm text-danger-foreground"
               }
             >
               {label}
             </Text>
             {props.copied ? (
-              <Text className="pr-1 font-t3-medium text-3xs text-adaptive-emerald-600-400">
-                Copied
-              </Text>
+              <Text className="pr-1 font-t3-medium text-3xs text-success">Copied</Text>
             ) : null}
             <Text
               accessibilityLabel={timestamp.toLocaleString()}
@@ -944,7 +942,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                     isUsageLimit
                       ? "accent-warning-foreground"
                       : iconIsDestructive
-                        ? "accent-adaptive-rose-600-400"
+                        ? "accent-danger-foreground"
                         : failed
                           ? "accent-danger-foreground/40"
                           : undefined
@@ -973,9 +971,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
 
         <View className="shrink-0 flex-row items-center gap-px">
           {props.copied ? (
-            <Text className="pr-1 font-t3-medium text-3xs text-adaptive-emerald-600-400">
-              Copied
-            </Text>
+            <Text className="pr-1 font-t3-medium text-3xs text-success">Copied</Text>
           ) : null}
           {failed && toolIcon !== undefined ? (
             <View

@@ -281,10 +281,8 @@ const ReviewFileNavigatorRow = memo(function ReviewFileNavigatorRow(props: {
         {file.path}
       </Text>
       <View className="mt-1 flex-row gap-2">
-        <Text className="text-2xs font-t3-bold text-adaptive-emerald-700-300">
-          +{file.additions}
-        </Text>
-        <Text className="text-2xs font-t3-bold text-adaptive-rose-700-300">-{file.deletions}</Text>
+        <Text className="text-2xs font-t3-bold text-success">+{file.additions}</Text>
+        <Text className="text-2xs font-t3-bold text-danger-foreground">-{file.deletions}</Text>
       </View>
     </Pressable>
   );
@@ -396,7 +394,7 @@ function ReviewFileNavigator({
           >
             {fileList}
             <ScreenStackHeaderConfig
-              backgroundColor="rgba(0,0,0,0)"
+              backgroundColor="transparent"
               color={foregroundColor}
               hideBackButton
               hideShadow={false}
