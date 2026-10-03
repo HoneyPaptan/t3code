@@ -72,7 +72,7 @@ interface ComposerCommandPopoverProps {
 
 function PopoverSurface(props: { readonly children: React.ReactNode; readonly style?: ViewStyle }) {
   const baseStyle: ViewStyle = {
-    borderRadius: MOBILE_RADIUS.xl,
+    borderRadius: MOBILE_RADIUS.lg,
     overflow: "hidden",
     ...props.style,
   };
@@ -158,7 +158,7 @@ const CommandRow = memo(function CommandRow(props: {
     <Pressable
       accessibilityRole="button"
       onPress={props.onPress}
-      className="flex-row items-center gap-2.5 border-border px-3.5 py-2.5 active:opacity-60"
+      className="flex-row items-center gap-2 border-border px-3 py-2 active:opacity-60"
       style={{ borderBottomWidth: props.isLast ? 0 : StyleSheet.hairlineWidth }}
     >
       {props.item.type === "path" ? (
@@ -171,7 +171,7 @@ const CommandRow = memo(function CommandRow(props: {
           type="monochrome"
         />
       ) : null}
-      <Text className="shrink-0 text-base font-t3-medium text-foreground" numberOfLines={1}>
+      <Text className="shrink-0 text-[13.5px] font-t3-medium text-foreground" numberOfLines={1}>
         {props.isSlashSkill && props.item.type === "skill" ? (
           <>
             <Text className="text-foreground-muted">skill:</Text>
@@ -198,10 +198,8 @@ export const ComposerCommandPopover = memo(function ComposerCommandPopover(
   return (
     <PopoverSurface>
       {label ? (
-        <View className="px-3.5 pt-2.5 pb-1">
-          <Text className="text-3xs font-t3-bold tracking-[0.8px] uppercase text-foreground-muted">
-            {label}
-          </Text>
+        <View className="px-3 pt-2 pb-1">
+          <Text className="text-xs text-foreground-muted/50">{label}</Text>
         </View>
       ) : null}
       {props.items.length > 0 ? (
