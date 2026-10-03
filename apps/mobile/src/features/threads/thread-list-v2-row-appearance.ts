@@ -43,8 +43,8 @@ export function getThreadListV2RowAppearance(
       ? "text-drawer-foreground-muted"
       : "text-foreground-muted",
     tertiaryForegroundClassName: sidebarPane
-      ? "text-drawer-foreground-muted"
-      : "text-foreground-tertiary",
+      ? "text-drawer-foreground-muted/60"
+      : "text-foreground-muted/60",
     mutedIconTintClassName: sidebarPane
       ? "accent-drawer-foreground-muted"
       : "accent-foreground-muted",
