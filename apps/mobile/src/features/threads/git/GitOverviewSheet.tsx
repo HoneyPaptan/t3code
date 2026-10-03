@@ -417,7 +417,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
           >
             {content}
             <ScreenStackHeaderConfig
-              backgroundColor="rgba(0,0,0,0)"
+              backgroundColor="transparent"
               color={foregroundColor}
               hideBackButton
               hideShadow={false}
@@ -453,7 +453,7 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
           >
             {content}
             <ScreenStackHeaderConfig
-              backgroundColor="rgba(0,0,0,0)"
+              backgroundColor="transparent"
               color={foregroundColor}
               hideBackButton
               hideShadow={false}

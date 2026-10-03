@@ -83,20 +83,25 @@ function LoadedMediaVideo(props: {
         allowsPictureInPicture={false}
       />
       {loadState === "error" || (loadState === "complete" && status === "error") ? (
-        <View className="absolute inset-0 items-center justify-center gap-2 bg-black px-4">
-          <AppText className="text-center text-sm text-white/80">Video unavailable</AppText>
+        <View className="absolute inset-0 items-center justify-center gap-2 bg-scrim px-4">
+          <AppText className="text-center text-sm text-scrim-foreground/80">
+            Video unavailable
+          </AppText>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Retry video"
             onPress={() => setAttempt((value) => value + 1)}
             className="min-h-11 justify-center px-4"
           >
-            <AppText className="text-sm text-white">Retry</AppText>
+            <AppText className="text-sm text-scrim-foreground">Retry</AppText>
           </Pressable>
         </View>
       ) : loadState === "pending" || status === "loading" ? (
         <View pointerEvents="none" className="absolute inset-0 items-center justify-center">
-          <ActivityIndicator color="#ffffff" accessibilityLabel="Loading video" />
+          <ActivityIndicator
+            colorClassName="accent-scrim-foreground"
+            accessibilityLabel="Loading video"
+          />
         </View>
       ) : null}
     </View>
@@ -125,7 +130,7 @@ function MediaVideoPlayerContent(props: MediaVideoPlayerProps) {
   return (
     <View
       collapsable={false}
-      className="overflow-hidden rounded-md bg-black"
+      className="overflow-hidden rounded-md bg-scrim"
       style={props.expanded ? { flex: 1 } : { width: "100%", maxWidth: 480, aspectRatio: 16 / 9 }}
     >
       {playbackUri ? (
@@ -158,17 +163,25 @@ function MediaVideoPlayerContent(props: MediaVideoPlayerProps) {
               />
             ) : null}
             {props.unavailable ? (
-              <AppText className="text-sm text-white/80">Video unavailable</AppText>
+              <AppText className="text-sm text-scrim-foreground/80">Video unavailable</AppText>
             ) : props.uri === null ? (
-              <ActivityIndicator color="#ffffff" accessibilityLabel="Loading video" />
+              <ActivityIndicator
+                colorClassName="accent-scrim-foreground"
+                accessibilityLabel="Loading video"
+              />
             ) : (
-              <View className="size-12 items-center justify-center rounded-full bg-black/60">
-                <SymbolView name="play" size={28} tintColor="#ffffff" type="monochrome" />
+              <View className="size-12 items-center justify-center rounded-full bg-scrim/60">
+                <SymbolView
+                  name="play"
+                  size={28}
+                  tintColorClassName="accent-scrim-foreground"
+                  type="monochrome"
+                />
               </View>
             )}
             {props.uri !== null && !props.unavailable ? (
               <AppText
-                className="absolute right-2 bottom-2 max-w-[75%] rounded bg-black/60 px-2 py-1 text-right text-xs text-white"
+                className="absolute right-2 bottom-2 max-w-[75%] rounded bg-scrim/60 px-2 py-1 text-right text-xs text-scrim-foreground"
                 numberOfLines={1}
               >
                 {props.name}

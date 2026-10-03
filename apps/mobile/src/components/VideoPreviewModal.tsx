@@ -145,11 +145,14 @@ function OpenVideoPreviewModal(props: {
       navigationBarTranslucent
     >
       <View
-        className="flex-1 bg-black"
+        className="flex-1 bg-scrim"
         style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
       >
         <View className="min-h-14 flex-row items-center gap-3 pl-4 pr-2">
-          <AppText className="flex-1 font-t3-medium text-base text-white" numberOfLines={2}>
+          <AppText
+            className="flex-1 font-t3-medium text-base text-scrim-foreground"
+            numberOfLines={2}
+          >
             {props.name}
           </AppText>
           <MediaActionsMenu media={mediaActions} inModal />
@@ -159,14 +162,19 @@ function OpenVideoPreviewModal(props: {
             onPress={props.onRequestClose}
             className="size-12 items-center justify-center"
           >
-            <SymbolView name="xmark" size={20} tintColor="#ffffff" type="monochrome" />
+            <SymbolView
+              name="xmark"
+              size={20}
+              tintColorClassName="accent-scrim-foreground"
+              type="monochrome"
+            />
           </Pressable>
         </View>
         <MediaSourceCaption source={mediaActions.title} />
         {playback.uri === null && !playback.unavailable ? (
           <View className="flex-1 items-center justify-center gap-3 px-6">
-            <ActivityIndicator color="#ffffff" />
-            <AppText className="text-sm text-white/80">Loading video...</AppText>
+            <ActivityIndicator colorClassName="accent-scrim-foreground" />
+            <AppText className="text-sm text-scrim-foreground/80">Loading video...</AppText>
           </View>
         ) : (
           <MediaVideoPlayer
@@ -181,7 +189,7 @@ function OpenVideoPreviewModal(props: {
           />
         )}
         {playback.error ? (
-          <AppText accessibilityRole="alert" className="px-4 pb-3 text-sm text-white/80">
+          <AppText accessibilityRole="alert" className="px-4 pb-3 text-sm text-scrim-foreground/80">
             {playback.error}
           </AppText>
         ) : null}
@@ -190,9 +198,9 @@ function OpenVideoPreviewModal(props: {
           accessibilityLabel="Save or share video"
           disabled={playback.uri === null || mediaActions.sharing}
           onPress={mediaActions.share}
-          className="mx-4 my-3 min-h-12 items-center justify-center rounded-xl bg-white/15 px-4"
+          className="mx-4 my-3 min-h-12 items-center justify-center rounded-xl bg-scrim-foreground/15 px-4"
         >
-          <AppText className="font-t3-medium text-base text-white">
+          <AppText className="font-t3-medium text-base text-scrim-foreground">
             {mediaActions.sharing ? "Opening share sheet..." : "Save or share video"}
           </AppText>
         </Pressable>

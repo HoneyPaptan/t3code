@@ -426,7 +426,7 @@ export function ThreadQueueSheet({ route }: StaticScreenProps<QueueTarget>) {
             >
               {content}
               <ScreenStackHeaderConfig
-                backgroundColor="rgba(0,0,0,0)"
+                backgroundColor="transparent"
                 color={theme["--color-foreground"]}
                 hideBackButton
                 hideShadow={false}

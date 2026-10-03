@@ -11,7 +11,7 @@ export function MediaSourceCaption(props: { readonly source: string | undefined 
       contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 8 }}
       nestedScrollEnabled
     >
-      <AppText selectable className="text-xs text-white/70">
+      <AppText selectable className="text-xs text-scrim-foreground/70">
         {props.source}
       </AppText>
     </ScrollView>

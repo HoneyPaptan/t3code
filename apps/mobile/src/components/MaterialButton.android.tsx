@@ -29,7 +29,7 @@ export function MaterialButton(props: MaterialButtonProps) {
       : tone === "danger"
         ? colors["--color-danger"]
         : tone === "text"
-          ? "#00000000"
+          ? "transparent"
           : colors["--color-secondary"];
   const contentColor =
     tone === "primary"

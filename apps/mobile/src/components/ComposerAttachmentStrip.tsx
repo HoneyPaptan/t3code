@@ -79,16 +79,16 @@ export function ComposerAttachmentThumbnail(props: ComposerAttachmentThumbnailPr
             props.environmentId &&
             retryComposerAttachmentUpload(props.environmentId, props.attachment.id)
           }
-          className="absolute bottom-0.5 left-0.5 flex-row items-center gap-0.5 rounded-sm bg-black/70 px-1 py-0.5"
+          className="absolute bottom-0.5 left-0.5 flex-row items-center gap-0.5 rounded-sm bg-scrim/70 px-1 py-0.5"
         >
           <SymbolView
             name={upload.status === "failed" ? "arrow.clockwise" : "arrow.up"}
             size={props.compact ? 8 : 10}
-            tintColor="#ffffff"
+            tintColorClassName="accent-scrim-foreground"
             type="monochrome"
           />
           {!props.compact ? (
-            <Text className="text-2xs text-white">
+            <Text className="text-2xs text-scrim-foreground">
               {upload.status === "failed" ? "Retry" : `${Math.floor(upload.progress * 100)}%`}
             </Text>
           ) : null}
@@ -368,7 +368,7 @@ export function ComposerAttachmentStrip(props: ComposerAttachmentStripProps) {
               onPressDocument={props.onPressDocument}
             />
             <Pressable
-              className="absolute h-[22px] w-[22px] items-center justify-center rounded-md bg-black/55"
+              className="absolute h-[22px] w-[22px] items-center justify-center rounded-md bg-scrim/55"
               style={{
                 top: removeButtonPlacement === "gutter" ? 0 : 4,
                 right: removeButtonPlacement === "gutter" ? 0 : 4,
@@ -379,7 +379,7 @@ export function ComposerAttachmentStrip(props: ComposerAttachmentStripProps) {
               <SymbolView
                 name="xmark"
                 size={9}
-                tintColor="#ffffff"
+                tintColorClassName="accent-scrim-foreground"
                 type="monochrome"
                 weight="bold"
               />

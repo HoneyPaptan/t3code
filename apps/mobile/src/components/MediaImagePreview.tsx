@@ -22,9 +22,9 @@ function ImagePreviewHeader() {
   const insets = useSafeAreaInsets();
   const mediaActions = useMediaActions(props.source.actionsSource, props.onRequestClose);
   return (
-    <View className="bg-black/70" style={{ paddingTop: insets.top }}>
+    <View className="bg-scrim/70" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center gap-2 px-3">
-        <AppText className="flex-1 text-base text-white" numberOfLines={2}>
+        <AppText className="flex-1 text-base text-scrim-foreground" numberOfLines={2}>
           {props.source.name ?? "Image"}
         </AppText>
         <MediaActionsMenu media={mediaActions} inModal />
@@ -34,7 +34,12 @@ function ImagePreviewHeader() {
           onPress={props.onRequestClose}
           className="min-h-11 min-w-11 items-center justify-center"
         >
-          <SymbolView name="xmark" size={20} tintColor="#ffffff" type="monochrome" />
+          <SymbolView
+            name="xmark"
+            size={20}
+            tintColorClassName="accent-scrim-foreground"
+            type="monochrome"
+          />
         </Pressable>
       </View>
       <MediaSourceCaption source={mediaActions.title} />
