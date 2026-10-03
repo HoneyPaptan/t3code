@@ -94,7 +94,7 @@ export function ThreadAgentsSheet({ route }: StaticScreenProps<AgentsTarget>) {
           >
             {content}
             <ScreenStackHeaderConfig
-              backgroundColor="rgba(0,0,0,0)"
+              backgroundColor="transparent"
               color={theme["--color-foreground"]}
               hideBackButton
               hideShadow={false}

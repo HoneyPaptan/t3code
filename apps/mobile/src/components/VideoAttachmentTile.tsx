@@ -49,26 +49,26 @@ export function VideoAttachmentTile(props: {
           accessibilityState={{ disabled: props.disabled ?? false }}
           disabled={props.disabled}
           onPress={() => props.onPress(props.sourceIdentifier)}
-          className={cn("items-center justify-center overflow-hidden bg-black/80", props.className)}
+          className={cn("items-center justify-center overflow-hidden bg-scrim/80", props.className)}
           style={props.style}
         >
           <VideoThumbnailImage cacheKey={props.sourceIdentifier} source={props.thumbnailSource} />
           <View
             className={cn(
-              "items-center justify-center rounded-full bg-black/45",
+              "items-center justify-center rounded-full bg-scrim/45",
               props.compact ? "size-6" : "size-12",
             )}
           >
             <SymbolView
               name="play"
               size={props.compact ? 15 : 24}
-              tintColor="#ffffff"
+              tintColorClassName="accent-scrim-foreground"
               type="monochrome"
             />
           </View>
           {!props.compact ? (
-            <View className="absolute inset-x-0 bottom-0 bg-black/55 px-2 py-1.5">
-              <AppText className="text-center text-xs text-white" numberOfLines={1}>
+            <View className="absolute inset-x-0 bottom-0 bg-scrim/55 px-2 py-1.5">
+              <AppText className="text-center text-xs text-scrim-foreground" numberOfLines={1}>
                 {props.name}
               </AppText>
             </View>

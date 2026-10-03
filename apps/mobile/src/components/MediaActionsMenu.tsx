@@ -35,9 +35,14 @@ export function MediaActionsMenu(props: {
           accessible
           accessibilityRole="button"
           accessibilityLabel="Media actions"
-          className="min-h-11 min-w-11 items-center justify-center rounded-md bg-black/60"
+          className="min-h-11 min-w-11 items-center justify-center rounded-md bg-scrim/60"
         >
-          <SymbolView name="ellipsis" size={20} tintColor="#ffffff" type="monochrome" />
+          <SymbolView
+            name="ellipsis"
+            size={20}
+            tintColorClassName="accent-scrim-foreground"
+            type="monochrome"
+          />
         </View>
       )}
     </Menu>

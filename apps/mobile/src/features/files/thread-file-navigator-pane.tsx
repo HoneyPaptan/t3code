@@ -100,7 +100,7 @@ export function ThreadFileNavigatorPane(props: {
           >
             {fileTree}
             <ScreenStackHeaderConfig
-              backgroundColor="rgba(0,0,0,0)"
+              backgroundColor="transparent"
               color={foregroundColor}
               headerRightBarButtonItems={nativeHeaderRightBarButtonItems}
               hideBackButton
