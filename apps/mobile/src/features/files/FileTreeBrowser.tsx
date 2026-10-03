@@ -263,12 +263,12 @@ export function FileTreeBrowser(props: {
       ListHeaderComponent={
         <>
           {props.error && props.entries.length > 0 ? (
-            <Text accessibilityRole="alert" className="mx-4 my-2 text-xs text-foreground-muted">
+            <Text accessibilityRole="alert" className="mx-4 my-2 text-xs text-danger-foreground">
               {props.error}
             </Text>
           ) : null}
           {props.searchTruncated ? (
-            <Text className="mx-4 my-2 text-xs text-foreground-muted">
+            <Text className="mx-4 my-2 text-xs text-foreground-muted/60">
               More search results available. Refine your search to see them.
             </Text>
           ) : null}
@@ -281,7 +281,7 @@ export function FileTreeBrowser(props: {
               <Text className="text-sm font-t3-bold text-foreground">Files unavailable</Text>
               <Text
                 accessibilityRole="alert"
-                className="mt-1 text-xs leading-normal text-foreground-muted"
+                className="mt-1 text-xs leading-normal text-danger-foreground"
               >
                 {props.error}
               </Text>

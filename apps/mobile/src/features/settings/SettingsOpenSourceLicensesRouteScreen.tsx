@@ -162,7 +162,7 @@ export function SettingsOpenSourceLicensesRouteScreen() {
         keyExtractor={thirdPartyLicenseEntryKey}
         ListEmptyComponent={
           <View className="items-center px-6 py-12">
-            <Text className="text-center text-base text-foreground-muted">
+            <Text className="text-center text-base text-foreground-muted/60">
               No licenses match that search.
             </Text>
           </View>

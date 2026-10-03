@@ -153,13 +153,13 @@ function CloudEnvironmentRowsContent(
       ) : controller.relayDiscovery.isRefreshing ? (
         <View collapsable={false} className="items-center gap-3 rounded-xl bg-grouped-card p-6">
           <ActivityIndicator colorClassName={"accent-icon"} />
-          <Text className="text-center text-sm leading-normal text-foreground-muted">
+          <Text className="text-center text-sm leading-normal text-foreground-muted/60">
             Loading linked cloud environments.
           </Text>
         </View>
       ) : controller.relayDiscovery.error ? null : (
         <View collapsable={false} className="rounded-xl bg-grouped-card p-5">
-          <Text className="text-sm leading-normal text-foreground-muted">
+          <Text className="text-sm leading-normal text-foreground-muted/60">
             No additional linked cloud environments.
           </Text>
         </View>
@@ -174,7 +174,7 @@ function CloudEnvironmentRowsContent(
           <Text className="text-base font-t3-bold text-foreground">
             Could not load T3 Connect environments
           </Text>
-          <Text className="text-sm text-foreground-muted">{controller.relayDiscovery.error}</Text>
+          <Text className="text-sm text-danger-foreground">{controller.relayDiscovery.error}</Text>
           {controller.relayDiscovery.errorTraceId ? (
             <CopyTraceIdButton traceId={controller.relayDiscovery.errorTraceId} />
           ) : null}

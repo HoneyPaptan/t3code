@@ -168,7 +168,7 @@ function ThreadMarkdownImageRequest(props: {
           pointerEvents="none"
           style={[StyleSheet.absoluteFill, { alignItems: "center", justifyContent: "center" }]}
         >
-          <Text className="text-xs text-foreground-muted">Loading image…</Text>
+          <Text className="text-xs text-foreground-muted/60">Loading image…</Text>
         </View>
       )}
     </>

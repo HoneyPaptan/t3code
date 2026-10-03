@@ -330,7 +330,7 @@ export function UsageRouteScreen() {
                   Scanning provider transcripts…
                 </Text>
               ) : selectedEnvironments.length === 0 ? (
-                <Text className="py-16 text-center text-base text-foreground-muted">
+                <Text className="py-16 text-center text-base text-foreground-muted/60">
                   {environments.length === 0
                     ? "Connect an environment to see usage."
                     : "Select an environment to see usage."}

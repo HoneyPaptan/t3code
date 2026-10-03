@@ -20,7 +20,7 @@ export function WorkspaceFileWebPreview(props: { readonly uri: string | null }) 
       {loadError ? (
         <View className="border-b border-border bg-card px-4 py-2">
           <Text className="text-xs font-t3-bold text-foreground">Preview failed</Text>
-          <Text className="mt-0.5 text-xs leading-snug text-foreground-muted">{loadError}</Text>
+          <Text className="mt-0.5 text-xs leading-snug text-danger-foreground">{loadError}</Text>
         </View>
       ) : null}
       <WebView

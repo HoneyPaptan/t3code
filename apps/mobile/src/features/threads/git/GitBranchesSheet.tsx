@@ -173,7 +173,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
               Existing branches
             </Text>
             {branchesLoading ? (
-              <Text className="text-foreground-secondary text-sm font-medium android:px-4">
+              <Text className="text-sm font-t3-medium text-foreground-muted/60 android:px-4">
                 Loading branches...
               </Text>
             ) : null}
