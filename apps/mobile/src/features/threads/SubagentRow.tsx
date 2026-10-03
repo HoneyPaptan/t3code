@@ -41,7 +41,7 @@ export function SubagentRow(props: {
   const detail = subagentCardDetail(presentation.detail);
   return (
     <View className="flex-row gap-3">
-      <View className="h-5 justify-center">
+      <View className="min-h-5 justify-center">
         <SubagentStatusDot tone={presentation.tone} placement="sheet" />
       </View>
       <View className="min-w-0 flex-1 gap-1">

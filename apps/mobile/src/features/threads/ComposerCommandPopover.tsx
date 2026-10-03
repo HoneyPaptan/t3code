@@ -220,7 +220,7 @@ export const ComposerCommandPopover = memo(function ComposerCommandPopover(
         </ScrollView>
       ) : (
         <View className="px-3.5 py-2.5">
-          <Text className="text-xs text-foreground-tertiary">
+          <Text className="text-xs text-foreground-muted/60">
             {props.error ?? emptyText(props.triggerKind, props.isLoading)}
           </Text>
         </View>

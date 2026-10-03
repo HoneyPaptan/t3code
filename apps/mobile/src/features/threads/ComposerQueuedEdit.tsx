@@ -5,6 +5,7 @@ import { Pressable, ScrollView, View } from "react-native";
 import { AppText as Text } from "../../components/AppText";
 import { SymbolView } from "../../components/AppSymbol";
 import { useAssetUrl } from "../../state/assets";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 /**
  * The composer is shared, so editing a queued message needs a visible way back
@@ -94,7 +95,7 @@ function QueuedEditAttachmentChip(props: {
         <Image
           source={{ uri: url }}
           contentFit="cover"
-          style={{ width: 24, height: 24, borderRadius: 6 }}
+          style={{ width: 24, height: 24, borderRadius: MOBILE_RADIUS.sm }}
           accessibilityIgnoresInvertColors
         />
       ) : (
