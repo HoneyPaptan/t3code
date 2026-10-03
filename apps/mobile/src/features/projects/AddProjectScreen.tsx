@@ -142,7 +142,7 @@ function SectionTitle(props: { readonly children: string }) {
       className={
         Platform.OS === "android"
           ? "px-4 text-sm font-t3-medium text-primary-text"
-          : "px-1 text-2xs font-t3-bold tracking-[0.7px] uppercase text-foreground-muted"
+          : "px-1 text-sm font-t3-medium text-foreground-muted/70"
       }
     >
       {props.children}
@@ -238,7 +238,7 @@ function ListRow(props: {
         <View className="flex-1 gap-0.5">
           <Text className="text-base leading-snug font-t3-bold">{props.title}</Text>
           {props.subtitle ? (
-            <Text className="text-sm leading-snug text-foreground-muted" numberOfLines={2}>
+            <Text className="text-sm leading-snug text-foreground-muted/60" numberOfLines={2}>
               {props.subtitle}
             </Text>
           ) : null}
@@ -269,7 +269,7 @@ function PrimaryActionButton(props: {
     <Pressable
       disabled={props.disabled}
       onPress={props.onPress}
-      className="h-12 items-center justify-center rounded-lg bg-primary active:opacity-70 disabled:opacity-45"
+      className="min-h-12 items-center justify-center rounded-lg bg-primary active:opacity-70 disabled:opacity-45"
     >
       {props.loading ? (
         <ActivityIndicator colorClassName={String("accent-primary-foreground")} />
@@ -287,7 +287,7 @@ function ProjectPathInput(props: {
 }) {
   return (
     <TextInput
-      className="h-12 min-h-12 rounded-lg px-4 py-0 text-base leading-snug"
+      className="min-h-12 rounded-lg px-4 py-0 text-base leading-snug"
       value={props.value}
       onChangeText={props.onChangeText}
       autoCapitalize="none"
@@ -459,7 +459,7 @@ function EmptyEnvironmentState() {
   const navigation = useNavigation();
 
   return (
-    <View className="items-center gap-3 rounded-2xl bg-grouped-card px-5 py-8">
+    <View className="items-center gap-3 rounded-xl bg-grouped-card px-5 py-8">
       <Text className="text-center text-lg font-t3-bold">Environment unavailable</Text>
       <Text className="text-center text-sm leading-normal text-foreground-muted">
         Start or reconnect an environment before adding a project.
@@ -839,7 +839,7 @@ export function AddProjectRepositoryScreen(props: {
       {environment ? (
         <>
           <TextInput
-            className="h-12 min-h-12 rounded-lg px-4 py-0 text-base leading-snug"
+            className="min-h-12 rounded-lg px-4 py-0 text-base leading-snug"
             value={repositoryInput}
             onChangeText={setRepositoryInput}
             autoCapitalize="none"
@@ -1123,7 +1123,7 @@ export function AddProjectNewScreen(props: { readonly environmentId?: string | s
       {environment ? (
         <>
           <TextInput
-            className="h-12 min-h-12 rounded-lg px-4 py-0 text-base leading-snug"
+            className="min-h-12 rounded-lg px-4 py-0 text-base leading-snug"
             value={name}
             onChangeText={setName}
             autoCorrect={false}
@@ -1133,7 +1133,7 @@ export function AddProjectNewScreen(props: { readonly environmentId?: string | s
             onSubmitEditing={() => void submit()}
           />
           {pathPreview !== null ? (
-            <Text className="px-1 text-sm leading-snug text-foreground-muted" numberOfLines={2}>
+            <Text className="px-1 text-sm leading-snug text-foreground-muted/60" numberOfLines={2}>
               {trimmedName.length > 0
                 ? `Creates ${pathPreview}`
                 : `Goes in ${environment.newProjectsRoot}`}
@@ -1406,7 +1406,7 @@ export function AddProjectDestinationScreen(props: {
       {repositoryTitle ? (
         <View className="rounded-xl bg-grouped-card px-4 py-3">
           <Text className="text-base font-t3-bold">{repositoryTitle}</Text>
-          <Text className="mt-0.5 text-xs text-foreground-muted" numberOfLines={2}>
+          <Text className="mt-0.5 text-xs text-foreground-muted/60" numberOfLines={2}>
             {remoteUrl}
           </Text>
         </View>
