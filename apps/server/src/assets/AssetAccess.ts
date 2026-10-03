@@ -6,6 +6,7 @@ import {
   AssetProjectFaviconInspectionError,
   AssetProjectFaviconNotFoundError,
   AssetProjectFaviconResolutionError,
+  AssetServerFontNotFoundError,
   AssetSigningKeyLoadError,
   AssetWorkspaceAssetInspectionError,
   AssetWorkspaceAssetNotFoundError,
@@ -52,6 +53,7 @@ import * as ServerConfig from "../config.ts";
 import * as ProjectFaviconResolver from "../project/ProjectFaviconResolver.ts";
 import * as WorkspacePaths from "../workspace/WorkspacePaths.ts";
 import * as NativeAppIconResolver from "./NativeAppIconResolver.ts";
+import * as ServerFontCatalog from "./ServerFontCatalog.ts";
 import { openMediaFile, readMediaFileHeader, type OpenMediaFile } from "./MediaFile.ts";
 
 export const ASSET_ROUTE_PREFIX = "/api/assets";
@@ -143,6 +145,12 @@ const AssetClaimsSchema = Schema.Union([
     /** Already narrowed to a GitHub media host at mint time; the signature is what keeps it there. */
     url: Schema.String,
     cwd: Schema.String,
+    expiresAt: Schema.Number,
+  }),
+  Schema.Struct({
+    version: Schema.Literal(1),
+    kind: Schema.Literal("server-font"),
+    fontId: Schema.String,
     expiresAt: Schema.Number,
   }),
 ]);
@@ -696,6 +704,16 @@ export const issueAssetUrl = Effect.fn("AssetAccess.issueAssetUrl")(function* (i
       fileName = githubMediaFileName(fetchUrl);
       break;
     }
+    case "server-font": {
+      const fontCatalog = yield* ServerFontCatalog.ServerFontCatalog;
+      const font = yield* fontCatalog.find(input.resource.fontId);
+      if (font === null) {
+        return yield* new AssetServerFontNotFoundError({ resource: input.resource });
+      }
+      claims = { version: 1, kind: "server-font", fontId: font.fontId, expiresAt };
+      fileName = font.fileName;
+      break;
+    }
   }
 
   const secretStore = yield* ServerSecretStore.ServerSecretStore;
@@ -803,6 +821,12 @@ export const resolveAsset = Effect.fn("AssetAccess.resolveAsset")(function* (
       cwd: claims.cwd,
       expiresAt: claims.expiresAt,
     } satisfies ResolvedAsset;
+  }
+
+  if (claims.kind === "server-font") {
+    const fontCatalog = yield* ServerFontCatalog.ServerFontCatalog;
+    const font = yield* fontCatalog.find(claims.fontId);
+    return font ? ({ kind: "file", path: font.absolutePath } satisfies ResolvedAsset) : null;
   }
 
   if (claims.kind === "native-app-icon") {
