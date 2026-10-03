@@ -57,7 +57,7 @@ export function ScreenHeader(props: ScreenHeaderProps) {
         <Pressable
           accessibilityLabel={menu.title}
           accessibilityRole="button"
-          className="items-center justify-center rounded-full bg-subtle"
+          className="items-center justify-center rounded-lg bg-subtle"
           style={{ width: buttonSize, height: buttonSize }}
         >
           <SymbolView

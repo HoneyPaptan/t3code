@@ -202,7 +202,7 @@ export function AndroidSettingsEnvironmentFilter() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Filter settings environments and projects"
-        className="size-11 items-center justify-center rounded-full"
+        className="size-11 items-center justify-center rounded-lg"
       >
         <SymbolView name={filterIcon} size={22} tintColorClassName="accent-icon" />
       </Pressable>

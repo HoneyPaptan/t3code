@@ -425,7 +425,7 @@ function CursorEnableAction({
       accessibilityHint={CURSOR_KEYCHAIN_COPY}
       disabled={pending}
       onPress={() => void enable()}
-      className="rounded-full bg-primary px-4 py-2"
+      className="rounded-lg bg-primary px-4 py-2"
     >
       <Text className="text-sm font-medium text-primary-foreground">{buttonText}</Text>
     </Pressable>

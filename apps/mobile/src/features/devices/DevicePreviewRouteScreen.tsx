@@ -288,7 +288,7 @@ function DevicePreviewScreen({
               </AppText>
               <Pressable
                 accessibilityRole="button"
-                className="rounded-full border border-secondary-border bg-secondary px-6 py-3"
+                className="rounded-lg border border-secondary-border bg-secondary px-6 py-3"
                 onPress={state.refresh}
               >
                 <AppText className="text-secondary-foreground">Retry</AppText>
@@ -420,7 +420,7 @@ function OpenDevicePreview({
           </AppText>
           <Pressable
             accessibilityRole="button"
-            className="rounded-full border border-secondary-border bg-secondary px-6 py-3"
+            className="rounded-lg border border-secondary-border bg-secondary px-6 py-3"
             onPress={refresh}
           >
             <AppText className="text-secondary-foreground">Retry</AppText>

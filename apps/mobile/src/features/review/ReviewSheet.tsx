@@ -210,19 +210,19 @@ function ReviewSelectionActionBar(props: {
     >
       {props.onOpenComment ? (
         <Pressable
-          className="h-12 flex-1 flex-row items-center justify-center gap-2 rounded-full bg-primary px-5"
+          className="h-12 flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-primary px-5"
           onPress={props.onOpenComment}
         >
           {content}
         </Pressable>
       ) : (
-        <View className="h-12 flex-1 flex-row items-center justify-center gap-2 rounded-full bg-primary px-5">
+        <View className="h-12 flex-1 flex-row items-center justify-center gap-2 rounded-lg bg-primary px-5">
           {content}
         </View>
       )}
 
       <Pressable
-        className="h-12 w-12 items-center justify-center rounded-full bg-primary"
+        className="h-12 w-12 items-center justify-center rounded-lg bg-primary"
         onPress={props.onClear}
       >
         <SymbolView

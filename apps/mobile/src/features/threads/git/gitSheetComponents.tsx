@@ -95,7 +95,7 @@ export function SheetListRow(props: {
       disabled={props.disabled}
       onPress={props.onPress}
     >
-      <View className="items-center justify-center android:size-6 ios:bg-subtle ios:h-9 ios:w-9 ios:rounded-full">
+      <View className="items-center justify-center android:size-6 ios:bg-subtle ios:h-9 ios:w-9 ios:rounded-lg">
         <SymbolView
           name={props.icon}
           size={Platform.OS === "android" ? 24 : 16}

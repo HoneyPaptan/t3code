@@ -182,7 +182,7 @@ function CloudEnvironmentRowsContent(
             onPress={() => {
               void controller.refreshRelayEnvironments();
             }}
-            className="self-start rounded-full bg-subtle px-3.5 py-2 active:opacity-70"
+            className="self-start rounded-lg bg-subtle px-3.5 py-2 active:opacity-70"
           >
             <Text className="text-xs font-t3-bold text-foreground">Try again</Text>
           </Pressable>
@@ -427,7 +427,7 @@ function CopyTraceIdButton(props: { readonly traceId: string }) {
       onPress={() => {
         copyTextWithHaptic(props.traceId, { target: "connection-trace-id" });
       }}
-      className="self-start flex-row items-center gap-1.5 rounded-full bg-subtle px-3 py-2 active:opacity-70"
+      className="self-start flex-row items-center gap-1.5 rounded-lg bg-subtle px-3 py-2 active:opacity-70"
     >
       <SymbolView
         name="doc.on.doc"

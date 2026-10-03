@@ -1792,7 +1792,7 @@ function renderFeedEntry(
                 accessibilityRole="text"
                 accessibilityLabel={intentBadge.accessibilityLabel}
                 className={cn(
-                  "rounded-full border px-1.5 py-0.5",
+                  "rounded-sm border px-1.5 py-0.5",
                   intentBadge.tone === "queued"
                     ? "border-adaptive-amber-500-a25-400-a25 bg-adaptive-amber-500-a10-400-a10"
                     : "border-adaptive-sky-500-a25-400-a25 bg-adaptive-sky-500-a10-400-a10",
@@ -3226,7 +3226,7 @@ function ThreadFeedLoadEarlierControl(props: ThreadFeedHistoryControls) {
           accessibilityLabel="Load earlier activity"
           disabled={props.loading}
           onPress={props.onLoadEarlier}
-          className="min-h-9 flex-row items-center justify-center gap-2 rounded-full border border-border/60 bg-surface/80 px-4 py-2 disabled:opacity-50"
+          className="min-h-9 flex-row items-center justify-center gap-2 rounded-lg border border-border/60 bg-surface/80 px-4 py-2 disabled:opacity-50"
         >
           {props.loading ? (
             <ActivityIndicator size="small" color={accentColor} />

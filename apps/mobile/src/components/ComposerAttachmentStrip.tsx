@@ -79,7 +79,7 @@ export function ComposerAttachmentThumbnail(props: ComposerAttachmentThumbnailPr
             props.environmentId &&
             retryComposerAttachmentUpload(props.environmentId, props.attachment.id)
           }
-          className="absolute bottom-0.5 left-0.5 flex-row items-center gap-0.5 rounded-full bg-black/70 px-1 py-0.5"
+          className="absolute bottom-0.5 left-0.5 flex-row items-center gap-0.5 rounded-sm bg-black/70 px-1 py-0.5"
         >
           <SymbolView
             name={upload.status === "failed" ? "arrow.clockwise" : "arrow.up"}

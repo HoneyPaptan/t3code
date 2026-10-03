@@ -140,7 +140,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
               <View className="flex-row items-center gap-2">
                 {!allSelected && isEditingFiles ? (
                   <Pressable
-                    className="rounded-full px-3 android:min-h-12 android:justify-center android:active:bg-subtle ios:bg-subtle ios:py-2"
+                    className="rounded-lg px-3 android:min-h-12 android:justify-center android:active:bg-subtle ios:bg-subtle ios:py-2"
                     onPress={() => setExcludedFiles(new Set())}
                   >
                     <Text className="android:text-primary-text android:text-sm android:font-t3-medium ios:text-foreground ios:text-2xs ios:font-t3-bold ios:uppercase">
@@ -149,7 +149,7 @@ export function GitCommitSheet(_props: GitCommitSheetProps) {
                   </Pressable>
                 ) : null}
                 <Pressable
-                  className="rounded-full px-3 android:min-h-12 android:justify-center android:active:bg-subtle ios:bg-subtle ios:py-2"
+                  className="rounded-lg px-3 android:min-h-12 android:justify-center android:active:bg-subtle ios:bg-subtle ios:py-2"
                   onPress={() => setIsEditingFiles((current) => !current)}
                 >
                   <Text className="android:text-primary-text android:text-sm android:font-t3-medium ios:text-foreground ios:text-2xs ios:font-t3-bold ios:uppercase">

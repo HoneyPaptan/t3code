@@ -18,7 +18,7 @@ export function StatusPill(
   return (
     <View
       className={cn(
-        "rounded-full",
+        "rounded-sm",
         size === "compact" ? "px-2.5 py-1" : "px-3 py-1.5",
         props.pillClassName,
       )}

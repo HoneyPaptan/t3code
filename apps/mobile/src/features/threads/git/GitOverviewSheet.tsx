@@ -527,8 +527,8 @@ function GitOverviewSheetContent(props: GitOverviewSheetProps) {
             <Pressable
               className={
                 busy
-                  ? "absolute right-3 top-4 z-[1] h-9 w-9 items-center justify-center rounded-full bg-subtle opacity-[0.45]"
-                  : "absolute right-3 top-4 z-[1] h-9 w-9 items-center justify-center rounded-full bg-subtle"
+                  ? "absolute right-3 top-4 z-[1] h-9 w-9 items-center justify-center rounded-lg bg-subtle opacity-[0.45]"
+                  : "absolute right-3 top-4 z-[1] h-9 w-9 items-center justify-center rounded-lg bg-subtle"
               }
               disabled={busy}
               onPress={() => void gitActions.refreshSelectedThreadGitStatus()}

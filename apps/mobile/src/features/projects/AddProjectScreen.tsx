@@ -229,7 +229,7 @@ function ListRow(props: {
         <View
           className={
             props.selected
-              ? "h-7 w-7 items-center justify-center rounded-full bg-primary"
+              ? "h-7 w-7 items-center justify-center rounded-lg bg-primary"
               : "h-7 w-7 items-center justify-center"
           }
         >
@@ -269,7 +269,7 @@ function PrimaryActionButton(props: {
     <Pressable
       disabled={props.disabled}
       onPress={props.onPress}
-      className="h-12 items-center justify-center rounded-full bg-primary active:opacity-70 disabled:opacity-45"
+      className="h-12 items-center justify-center rounded-lg bg-primary active:opacity-70 disabled:opacity-45"
     >
       {props.loading ? (
         <ActivityIndicator colorClassName={String("accent-primary-foreground")} />
@@ -466,7 +466,7 @@ function EmptyEnvironmentState() {
       </Text>
       <Pressable
         onPress={() => navigation.dispatch(StackActions.replace("ConnectionsNew"))}
-        className="mt-1 rounded-full bg-primary px-4 py-2.5 active:opacity-70"
+        className="mt-1 rounded-lg bg-primary px-4 py-2.5 active:opacity-70"
       >
         <Text className="text-sm font-t3-bold text-primary-foreground">Add environment</Text>
       </Pressable>

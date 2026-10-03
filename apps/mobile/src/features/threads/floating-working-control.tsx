@@ -264,7 +264,7 @@ export function FloatingWorkingControl(props: {
             glassEffectStyle="regular"
             isInteractive={capsuleInteractive}
             pointerEvents={capsuleInteractive ? "box-none" : "none"}
-            className="h-11 items-center justify-center overflow-hidden rounded-full"
+            className="h-11 items-center justify-center overflow-hidden rounded-lg"
             style={capsuleStyle}
           >
             {capsuleContent}
@@ -277,7 +277,7 @@ export function FloatingWorkingControl(props: {
             pointerEvents={props.showScrollToEnd ? "auto" : "none"}
             accessibilityElementsHidden={!props.showScrollToEnd}
             importantForAccessibility={props.showScrollToEnd ? "auto" : "no-hide-descendants"}
-            className="h-11 w-11 items-center justify-center overflow-hidden rounded-full"
+            className="h-11 w-11 items-center justify-center overflow-hidden rounded-lg"
             style={arrowTransformStyle}
           >
             <Animated.View style={arrowContentStyle}>
@@ -289,7 +289,7 @@ export function FloatingWorkingControl(props: {
         <View pointerEvents="box-none" className="flex-row items-center gap-4">
           <Animated.View
             pointerEvents={capsuleInteractive ? "box-none" : "none"}
-            className="h-11 items-center justify-center overflow-hidden rounded-full border border-border bg-glass-fallback shadow-md shadow-black/10"
+            className="h-11 items-center justify-center overflow-hidden rounded-lg border border-border bg-glass-fallback shadow-md shadow-black/10"
             style={capsuleStyle}
           >
             {capsuleContent}
@@ -316,7 +316,7 @@ export function FloatingWorkingControl(props: {
           colorScheme={props.colorScheme}
           glassEffectStyle="regular"
           isInteractive
-          className="h-11 w-11 items-center justify-center overflow-hidden rounded-full"
+          className="h-11 w-11 items-center justify-center overflow-hidden rounded-lg"
         >
           <ScrollToEndButton onPress={props.onScrollToEnd} />
         </UniwindGlassView>

@@ -922,7 +922,7 @@ function ThreadSettingsMainContent(props: {
           {Platform.OS === "android" ? (
             <View className="px-4 pb-2 pt-3">
               <View
-                className="flex-row items-center rounded-full bg-input px-2"
+                className="flex-row items-center rounded-lg bg-input px-2"
                 style={{ minHeight: 56 }}
               >
                 <View pointerEvents="none" className="px-2">
