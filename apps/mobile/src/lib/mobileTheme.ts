@@ -15,9 +15,18 @@ import {
   type ThemePreviewColors,
 } from "@t3tools/shared/themePreview";
 
-export const DEFAULT_MOBILE_THEME_ID = MOBILE_DEFAULT_THEME_ID;
-export const MOBILE_THEME_IDS = [...SHARED_MOBILE_THEME_IDS, "material-you"] as const;
-export type MobileThemeId = SharedMobileThemeId | "material-you";
+import { getDrayThemeColors } from "./drayPalettes.ts";
+import { DRAY_THEME_IDS, DRAY_THEMES, type DrayThemeId } from "./drayTokens.ts";
+
+export const STOCK_MOBILE_THEME_ID = MOBILE_DEFAULT_THEME_ID;
+export const DEFAULT_MOBILE_THEME_ID = "gruvbox" satisfies DrayThemeId;
+export const MOBILE_THEME_IDS = [
+  ...SHARED_MOBILE_THEME_IDS,
+  ...DRAY_THEME_IDS,
+  "material-you",
+] as const;
+export type MobilePaletteThemeId = SharedMobileThemeId | DrayThemeId;
+export type MobileThemeId = MobilePaletteThemeId | "material-you";
 export type MobileThemeAppearance = ThemeAppearance;
 export type MobileThemeMode = MobileThemeAppearance | "system";
 export type MobileThemeIds = Readonly<Record<MobileThemeAppearance, MobileThemeId>>;
@@ -26,7 +35,8 @@ export const MOBILE_THEME_OPTIONS: ReadonlyArray<{
   readonly id: MobileThemeId;
   readonly label: string;
 }> = [
-  { id: DEFAULT_MOBILE_THEME_ID, label: "T3 Code" },
+  ...DRAY_THEMES.map((theme) => ({ id: theme.id, label: theme.label })),
+  { id: STOCK_MOBILE_THEME_ID, label: "T3 Code" },
   { id: "material-you", label: "Material You" },
   ...BUILT_IN_THEMES.map((theme) => ({ id: theme.id as MobileThemeId, label: theme.label })),
 ];
@@ -350,11 +360,16 @@ export const MOBILE_THEME_VARIABLE_NAMES = Object.keys(
   createMobileThemeVariables(T3_CHAT_THEME.colors, "light"),
 ) as ReadonlyArray<MobileThemeVariable>;
 
+function isDrayThemeId(themeId: MobilePaletteThemeId): themeId is DrayThemeId {
+  return (DRAY_THEME_IDS as readonly string[]).includes(themeId);
+}
+
 export function getMobileThemeColors(
-  themeId: SharedMobileThemeId,
+  themeId: MobilePaletteThemeId,
   appearance: MobileThemeAppearance,
 ): ThemeColors {
-  if (themeId === DEFAULT_MOBILE_THEME_ID) {
+  if (isDrayThemeId(themeId)) return getDrayThemeColors(themeId, appearance);
+  if (themeId === STOCK_MOBILE_THEME_ID) {
     return appearance === "dark" ? T3_CODE_DARK_THEME_COLORS : T3_CODE_LIGHT_THEME_COLORS;
   }
   const theme = BUILT_IN_THEMES.find((candidate) => candidate.id === themeId) ?? T3_CHAT_THEME;
@@ -362,7 +377,7 @@ export function getMobileThemeColors(
 }
 
 export function getMobileThemeVariables(
-  themeId: SharedMobileThemeId,
+  themeId: MobilePaletteThemeId,
   appearance: MobileThemeAppearance,
   overrides: Partial<MobileThemeVariables> | null = null,
 ): MobileThemeVariables {
@@ -370,13 +385,13 @@ export function getMobileThemeVariables(
   // Mobile settings groups and fallback materials use tonal fills where desktop
   // uses outlined cards. Regular cards retain their shared desktop surface.
   const groupedCard =
-    themeId === DEFAULT_MOBILE_THEME_ID
+    themeId === STOCK_MOBILE_THEME_ID
       ? appearance === "light"
         ? colors.toolbarControlHover
         : colors.sidebarRowActive
       : colors.surface;
   const mobileColors =
-    themeId === DEFAULT_MOBILE_THEME_ID
+    themeId === STOCK_MOBILE_THEME_ID
       ? {
           ...colors,
           messageSurface: flattenThemeColor(
@@ -398,10 +413,9 @@ export function getMobileThemePreviewColors(
   themeId: MobileThemeId,
   appearance: MobileThemeAppearance,
 ): ThemePreviewColors {
-  if (themeId === DEFAULT_MOBILE_THEME_ID || themeId === "material-you")
+  if (themeId === STOCK_MOBILE_THEME_ID || themeId === "material-you")
     return STANDARD_THEME_PREVIEW_COLORS[appearance];
-  const theme = BUILT_IN_THEMES.find((candidate) => candidate.id === themeId) ?? T3_CHAT_THEME;
-  const colors = getThemeColorsForAppearance(theme, appearance) ?? theme.colors;
+  const colors = getMobileThemeColors(themeId, appearance);
   return {
     canvas: themeColorToNativeColor(colors.canvas),
     accent: themeColorToNativeColor(colors.accent),
