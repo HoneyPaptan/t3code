@@ -2,9 +2,7 @@ import { Text as NativeText, View } from "react-native";
 
 import { cn } from "../../lib/cn";
 import { MOBILE_CODE_SURFACE } from "../../lib/typography";
-import { themeColorWithAlpha, type MobileThemeVariables } from "../../lib/mobileTheme";
 import { MONO_FONT_FAMILY } from "../../lib/useFontFamily";
-import { useUniwindTheme } from "../../lib/useUniwindTheme";
 
 import type { ReviewRenderableLineRow } from "./reviewModel";
 import type { ReviewHighlightedToken } from "./reviewHighlightedToken.types";
@@ -30,12 +28,9 @@ export function changeBarTone(change: ReviewRenderableLineRow["change"]): string
   return "bg-border/50";
 }
 
-function diffHighlightColor(
-  change: ReviewRenderableLineRow["change"],
-  theme: MobileThemeVariables,
-): string | undefined {
-  if (change === "add") return themeColorWithAlpha(theme["--color-diff-add"], 0.24);
-  if (change === "delete") return themeColorWithAlpha(theme["--color-diff-delete"], 0.24);
+function diffHighlightClassName(change: ReviewRenderableLineRow["change"]): string | undefined {
+  if (change === "add") return "bg-diff-add/25";
+  if (change === "delete") return "bg-diff-delete/25";
   return undefined;
 }
 
@@ -74,7 +69,6 @@ export function DiffTokenText(props: {
   readonly fontSize?: number;
   readonly lineHeight?: number;
 }) {
-  const theme = useUniwindTheme();
   const fontSize = props.fontSize ?? MOBILE_CODE_SURFACE.fontSize;
   const lineHeight = props.lineHeight ?? MOBILE_CODE_SURFACE.rowHeight;
   if (!props.tokens || props.tokens.length === 0) {
@@ -125,15 +119,16 @@ export function DiffTokenText(props: {
             <NativeText
               key={`${start}:${token.content.length}:${token.color ?? ""}:${token.fontStyle ?? ""}`}
               selectable
+              className={
+                token.diffHighlight && props.change
+                  ? diffHighlightClassName(props.change)
+                  : undefined
+              }
               style={{
                 color: token.color ?? undefined,
                 fontFamily: REVIEW_MONO_FONT_FAMILY,
                 fontWeight,
                 fontStyle,
-                backgroundColor:
-                  token.diffHighlight && props.change
-                    ? diffHighlightColor(props.change, theme)
-                    : undefined,
                 borderRadius: token.diffHighlight ? 4 : undefined,
               }}
             >
