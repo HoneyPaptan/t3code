@@ -112,7 +112,7 @@ function AppSettingsSection() {
       <View className="items-end">
         <Text className="text-lg text-foreground-muted">{versionLabel}</Text>
         {statusLabel ? (
-          <Text className="text-xs text-foreground-muted/70">{statusLabel}</Text>
+          <Text className="text-xs text-foreground-muted/60">{statusLabel}</Text>
         ) : null}
       </View>
     </View>

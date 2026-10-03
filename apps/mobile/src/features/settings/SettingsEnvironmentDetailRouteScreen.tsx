@@ -351,13 +351,13 @@ function EnvironmentDetail({ environmentId }: { readonly environmentId: Environm
                             </Text>
                           ) : null}
                           {provider.unavailableReason || provider.message ? (
-                            <Text selectable className="text-sm text-foreground-muted">
+                            <Text selectable className="text-sm text-foreground-muted/60">
                               {provider.unavailableReason ?? provider.message}
                             </Text>
                           ) : null}
                           {provider.versionAdvisory?.status === "behind_latest" &&
                           !provider.versionAdvisory.canUpdate ? (
-                            <Text className="text-sm text-foreground-muted">
+                            <Text className="text-sm text-foreground-muted/60">
                               Update this provider on the environment's machine.
                             </Text>
                           ) : null}

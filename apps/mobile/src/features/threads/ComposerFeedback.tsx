@@ -42,7 +42,7 @@ export function ComposerFeedback({
           ) : null}
         </View>
         {notice.description ? (
-          <Text selectable className="text-xs text-foreground-muted">
+          <Text selectable className="text-xs text-foreground-muted/60">
             {notice.description}
           </Text>
         ) : null}

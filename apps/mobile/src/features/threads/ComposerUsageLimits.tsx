@@ -93,8 +93,8 @@ export function ComposerUsageLimits({
             key={notice}
             className={
               report.accounts.length === 0
-                ? "px-4 py-3 text-xs text-foreground-muted"
-                : "border-t border-border-subtle px-4 py-3 text-xs text-foreground-muted"
+                ? "px-4 py-3 text-xs text-foreground-muted/60"
+                : "border-t border-border-subtle px-4 py-3 text-xs text-foreground-muted/60"
             }
           >
             {notice}

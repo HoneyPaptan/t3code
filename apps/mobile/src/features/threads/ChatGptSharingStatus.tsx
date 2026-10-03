@@ -25,7 +25,7 @@ export function ChatGptSharingStatus({ provider }: { provider: ServerProvider | 
         }}
       >
         <ProviderIcon provider="codex" size={14} />
-        <Text className="text-xs text-foreground-muted">Using ChatGPT plan</Text>
+        <Text className="text-xs text-foreground-muted/60">Using ChatGPT plan</Text>
       </Pressable>
       <Pressable
         accessibilityRole="link"
