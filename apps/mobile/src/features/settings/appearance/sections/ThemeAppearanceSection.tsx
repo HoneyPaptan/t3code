@@ -288,7 +288,6 @@ export function ThemeAppearanceSection() {
     setThemeMode,
     themeIds,
     themeMode,
-    systemColorsAvailable,
   } = useAppearancePreferences();
 
   return (
@@ -313,9 +312,7 @@ export function ThemeAppearanceSection() {
       <View className="gap-3">
         <SectionLabel>Themes</SectionLabel>
         <View className="flex-row flex-wrap gap-3">
-          {MOBILE_THEME_OPTIONS.filter(
-            (theme) => theme.id !== "material-you" || systemColorsAvailable,
-          ).map((theme) => (
+          {MOBILE_THEME_OPTIONS.map((theme) => (
             <ThemeCard
               disabled={!isReady}
               key={theme.id}
