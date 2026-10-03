@@ -85,8 +85,8 @@ export const GUARD_LENGTH = 64;
 // readers; it never discards a record because of its size.
 const STREAMING_THRESHOLD_BYTES = 8 * 1024 * 1024;
 const NEWLINE = 0x0a;
-/** Filesystem calls one transcript walk keeps in flight. The pool has 4 threads. */
-const WALK_CONCURRENCY = 32;
+/** `stat` calls one transcript walk keeps in flight. The libuv pool has 4 threads. */
+const STAT_CONCURRENCY = 32;
 const CARRIAGE_RETURN = 0x0d;
 
 type SelectedFields = { readonly [key: string]: true | SelectedFields };
@@ -159,11 +159,10 @@ function fnv1a(buffer: Buffer): number {
  * Grok sessions also ship multi-megabyte `chat_history` and `events` logs that
  * never carry usage, so the basename filter keeps a cold scan off those files.
  *
- * Entries are stat'd concurrently: a warm scan stats thousands of files, and
- * one at a time each waits its own trip through the thread pool. At most
- * `WALK_CONCURRENCY` calls are in flight, so a huge tree cannot queue ahead of
- * the server's other filesystem work. Results keep `readdir` order, which the
- * aggregator's first-seen dedupe relies on.
+ * Directories are listed depth-first, one at a time, then the candidates are
+ * stat'd by a fixed pool of workers: a warm scan stats thousands of files, and
+ * one at a time each waits its own trip through the thread pool. Results keep
+ * `readdir` order, which the aggregator's first-seen dedupe relies on.
  */
 export async function listTranscriptFiles(
   root: string,
@@ -171,50 +170,43 @@ export async function listTranscriptFiles(
   options?: { readonly fileName?: string },
 ): Promise<readonly TranscriptFile[]> {
   const fileName = options?.fileName;
-  let active = 0;
-  const waiting: Array<() => void> = [];
-  const limited = async <A>(call: () => Promise<A>): Promise<A> => {
-    if (active < WALK_CONCURRENCY) active += 1;
-    // A finished call hands its slot straight to the next waiter.
-    else await new Promise<void>((resolve) => waiting.push(resolve));
-    try {
-      return await call();
-    } finally {
-      const next = waiting.shift();
-      if (next === undefined) active -= 1;
-      else next();
-    }
-  };
-
-  const walk = async (dir: string): Promise<readonly TranscriptFile[]> => {
+  const candidates: string[] = [];
+  const walk = async (dir: string): Promise<void> => {
     let entries;
     try {
-      entries = await limited(() => NodeFSP.readdir(dir, { withFileTypes: true }));
+      entries = await NodeFSP.readdir(dir, { withFileTypes: true });
     } catch {
-      return [];
+      return;
     }
-    const nested = await Promise.all(
-      entries.map(async (entry): Promise<readonly TranscriptFile[]> => {
-        const child = NodePath.join(dir, entry.name);
-        if (entry.isDirectory()) return walk(child);
-        if (fileName !== undefined ? entry.name !== fileName : !entry.name.endsWith(".jsonl")) {
-          return [];
-        }
-        try {
-          const stats = await limited(() => NodeFSP.stat(child));
-          return stats.mtimeMs >= sinceMs
-            ? [{ path: child, size: stats.size, mtimeMs: stats.mtimeMs }]
-            : [];
-        } catch {
-          // Vanished between readdir and stat.
-          return [];
-        }
-      }),
-    );
-    return nested.flat();
+    for (const entry of entries) {
+      const child = NodePath.join(dir, entry.name);
+      if (entry.isDirectory()) await walk(child);
+      else if (fileName !== undefined ? entry.name === fileName : entry.name.endsWith(".jsonl")) {
+        candidates.push(child);
+      }
+    }
   };
+  await walk(root);
 
-  return walk(root);
+  const found: Array<TranscriptFile | undefined> = Array.from({ length: candidates.length });
+  // Each worker pulls the next candidate from one shared iterator.
+  const queue = candidates.entries();
+  const statQueued = async (): Promise<void> => {
+    for (const [index, path] of queue) {
+      try {
+        const stats = await NodeFSP.stat(path);
+        if (stats.mtimeMs >= sinceMs) {
+          found[index] = { path, size: stats.size, mtimeMs: stats.mtimeMs };
+        }
+      } catch {
+        // Vanished between readdir and stat.
+      }
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(STAT_CONCURRENCY, candidates.length) }, statQueued),
+  );
+  return found.filter((file) => file !== undefined);
 }
 
 /**
