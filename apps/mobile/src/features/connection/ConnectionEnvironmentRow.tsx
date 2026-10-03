@@ -20,10 +20,11 @@ import type { ConnectedEnvironmentSummary } from "../../state/remote-runtime-typ
 import { serverEnvironment } from "../../state/server";
 import { ConnectionFormField } from "./ConnectionFormField";
 import { ConnectionStatusDot } from "./ConnectionStatusDot";
+import { isStatusRestatedByIndicators, OFF_STATUS_LABEL } from "./connectionStatusVisibility";
 
 function connectionStatusLabel(environment: ConnectedEnvironmentSummary): string | null {
   if (!environment.isEnabled && environment.connectionState !== "unsupported") {
-    return "Off";
+    return OFF_STATUS_LABEL;
   }
   return connectionStatusText({
     phase: environment.connectionState,
@@ -52,7 +53,13 @@ export function ConnectionEnvironmentRow(props: {
   );
   const unsupported = props.environment.connectionState === "unsupported";
   const enabled = props.environment.isEnabled && !unsupported;
-  const statusLabel = connectionStatusLabel(props.environment);
+  const fullStatusLabel = connectionStatusLabel(props.environment);
+  const statusLabel = isStatusRestatedByIndicators(
+    props.environment.connectionState,
+    fullStatusLabel,
+  )
+    ? null
+    : fullStatusLabel;
   const statusTraceId = enabled ? props.environment.connectionErrorTraceId : null;
   // Unsupported is a compatibility note, not a failure, so it stays muted.
   const hasConnectionFailure = enabled && props.environment.connectionError !== null;
@@ -92,6 +99,7 @@ export function ConnectionEnvironmentRow(props: {
               state={enabled || unsupported ? props.environment.connectionState : "available"}
               pulse={isRetrying}
               size={8}
+              accessibilityLabel={fullStatusLabel ?? undefined}
             />
             <EnvironmentMachineSymbol
               kind={resolveEnvironmentMachineKind(serverConfig)}
