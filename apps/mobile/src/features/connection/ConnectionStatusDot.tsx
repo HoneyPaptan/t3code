@@ -81,6 +81,7 @@ export function ConnectionStatusDot(props: {
   readonly state: ConnectionStatusDotState;
   readonly pulse: boolean;
   readonly size?: number;
+  readonly accessibilityLabel?: string;
 }) {
   const pulseProgress = usePulseAnimation(props.pulse);
   const { themeVariables } = useAppearancePreferences();
@@ -96,6 +97,8 @@ export function ConnectionStatusDot(props: {
 
   return (
     <View
+      accessible={props.accessibilityLabel !== undefined}
+      accessibilityLabel={props.accessibilityLabel}
       style={{
         width: containerSize,
         height: containerSize,

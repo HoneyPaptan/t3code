@@ -1,4 +1,5 @@
 import { ConnectionTraceId } from "./ConnectionTraceId";
+import { isStatusRestatedByIndicators, OFF_STATUS_LABEL } from "./connectionStatusVisibility";
 import { useAuth } from "@clerk/expo";
 import { SymbolView } from "../../components/AppSymbol";
 import {
@@ -239,7 +240,7 @@ function ConnectedCloudEnvironmentRow(props: {
         onValueChange={props.onSetEnabled}
         onToggleError={props.onToggleError}
         disabled={unsupported}
-        {...(enabled || unsupported ? {} : { statusText: "Off" })}
+        {...(enabled || unsupported ? {} : { statusText: OFF_STATUS_LABEL })}
         value={enabled}
       />
     </Pressable>
@@ -321,6 +322,9 @@ function CloudEnvironmentRowShell(props: {
     readonly lineCount: number;
   } | null>(null);
   const errorTraceId = props.connectionErrorTraceId;
+  const showStatus =
+    props.connectionError !== null ||
+    !isStatusRestatedByIndicators(props.connectionState, statusText);
   const measuredErrorText = errorTraceId ? `${statusText} Trace ID: ${errorTraceId}` : statusText;
   const errorLineCount =
     errorMeasurement?.text === measuredErrorText ? errorMeasurement.lineCount : 0;
@@ -346,7 +350,12 @@ function CloudEnvironmentRowShell(props: {
     <View collapsable={false} className="flex-row items-center gap-3 bg-grouped-card px-4 py-3.5">
       <View className="min-w-0 flex-1 gap-0.5">
         <View className="min-w-0 flex-row items-center gap-2">
-          <ConnectionStatusDot state={props.connectionState} pulse={shouldPulse} size={7} />
+          <ConnectionStatusDot
+            state={props.connectionState}
+            pulse={shouldPulse}
+            size={7}
+            accessibilityLabel={statusText}
+          />
           <EnvironmentMachineSymbol
             kind={props.machine}
             size={14}
@@ -368,42 +377,44 @@ function CloudEnvironmentRowShell(props: {
             {measuredErrorText}
           </Text>
         ) : null}
-        <StatusContainer
-          {...(errorCanExpand
-            ? { accessibilityRole: "button" as const, onPress: props.onToggleError }
-            : {})}
-          className="min-w-0 flex-row items-start gap-1"
-        >
-          <Text
-            className={cn("min-w-0 flex-1 text-xs", statusClassName)}
-            numberOfLines={isErrorExpanded ? undefined : 1}
+        {showStatus ? (
+          <StatusContainer
+            {...(errorCanExpand
+              ? { accessibilityRole: "button" as const, onPress: props.onToggleError }
+              : {})}
+            className="min-w-0 flex-row items-start gap-1"
           >
-            {statusText}
-            {errorTraceId ? (
-              <ConnectionTraceId
-                traceId={errorTraceId}
-                tone={
-                  props.connectionError && props.connectionState !== "unsupported"
-                    ? "danger"
-                    : "muted"
-                }
-                activation="longPress"
+            <Text
+              className={cn("min-w-0 flex-1 text-xs", statusClassName)}
+              numberOfLines={isErrorExpanded ? undefined : 1}
+            >
+              {statusText}
+              {errorTraceId ? (
+                <ConnectionTraceId
+                  traceId={errorTraceId}
+                  tone={
+                    props.connectionError && props.connectionState !== "unsupported"
+                      ? "danger"
+                      : "muted"
+                  }
+                  activation="longPress"
+                />
+              ) : null}
+            </Text>
+            {errorCanExpand ? (
+              <SymbolView
+                name="chevron.down"
+                size={10}
+                tintColorClassName={"accent-chevron"}
+                type="monochrome"
+                style={{
+                  marginTop: 3,
+                  transform: [{ rotate: isErrorExpanded ? "180deg" : "0deg" }],
+                }}
               />
             ) : null}
-          </Text>
-          {errorCanExpand ? (
-            <SymbolView
-              name="chevron.down"
-              size={10}
-              tintColorClassName={"accent-chevron"}
-              type="monochrome"
-              style={{
-                marginTop: 3,
-                transform: [{ rotate: isErrorExpanded ? "180deg" : "0deg" }],
-              }}
-            />
-          ) : null}
-        </StatusContainer>
+          </StatusContainer>
+        ) : null}
       </View>
       <ThemedSwitch
         style={{ alignSelf: "center" }}
