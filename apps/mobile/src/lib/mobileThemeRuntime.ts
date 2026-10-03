@@ -1,5 +1,11 @@
 import { resolveTextScaleVariables } from "./appearancePreferences";
 import { BUILT_IN_THEME_IDS, type BuiltInThemeId } from "@t3tools/shared/themePalettes";
+import {
+  DEFAULT_FONT_FAMILY_NAMES,
+  fontFamilyNamesEqual,
+  fontFamilyVariables,
+  type FontFamilyNames,
+} from "./fontFamilyStore";
 import { DRAY_THEME_IDS, type DrayThemeId } from "./drayTokens.ts";
 import {
   STOCK_MOBILE_THEME_ID,
@@ -14,6 +20,7 @@ export type MobileUniwindThemeName =
 
 export interface MobileThemeRuntimeState {
   readonly baseFontSize: number;
+  readonly fontFamilies: FontFamilyNames;
   readonly themeAppearance: MobileThemeAppearance;
   readonly themeMode: MobileThemeMode;
 }
@@ -23,6 +30,11 @@ export type MobileThemeRuntimeOperation =
       readonly kind: "update-text-variables";
       readonly themeName: "light" | "dark" | MobileUniwindThemeName;
       readonly variables: Readonly<Record<string, number>>;
+    }
+  | {
+      readonly kind: "update-font-variables";
+      readonly themeName: "light" | "dark" | MobileUniwindThemeName;
+      readonly variables: Readonly<Record<string, string>>;
     }
   | {
       readonly kind: "set-appearance-mode";
@@ -63,6 +75,14 @@ export function createMobileThemeRuntimeOperations(
     const variables = resolveTextScaleVariables(next.baseFontSize);
     for (const themeName of UNIWIND_THEME_NAMES) {
       operations.push({ kind: "update-text-variables", themeName, variables });
+    }
+  }
+
+  const previousFontFamilies = previous?.fontFamilies ?? DEFAULT_FONT_FAMILY_NAMES;
+  if (!fontFamilyNamesEqual(previousFontFamilies, next.fontFamilies)) {
+    const variables = fontFamilyVariables(next.fontFamilies);
+    for (const themeName of UNIWIND_THEME_NAMES) {
+      operations.push({ kind: "update-font-variables", themeName, variables });
     }
   }
 

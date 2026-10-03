@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
+import { DEFAULT_FONT_FAMILY_NAMES } from "./fontFamilyStore";
 import {
   createMobileThemeRuntimeOperations,
   getMobileUniwindThemeName,
@@ -8,6 +9,7 @@ import {
 
 const initialState: MobileThemeRuntimeState = {
   baseFontSize: 16,
+  fontFamilies: DEFAULT_FONT_FAMILY_NAMES,
   themeAppearance: "light",
   themeMode: "system",
 };
@@ -34,6 +36,36 @@ describe("mobileThemeRuntime", () => {
       kind: "set-appearance-mode",
       appearance: "light",
       themeMode: "system",
+    });
+  });
+
+  it("leaves the stylesheet fonts alone while the defaults are active", () => {
+    const operations = createMobileThemeRuntimeOperations(null, initialState);
+
+    expect(operations.some((operation) => operation.kind === "update-font-variables")).toBe(false);
+  });
+
+  it("swaps font variables for every theme when a server font becomes active", () => {
+    const fontFamilies = {
+      ...DEFAULT_FONT_FAMILY_NAMES,
+      regular: "ServerFont-a",
+      bold: "ServerFont-b",
+    };
+    const operations = createMobileThemeRuntimeOperations(initialState, {
+      ...initialState,
+      fontFamilies,
+    });
+
+    expect(operations).toHaveLength(22);
+    expect(operations[0]).toEqual({
+      kind: "update-font-variables",
+      themeName: "light",
+      variables: {
+        "--font-sans": "ServerFont-a",
+        "--font-medium": "Geist-Medium",
+        "--font-bold": "ServerFont-b",
+        "--font-mono": "GeistMono-Regular",
+      },
     });
   });
 
