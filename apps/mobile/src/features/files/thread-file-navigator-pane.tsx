@@ -158,7 +158,7 @@ export function ThreadFileNavigatorPane(props: {
             onRefresh={entriesQuery.refresh}
           />
         ) : (
-          <View className="h-12 flex-row items-center gap-2 px-3">
+          <View className="min-h-12 flex-row items-center gap-2 px-3">
             <View className="min-w-0 flex-1">
               <Text className="text-sm font-t3-bold text-foreground">Files</Text>
               <Text className="text-xs text-foreground-muted/60" numberOfLines={1}>

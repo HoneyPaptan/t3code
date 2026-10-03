@@ -57,8 +57,8 @@ export function ControlPill(props: {
     isCircle
       ? "h-11 w-11 items-center justify-center rounded-lg"
       : variant === "primary"
-        ? "h-11 flex-row items-center justify-center gap-2 rounded-lg px-5"
-        : "h-11 flex-row items-center justify-center gap-2 rounded-lg px-3.5",
+        ? "min-h-11 flex-row items-center justify-center gap-2 rounded-lg px-5"
+        : "min-h-11 flex-row items-center justify-center gap-2 rounded-lg px-3.5",
     variant === "primary"
       ? props.disabled
         ? "bg-subtle-strong"
