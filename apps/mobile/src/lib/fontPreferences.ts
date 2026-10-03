@@ -55,3 +55,12 @@ export function sanitizeFontPreferences(value: unknown): FontPreferences | undef
     ...(mono === undefined ? {} : { mono }),
   };
 }
+
+export function withFontChoice(
+  fonts: FontPreferences | undefined,
+  kind: keyof FontPreferences,
+  choice: FontChoice | null,
+): FontPreferences {
+  const { [kind]: _replaced, ...rest } = fonts ?? {};
+  return choice === null ? rest : { ...rest, [kind]: choice };
+}
