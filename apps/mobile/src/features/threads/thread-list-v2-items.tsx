@@ -124,10 +124,10 @@ function ThreadListV2Section(props: {
         className={cn(
           "text-xs font-t3-medium",
           sidebarPane
-            ? "text-drawer-foreground-muted"
+            ? "text-drawer-foreground-muted/60"
             : snoozed
               ? "text-foreground-secondary"
-              : "text-foreground-tertiary",
+              : "text-foreground-muted/60",
         )}
       >
         {props.label}

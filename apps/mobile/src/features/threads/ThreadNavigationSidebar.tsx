@@ -1069,7 +1069,7 @@ function ThreadNavigationSidebarPane(
             </View>
           </View>
 
-          <View className="mx-4 mt-[9px] h-[38px] flex-row items-center gap-1.5 rounded-xl bg-sidebar-search pr-2.5 pl-[11px]">
+          <View className="mx-4 mt-[9px] min-h-[38px] flex-row items-center gap-1.5 rounded-lg bg-sidebar-search pr-2.5 pl-[11px]">
             <SymbolView
               name="magnifyingglass"
               size={15}
@@ -1089,7 +1089,7 @@ function ThreadNavigationSidebarPane(
               cursorColorClassName={undefined}
               selectionHandleColorClassName={undefined}
               returnKeyType="search"
-              className="h-[34px] flex-1 px-0 py-0 font-sans text-base text-drawer-foreground"
+              className="min-h-[34px] flex-1 px-0 py-0 font-sans text-base text-drawer-foreground"
               value={props.searchQuery}
             />
           </View>
