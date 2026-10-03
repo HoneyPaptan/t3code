@@ -192,7 +192,7 @@ const clerkColorsFor = (appearance: MobileThemeAppearance) => {
     background: variables["--color-sheet-solid"],
     input: variables["--color-input"],
     danger: variables["--color-danger-foreground"],
-    success: appearance === "dark" ? "#34d399" : "#059669",
+    success: variables["--color-success"],
     warning: variables["--color-warning-foreground"],
     foreground: variables["--color-foreground"],
     mutedForeground: variables["--color-foreground-muted"],

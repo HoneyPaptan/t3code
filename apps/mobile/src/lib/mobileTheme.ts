@@ -15,8 +15,8 @@ import {
   type ThemePreviewColors,
 } from "@t3tools/shared/themePreview";
 
-import { getDrayThemeColors } from "./drayPalettes.ts";
-import { DRAY_THEME_IDS, DRAY_THEMES, type DrayThemeId } from "./drayTokens.ts";
+import { getDrayPalette, getDrayThemeColors } from "./drayPalettes.ts";
+import { DRAY_THEME_IDS, DRAY_THEMES, type DrayPalette, type DrayThemeId } from "./drayTokens.ts";
 
 export const STOCK_MOBILE_THEME_ID = MOBILE_DEFAULT_THEME_ID;
 export const DEFAULT_MOBILE_THEME_ID = "gruvbox" satisfies DrayThemeId;
@@ -245,10 +245,51 @@ export function themeColorWithAlpha(color: string, alpha: number): string {
   return rgb ? `rgba(${rgb[1]}, ${rgb[2]}, ${rgb[3]}, ${alpha})` : color;
 }
 
+export interface MobileThemeExtras {
+  readonly success: string;
+  readonly merged: string;
+  readonly diffAdd: string;
+  readonly diffDelete: string;
+  readonly send: string;
+  readonly sendForeground: string;
+}
+
+const STOCK_EXTRA_COLORS = {
+  light: { success: "#059669", merged: "#7c3aed", diffDelete: "#e11d48" },
+  dark: { success: "#34d399", merged: "#a78bfa", diffDelete: "#fb7185" },
+} as const;
+
+function stockThemeExtras(
+  colors: ThemeColors,
+  appearance: MobileThemeAppearance,
+): MobileThemeExtras {
+  const stock = STOCK_EXTRA_COLORS[appearance];
+  return {
+    success: stock.success,
+    merged: stock.merged,
+    diffAdd: stock.success,
+    diffDelete: stock.diffDelete,
+    send: themeColorToNativeColor(colors.messageAction),
+    sendForeground: themeColorToNativeColor(colors.messageActionForeground),
+  };
+}
+
+function drayThemeExtras(palette: DrayPalette): MobileThemeExtras {
+  return {
+    success: palette.accentAdd,
+    merged: palette.accentMerged,
+    diffAdd: palette.accentAdd,
+    diffDelete: palette.destructive,
+    send: palette.primary,
+    sendForeground: palette.primaryForeground,
+  };
+}
+
 export function createMobileThemeVariables(
   colors: ThemeColors,
   appearance: MobileThemeAppearance,
   groupedCardColor = colors.surface,
+  extras: MobileThemeExtras = stockThemeExtras(colors, appearance),
 ) {
   const c = nativeColors(colors);
   const groupedCard = themeColorToNativeColor(groupedCardColor);
@@ -296,6 +337,15 @@ export function createMobileThemeVariables(
     "--color-primary-foreground": c.messageActionForeground,
     "--color-primary-text": readableTextColor(c.messageAction, textSurfaces),
     "--color-primary-shadow": "#000000",
+    "--color-send": extras.send,
+    "--color-send-foreground": extras.sendForeground,
+    "--color-success": extras.success,
+    "--color-success-surface": withAlpha(extras.success, 0.12),
+    "--color-merged": extras.merged,
+    "--color-diff-add": extras.diffAdd,
+    "--color-diff-delete": extras.diffDelete,
+    "--color-scrim": "#000000",
+    "--color-scrim-foreground": "#ffffff",
     "--color-secondary": c.secondary,
     "--color-secondary-foreground": c.secondaryForeground,
     "--color-secondary-border": c.border,
@@ -403,7 +453,10 @@ export function getMobileThemeVariables(
           ),
         }
       : colors;
-  const baseVariables = createMobileThemeVariables(mobileColors, appearance, groupedCard);
+  const extras = isDrayThemeId(themeId)
+    ? drayThemeExtras(getDrayPalette(themeId, appearance))
+    : stockThemeExtras(mobileColors, appearance);
+  const baseVariables = createMobileThemeVariables(mobileColors, appearance, groupedCard, extras);
 
   // The complete base record guarantees that optional overrides cannot leave a token undefined.
   return overrides ? ({ ...baseVariables, ...overrides } as MobileThemeVariables) : baseVariables;
