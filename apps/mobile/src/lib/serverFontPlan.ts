@@ -40,7 +40,7 @@ function groupByFamily(fonts: ReadonlyArray<ServerFont>): Map<string, ServerFont
 export function listFontFamilies(fonts: ReadonlyArray<ServerFont>): ReadonlyArray<FontFamilyEntry> {
   return [...groupByFamily(fonts)]
     .map(([family, faces]) => ({ family, regular: pickRegular(faces) }))
-    .toSorted((a, b) => a.family.localeCompare(b.family));
+    .sort((a, b) => a.family.localeCompare(b.family));
 }
 
 export function filterFontFamilies(

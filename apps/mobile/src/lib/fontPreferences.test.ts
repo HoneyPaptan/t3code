@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { sanitizeFontPreferences } from "./fontPreferences";
+import { sanitizeFontPreferences, withFontChoice } from "./fontPreferences";
 
 const FONT_ID = "0123456789abcdef";
 const BOLD_ID = "fedcba9876543210";
@@ -57,5 +57,19 @@ describe("sanitizeFontPreferences", () => {
     expect(sanitizeFontPreferences("Inter")).toBeUndefined();
     expect(sanitizeFontPreferences([])).toBeUndefined();
     expect(sanitizeFontPreferences({})).toBeUndefined();
+  });
+});
+
+describe("withFontChoice", () => {
+  const sans = { fontId: FONT_ID, format: "ttf" as const, family: "Inter" };
+  const mono = { fontId: BOLD_ID, format: "otf" as const, family: "Fira Code" };
+
+  it("sets one kind and keeps the other", () => {
+    expect(withFontChoice({ mono }, "sans", sans)).toEqual({ sans, mono });
+  });
+
+  it("clears one kind when the choice is null", () => {
+    expect(withFontChoice({ sans, mono }, "sans", null)).toEqual({ mono });
+    expect(withFontChoice(undefined, "mono", null)).toEqual({});
   });
 });
