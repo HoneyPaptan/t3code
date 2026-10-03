@@ -6,8 +6,8 @@ export function connectionTone(state: RemoteClientConnectionState): StatusTone {
     case "connected":
       return {
         label: "Connected",
-        pillClassName: "bg-adaptive-emerald-500-a12-a16",
-        textClassName: "text-adaptive-emerald-700-300",
+        pillClassName: "bg-success-surface",
+        textClassName: "text-success",
       };
     case "reconnecting":
       return {

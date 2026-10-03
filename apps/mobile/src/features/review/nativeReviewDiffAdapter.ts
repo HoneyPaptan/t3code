@@ -6,8 +6,8 @@ import type {
 import * as Arr from "effect/Array";
 import { pipe } from "effect/Function";
 import type { ResolvedMobileCodeSurface } from "../../lib/appearancePreferences";
-import { type MobileThemeId, type MobileThemeVariables } from "../../lib/mobileTheme";
-import { getMobileTerminalTheme, type TerminalAppearanceScheme } from "../terminal/terminalTheme";
+import { themeColorWithAlpha, type MobileThemeVariables } from "../../lib/mobileTheme";
+import type { TerminalAppearanceScheme } from "../terminal/terminalTheme";
 import { computeWordAltDiffRanges } from "./reviewWordDiffs";
 import {
   getReviewFilePreviewState,
@@ -168,13 +168,12 @@ function buildReviewCommentsCacheKey(comments: ReadonlyArray<ReviewInlineComment
   );
 }
 
+const DIFF_ROW_TINT_ALPHA = 0.16;
+
 export function createNativeReviewDiffTheme(
   scheme: TerminalAppearanceScheme,
-  themeId: MobileThemeId,
   appTheme: MobileThemeVariables,
 ): NativeReviewDiffTheme {
-  const terminalTheme = getMobileTerminalTheme(themeId, scheme);
-  const [, terminalRed] = terminalTheme.palette;
   // Swift expects #RRGGBB/#RRGGBBAA while Android expects #RRGGBB/#AARRGGBB.
   // Flatten translucent app tokens onto the code surface so both native
   // implementations receive the one unambiguous shared format.
@@ -184,25 +183,8 @@ export function createNativeReviewDiffTheme(
   );
   const background = opaqueNativeHexColor(appTheme["--color-md-code-bg"], screen);
   const nativeColor = (color: string) => opaqueNativeHexColor(color, background);
-
-  if (scheme === "dark") {
-    return {
-      // Code surfaces share the desktop palette rather than the sheet behind them.
-      background,
-      text: nativeColor(appTheme["--color-md-code-text"]),
-      mutedText: nativeColor(appTheme["--color-foreground-muted"]),
-      headerBackground: background,
-      border: nativeColor(appTheme["--color-border"]),
-      hunkBackground: nativeColor(appTheme["--color-subtle-strong"]),
-      hunkText: nativeColor(appTheme["--color-foreground"]),
-      addBackground: "#0d2f28",
-      deleteBackground: "#391415",
-      addBar: "#00cab1",
-      deleteBar: terminalRed ?? "#ff2e3f",
-      addText: "#5ECC71",
-      deleteText: "#FF6762",
-    };
-  }
+  const nativeTint = (color: string) =>
+    nativeColor(themeColorWithAlpha(color, DIFF_ROW_TINT_ALPHA));
 
   return {
     background,
@@ -212,12 +194,12 @@ export function createNativeReviewDiffTheme(
     border: nativeColor(appTheme["--color-border"]),
     hunkBackground: nativeColor(appTheme["--color-subtle-strong"]),
     hunkText: nativeColor(appTheme["--color-foreground"]),
-    addBackground: "#e5f8f5",
-    deleteBackground: "#ffe6e7",
-    addBar: "#00cab1",
-    deleteBar: terminalRed ?? "#ff2e3f",
-    addText: "#199F43",
-    deleteText: "#D52C36",
+    addBackground: nativeTint(appTheme["--color-diff-add"]),
+    deleteBackground: nativeTint(appTheme["--color-diff-delete"]),
+    addBar: nativeColor(appTheme["--color-diff-add"]),
+    deleteBar: nativeColor(appTheme["--color-diff-delete"]),
+    addText: nativeColor(appTheme["--color-diff-add"]),
+    deleteText: nativeColor(appTheme["--color-diff-delete"]),
   };
 }
 

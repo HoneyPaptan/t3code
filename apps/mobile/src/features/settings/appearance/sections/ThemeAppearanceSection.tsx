@@ -55,11 +55,7 @@ const PreviewOrb = memo(function PreviewOrb(props: {
   );
   return (
     <View
-      className={`${props.compact ? "size-14" : "size-16"} overflow-hidden rounded-full border`}
-      style={{
-        borderColor:
-          props.appearance === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.1)",
-      }}
+      className={`${props.compact ? "size-14" : "size-16"} overflow-hidden rounded-full border border-border`}
     >
       <Svg accessibilityElementsHidden height="100%" viewBox="0 0 64 64" width="100%">
         <Defs>
