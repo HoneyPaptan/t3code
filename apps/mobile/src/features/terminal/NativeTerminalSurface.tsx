@@ -12,6 +12,7 @@ import {
 
 import { AppText as Text } from "../../components/AppText";
 import { MOBILE_TYPOGRAPHY } from "../../lib/typography";
+import { MONO_FONT_FAMILY } from "../../lib/useFontFamily";
 import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
 import {
   getNativeTerminalHardwareKeyRevision,
@@ -115,7 +116,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface(props: Ter
             selectable
             style={{
               color: theme.foreground,
-              fontFamily: "Menlo",
+              fontFamily: MONO_FONT_FAMILY,
               fontSize,
               lineHeight: Math.round(fontSize * 1.35),
             }}
@@ -143,7 +144,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface(props: Ter
           style={{
             color: theme.foreground,
             flex: 1,
-            fontFamily: "Menlo",
+            fontFamily: MONO_FONT_FAMILY,
             padding: 0,
           }}
           onSubmitEditing={(event) => {

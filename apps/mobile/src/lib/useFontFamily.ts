@@ -2,7 +2,10 @@ const FONT_FAMILIES = {
   regular: "Geist-Regular",
   medium: "Geist-Medium",
   bold: "Geist-Bold",
+  mono: "GeistMono-Regular",
 } as const;
+
+export const MONO_FONT_FAMILY = FONT_FAMILIES.mono;
 
 /**
  * Resolves a font family for APIs that require a style object or native prop.
