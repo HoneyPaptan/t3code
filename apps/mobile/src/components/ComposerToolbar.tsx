@@ -314,7 +314,7 @@ export function ComposerToolbarButton(props: {
         // thread composer stretch to the row's edge. The numeric maxWidth
         // prop still wins via the inline style below.
         "h-11 max-w-[172px] flex-row items-center justify-center rounded-full border active:opacity-70",
-        variant === "primary" && "shadow-lg shadow-adaptive-black-a10-a25 disabled:shadow-none",
+        variant === "primary" && "shadow-lg shadow-primary-shadow/20 disabled:shadow-none",
         isCircle ? "w-11" : "gap-2 px-3.5",
         variant === "primary"
           ? props.disabled

@@ -149,7 +149,7 @@ function OverlayContent(props: { readonly progress: GitActionProgress }) {
   return (
     <Animated.View
       layout={OVERLAY_LAYOUT_TRANSITION}
-      className={`flex-row items-center gap-2.5 rounded-xl border border-continuous px-3.5 py-3 shadow-lg shadow-black/10 ${bgClass}`}
+      className={`flex-row items-center gap-2.5 rounded-xl border border-continuous px-3.5 py-3 shadow-lg shadow-primary-shadow/10 ${bgClass}`}
     >
       {content}
     </Animated.View>
