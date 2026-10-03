@@ -90,7 +90,7 @@ const FileTreeRow = memo(function FileTreeRow(props: {
           props.selected
             ? "font-t3-bold text-foreground"
             : node.ignored
-              ? "font-t3-medium text-foreground-tertiary"
+              ? "font-t3-medium text-foreground-muted/60"
               : "font-t3-medium text-foreground-secondary",
         )}
         numberOfLines={1}
@@ -98,7 +98,7 @@ const FileTreeRow = memo(function FileTreeRow(props: {
         {node.name}
       </Text>
       {node.kind === "directory" && props.loaded ? (
-        <Text className="text-2xs font-t3-medium text-foreground-tertiary">
+        <Text className="text-2xs font-t3-medium text-foreground-muted/60">
           {node.children.length}
         </Text>
       ) : null}
@@ -299,7 +299,7 @@ export function FileTreeBrowser(props: {
           ) : (
             <>
               <Text className="text-sm font-t3-bold text-foreground">No files found</Text>
-              <Text className="mt-1 text-xs leading-normal text-foreground-muted">
+              <Text className="mt-1 text-xs leading-normal text-foreground-muted/60">
                 {props.searchQuery.trim().length > 0
                   ? "Try a different search."
                   : "The workspace is empty."}

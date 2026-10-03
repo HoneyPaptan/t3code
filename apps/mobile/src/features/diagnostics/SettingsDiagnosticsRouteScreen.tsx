@@ -116,7 +116,7 @@ export function SettingsDiagnosticsRouteScreen() {
               onPress={() => void copyReport()}
             />
           </SettingsSection>
-          <Text className="px-2 text-sm leading-normal text-foreground-muted">
+          <Text className="px-2 text-sm leading-normal text-foreground-muted/60">
             Paste the report into a GitHub issue. It contains the app version, the JavaScript error
             message, and the component stack. Error messages can quote values from the app, so read
             it over before sharing.
@@ -151,7 +151,7 @@ function CrashRow(props: { readonly record: StartupCrashRecord; readonly first: 
   const { record } = props;
   return (
     <View className={props.first ? "gap-1.5 p-4" : "gap-1.5 border-t border-border-subtle p-4"}>
-      <Text className="text-xs text-foreground-muted">
+      <Text className="text-xs text-foreground-muted/60">
         {new Date(record.timestamp).toLocaleString()}
       </Text>
       <Text selectable className="text-base leading-snug text-danger-foreground">
