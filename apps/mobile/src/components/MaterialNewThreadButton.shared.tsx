@@ -20,8 +20,8 @@ export function MaterialNewThreadButton(props: {
       className={cn(
         "items-center justify-center bg-primary shadow-lg active:opacity-70",
         props.extended
-          ? "h-[56px] flex-row gap-[8px] rounded-[16px] px-[16px]"
-          : "size-[80px] rounded-[20px]",
+          ? "h-[56px] flex-row gap-[8px] rounded-lg px-[16px]"
+          : "size-[80px] rounded-lg",
         props.className,
       )}
       style={props.style}

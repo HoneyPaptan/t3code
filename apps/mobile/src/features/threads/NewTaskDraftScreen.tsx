@@ -128,6 +128,7 @@ import { selectIncomingShareAttachmentsForServer } from "../sharing/incoming-sha
 import { appAtomRegistry } from "../../state/atom-registry";
 import { serverEnvironment } from "../../state/server";
 import { fileRoutePathSegments } from "../files/filePath";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 function NewTaskWorkspaceIcon(props: {
   readonly workspaceMode: "local" | "worktree";
@@ -1641,7 +1642,7 @@ export function NewTaskDraftScreen(props: {
 
       <ComposerSurface
         style={{
-          borderRadius: 26,
+          borderRadius: MOBILE_RADIUS["2xl"],
           minHeight: 140,
           overflow: "hidden",
           paddingBottom: 6,

@@ -3,6 +3,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import { Alert, Pressable, type ColorValue } from "react-native";
 
 import { tryCopyTextWithHaptic } from "../lib/copyTextWithHaptic";
+import { MOBILE_RADIUS } from "../lib/radius";
 
 const COPY_FEEDBACK_DURATION_MS = 1200;
 
@@ -61,7 +62,7 @@ export const CopyTextButton = memo(function CopyTextButton(props: {
         height: props.buttonSize ?? 30,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: 9,
+        borderRadius: MOBILE_RADIUS.md,
         borderWidth: props.borderColor ? 1 : 0,
         borderColor: props.borderColor,
         backgroundColor: props.backgroundColor,

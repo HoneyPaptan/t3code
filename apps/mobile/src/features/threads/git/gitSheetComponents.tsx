@@ -38,7 +38,7 @@ export function SheetActionButton(props: {
     <Pressable
       className={cn(
         "min-h-[48px] flex-row items-center justify-center gap-2 px-4 py-3 disabled:opacity-[0.45]",
-        "flex-1 rounded-[18px]",
+        "flex-1 rounded-lg",
         tone === "primary" ? "bg-primary" : tone === "danger" ? "bg-danger" : "bg-secondary",
         tone !== "primary" &&
           (tone === "danger" ? "border border-danger-border" : "border border-secondary-border"),
@@ -71,7 +71,7 @@ export function SheetActionButton(props: {
 
 export function MetaCard(props: { readonly label: string; readonly value: string }) {
   return (
-    <View className="bg-card px-4 py-3 android:rounded-[20px] ios:rounded-[18px] ios:border ios:border-border">
+    <View className="bg-card px-4 py-3 android:rounded-xl ios:rounded-xl ios:border ios:border-border">
       <Text className="text-foreground-muted text-2xs font-t3-bold tracking-[0.9px] uppercase">
         {props.label}
       </Text>

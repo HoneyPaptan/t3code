@@ -248,8 +248,8 @@ export function GitOverviewSheet(props: GitOverviewSheetProps) {
       }
     >
       <View
-        className={`overflow-hidden bg-card android:rounded-[20px] ios:border ios:border-border ${
-          isInspector ? "ios:rounded-2xl ios:px-3 ios:py-1" : "ios:rounded-[22px] ios:px-4 ios:py-1"
+        className={`overflow-hidden bg-card android:rounded-xl ios:border ios:border-border ${
+          isInspector ? "ios:rounded-2xl ios:px-3 ios:py-1" : "ios:rounded-xl ios:px-4 ios:py-1"
         }`}
       >
         {sheetMenuItems.map(({ item, disabledReason }, index) => (
@@ -316,7 +316,7 @@ export function GitOverviewSheet(props: GitOverviewSheetProps) {
           {linkedPrChains.map((chain) => (
             <View
               key={threadPullRequestKeyOf(chain.layers[0]!)}
-              className="overflow-hidden bg-card android:rounded-[20px] ios:rounded-2xl ios:border ios:border-border ios:px-3 ios:py-1"
+              className="overflow-hidden bg-card android:rounded-xl ios:rounded-2xl ios:border ios:border-border ios:px-3 ios:py-1"
             >
               {chain.layers.length > 1 ? (
                 <View className="flex-row items-center gap-2 px-1 pt-2 pb-1">

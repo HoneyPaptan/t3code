@@ -124,7 +124,7 @@ function MediaVideoPlayerContent(props: MediaVideoPlayerProps) {
   return (
     <View
       collapsable={false}
-      className="overflow-hidden rounded-[10px] bg-black"
+      className="overflow-hidden rounded-md bg-black"
       style={props.expanded ? { flex: 1 } : { width: "100%", maxWidth: 480, aspectRatio: 16 / 9 }}
     >
       {playbackUri ? (

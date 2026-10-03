@@ -37,8 +37,8 @@ export function SettingsSection(props: {
       <View
         className={
           Platform.OS === "android"
-            ? "overflow-hidden rounded-[28px] bg-grouped-card"
-            : "overflow-hidden rounded-[24px] border-continuous bg-grouped-card"
+            ? "overflow-hidden rounded-xl bg-grouped-card"
+            : "overflow-hidden rounded-xl border-continuous bg-grouped-card"
         }
       >
         {props.children}

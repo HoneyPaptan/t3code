@@ -9,6 +9,11 @@
   --font-medium: "Geist-Medium";
   --font-bold: "Geist-Bold";
   --font-mono: "GeistMono-Regular";
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
 
   /* Keep this scale aligned with src/lib/typography.ts for native style props. */
   --text-3xs: 11px;

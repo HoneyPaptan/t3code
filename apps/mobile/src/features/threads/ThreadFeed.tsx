@@ -213,6 +213,7 @@ import {
   ThreadMarkdownImageUnavailable,
   ThreadMarkdownImageView,
 } from "./ThreadMarkdownImage";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 const WIDE_MARKDOWN_BLOCK_OPTIONS = {
   // Native iOS blockquotes and adjacent selectable text are separate layout
@@ -1658,7 +1659,7 @@ function renderFeedEntry(
             />
           ) : null}
           <View
-            className="min-w-0 gap-2 rounded-[20px] px-3.5 py-2.5"
+            className="min-w-0 gap-2 rounded-xl px-3.5 py-2.5"
             style={{
               backgroundColor: userBubbleColor,
               maxWidth: props.userBubbleMaxWidth,
@@ -1677,7 +1678,7 @@ function renderFeedEntry(
                   attachmentId={attachment.uploadedAttachmentId}
                   name={attachment.name}
                   mimeType={attachment.mimeType}
-                  className="h-[140px] w-[180px] rounded-[14px]"
+                  className="h-[140px] w-[180px] rounded-lg"
                   onPressPreview={props.onPressPreview}
                 />
               ) : attachment.type === "image" ? (
@@ -1685,7 +1686,7 @@ function renderFeedEntry(
                   key={attachment.id}
                   source={{ uri: attachment.previewUri }}
                   accessibilityLabel={attachment.name}
-                  style={{ width: 180, height: 140, borderRadius: 14 }}
+                  style={{ width: 180, height: 140, borderRadius: MOBILE_RADIUS.lg }}
                 />
               ) : (
                 <MessageAttachmentUnknown key={attachment.id} name={attachment.name} />
@@ -1704,8 +1705,8 @@ function renderFeedEntry(
                       mimeType={attachment.mimeType}
                       className={
                         inlineAttachmentIds.size
-                          ? "h-24 w-24 rounded-[14px] bg-user-bubble-foreground/15"
-                          : "aspect-[1.3] w-full rounded-[14px] bg-user-bubble-foreground/15"
+                          ? "h-24 w-24 rounded-lg bg-user-bubble-foreground/15"
+                          : "aspect-[1.3] w-full rounded-lg bg-user-bubble-foreground/15"
                       }
                       onPressPreview={props.onPressPreview}
                     />
@@ -1852,7 +1853,7 @@ function renderFeedEntry(
               attachmentId={attachment.id}
               name={attachment.name}
               mimeType={attachment.mimeType}
-              className="mt-1.5 aspect-[1.3] w-full rounded-[18px] bg-subtle-strong"
+              className="mt-1.5 aspect-[1.3] w-full rounded-xl bg-subtle-strong"
               onPressPreview={props.onPressPreview}
             />
           ) : isFileAttachment(attachment) ? (

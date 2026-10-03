@@ -94,7 +94,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
               : undefined
           }
         >
-          <View className="bg-card android:gap-3 android:rounded-[20px] android:p-4 ios:gap-2 ios:rounded-[18px] ios:border ios:border-border ios:px-4 ios:py-4">
+          <View className="bg-card android:gap-3 android:rounded-xl android:p-4 ios:gap-2 ios:rounded-xl ios:border ios:border-border ios:px-4 ios:py-4">
             <Text className="android:text-foreground android:text-base android:font-t3-medium ios:text-foreground-secondary ios:text-2xs ios:font-t3-bold ios:tracking-[1px] ios:uppercase">
               New branch
             </Text>
@@ -103,7 +103,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
               onChangeText={setNewBranchName}
               placeholder="feature/mobile-polish"
               accessibilityLabel="New branch name"
-              className="android:rounded-xl android:bg-sheet-solid ios:rounded-[18px]"
+              className="android:rounded-xl android:bg-sheet-solid ios:rounded-xl"
             />
             <SheetActionButton
               icon="plus"
@@ -121,7 +121,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
             />
           </View>
 
-          <View className="bg-card android:gap-3 android:rounded-[20px] android:p-4 ios:gap-2 ios:rounded-[18px] ios:border ios:border-border ios:px-4 ios:py-4">
+          <View className="bg-card android:gap-3 android:rounded-xl android:p-4 ios:gap-2 ios:rounded-xl ios:border ios:border-border ios:px-4 ios:py-4">
             <Text className="android:text-foreground android:text-base android:font-t3-medium ios:text-foreground-secondary ios:text-2xs ios:font-t3-bold ios:tracking-[1px] ios:uppercase">
               New worktree
             </Text>
@@ -133,7 +133,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
               onChangeText={setWorktreeBaseBranch}
               placeholder="main"
               accessibilityLabel="Worktree base branch"
-              className="android:rounded-xl android:bg-sheet-solid ios:rounded-[18px]"
+              className="android:rounded-xl android:bg-sheet-solid ios:rounded-xl"
             />
             {Platform.OS === "android" ? (
               <Text className="text-foreground-secondary text-sm">New branch</Text>
@@ -143,7 +143,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
               onChangeText={setWorktreeBranchName}
               placeholder="feature/mobile-thread"
               accessibilityLabel="Worktree branch name"
-              className="android:rounded-xl android:bg-sheet-solid ios:rounded-[18px]"
+              className="android:rounded-xl android:bg-sheet-solid ios:rounded-xl"
             />
             <SheetActionButton
               icon="square.split.2x1"
@@ -196,7 +196,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
                 <Pressable
                   key={branch.name}
                   className={cn(
-                    "gap-1 px-4 py-3 disabled:opacity-[0.45] android:rounded-[20px] android:active:bg-subtle ios:rounded-[18px] ios:border",
+                    "gap-1 px-4 py-3 disabled:opacity-[0.45] android:rounded-md android:active:bg-subtle ios:rounded-md ios:border",
                     branch.current
                       ? "android:bg-secondary ios:border-subtle-strong"
                       : "android:bg-card ios:border-border",
@@ -211,7 +211,7 @@ export function GitBranchesSheet(_props: GitBranchesSheetProps) {
                   }}
                 >
                   {Platform.OS !== "android" ? (
-                    <View className="absolute inset-0 rounded-[18px] bg-card" />
+                    <View className="absolute inset-0 rounded-md bg-card" />
                   ) : null}
                   <Text className="text-foreground text-base android:font-t3-medium ios:font-t3-bold">
                     {branch.name}

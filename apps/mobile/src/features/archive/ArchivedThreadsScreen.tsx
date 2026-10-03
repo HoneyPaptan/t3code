@@ -226,7 +226,7 @@ function ArchivedThreadRow(props: {
         <View
           className={`flex-row items-center gap-3 bg-grouped-card px-4 py-3 ${props.isLast ? "" : "border-b border-separator"}`}
         >
-          <View className="h-[34px] w-[34px] items-center justify-center rounded-[11px] bg-subtle">
+          <View className="h-[34px] w-[34px] items-center justify-center rounded-md bg-subtle">
             <SymbolView
               name="archivebox.fill"
               size={15}
@@ -272,7 +272,7 @@ function ArchivedThreadRow(props: {
 
 function ArchiveError(props: { readonly message: string; readonly onRetry: () => void }) {
   return (
-    <View className="rounded-[20px] border border-danger-border bg-danger p-4">
+    <View className="rounded-xl border border-danger-border bg-danger p-4">
       <Text className="text-base font-t3-bold text-danger-foreground">
         Could not load every archive
       </Text>

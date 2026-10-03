@@ -16,6 +16,7 @@ import { SymbolView, type AppSymbolName } from "../../components/AppSymbol";
 import { AppText as Text } from "../../components/AppText";
 import { GlassSurface } from "../../components/GlassSurface";
 import { PierreEntryIcon } from "../../components/PierreEntryIcon";
+import { MOBILE_RADIUS } from "../../lib/radius";
 export type ComposerCommandItem =
   | {
       readonly id: string;
@@ -71,7 +72,7 @@ interface ComposerCommandPopoverProps {
 
 function PopoverSurface(props: { readonly children: React.ReactNode; readonly style?: ViewStyle }) {
   const baseStyle: ViewStyle = {
-    borderRadius: 16,
+    borderRadius: MOBILE_RADIUS.xl,
     overflow: "hidden",
     ...props.style,
   };
