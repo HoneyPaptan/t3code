@@ -90,7 +90,7 @@ export function ThreadMarkdownImageView(props: {
             accessibilityHint={
               mediaActions.actions.length > 0 ? "Touch and hold for media actions" : undefined
             }
-            className="items-center justify-center rounded-[10px] bg-md-code-bg"
+            className="items-center justify-center rounded-md bg-md-code-bg"
             style={frameStyle}
           >
             {failed ? (
@@ -121,7 +121,7 @@ export function ThreadMarkdownImageView(props: {
               style={{ alignSelf: "flex-start" }}
             >
               <View
-                className="items-center justify-center overflow-hidden rounded-[10px] bg-md-code-bg"
+                className="items-center justify-center overflow-hidden rounded-md bg-md-code-bg"
                 style={frameStyle}
               >
                 <ThreadMarkdownImageRequest

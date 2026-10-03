@@ -29,6 +29,7 @@ import {
   type NativeMarkdownTextStyle,
 } from "../../native/SelectableMarkdownText";
 import { resolveWorkspaceFilePath } from "./filePath";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 interface MarkdownPreviewStyles {
   readonly theme: PartialMarkdownTheme;
@@ -140,7 +141,7 @@ function useMarkdownPreviewStyles(renderImage?: MarkdownImageRenderer): Markdown
         },
         codeBlock: {
           backgroundColor: codeBackground,
-          borderRadius: 12,
+          borderRadius: MOBILE_RADIUS.md,
           color: codeText,
           fontFamily: MONO_FONT_FAMILY,
           padding: 12,

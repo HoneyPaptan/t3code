@@ -13,6 +13,7 @@ import { tryOpenExternalUrl } from "../../lib/openExternalUrl";
 import { useUniwindTheme } from "../../lib/useUniwindTheme";
 import { NATIVE_LIQUID_GLASS_SUPPORTED } from "../../native/native-glass";
 import type { GitActionProgress } from "../../state/use-vcs-action-state";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 const OVERLAY_LAYOUT_TRANSITION = LinearTransition.duration(220);
 const OVERLAY_TOP_GAP = 8;
@@ -109,7 +110,7 @@ function OverlayContent(props: { readonly progress: GitActionProgress }) {
         layout={OVERLAY_LAYOUT_TRANSITION}
         style={{
           borderCurve: "continuous",
-          borderRadius: 26,
+          borderRadius: MOBILE_RADIUS.xl,
           elevation: 12,
           shadowColor,
           shadowOffset: { width: 0, height: 8 },
@@ -126,7 +127,7 @@ function OverlayContent(props: { readonly progress: GitActionProgress }) {
           style={{
             borderColor: glassBorder,
             borderCurve: "continuous",
-            borderRadius: 26,
+            borderRadius: MOBILE_RADIUS.xl,
             borderWidth: StyleSheet.hairlineWidth,
             overflow: "hidden",
           }}
@@ -148,7 +149,7 @@ function OverlayContent(props: { readonly progress: GitActionProgress }) {
   return (
     <Animated.View
       layout={OVERLAY_LAYOUT_TRANSITION}
-      className={`flex-row items-center gap-2.5 rounded-[26px] border border-continuous px-3.5 py-3 shadow-lg shadow-black/10 ${bgClass}`}
+      className={`flex-row items-center gap-2.5 rounded-xl border border-continuous px-3.5 py-3 shadow-lg shadow-black/10 ${bgClass}`}
     >
       {content}
     </Animated.View>

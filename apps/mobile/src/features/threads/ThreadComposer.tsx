@@ -126,6 +126,7 @@ import {
   useThreadSettingsSheetPresentation,
   type NavigationWithFinishTransitioning,
 } from "./use-thread-settings-sheet-presentation";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 /**
  * Height of the collapsed composer (pill + vertical padding, excluding safe-area inset).
@@ -815,16 +816,14 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
           style={
             isExpanded
               ? {
-                  borderRadius: 26,
+                  borderRadius: MOBILE_RADIUS["2xl"],
                   minHeight: 140,
                   overflow: "hidden" as const,
                   paddingBottom: 6,
                   paddingTop: 14,
                 }
               : {
-                  // Keep the numeric radius close to the expanded card so the
-                  // shape morph stays bounded while rendering as a capsule.
-                  borderRadius: 27,
+                  borderRadius: MOBILE_RADIUS["2xl"],
                   overflow: "hidden" as const,
                   paddingVertical: 2,
                 }

@@ -131,7 +131,7 @@ export const ReviewCommentCard = memo(function ReviewCommentCard(props: {
 
   return (
     <View
-      className="w-full overflow-hidden rounded-[16px] border border-continuous"
+      className="w-full overflow-hidden rounded-xl border border-continuous"
       style={{
         backgroundColor: props.colors.background,
         borderColor: props.colors.border,
@@ -142,7 +142,7 @@ export const ReviewCommentCard = memo(function ReviewCommentCard(props: {
         style={{ borderColor: props.colors.border }}
       >
         <View
-          className="size-6 items-center justify-center rounded-[7px] border-continuous"
+          className="size-6 items-center justify-center rounded-sm border-continuous"
           style={{ backgroundColor: props.colors.mutedBackground }}
         >
           <SymbolView

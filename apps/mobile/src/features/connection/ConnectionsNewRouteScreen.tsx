@@ -221,7 +221,7 @@ export function ConnectionsNewRouteScreen({
         <View collapsable={false} className="gap-5">
           {showScanner ? (
             cameraPermission?.granted ? (
-              <View className="overflow-hidden rounded-[24px] border-continuous">
+              <View className="overflow-hidden rounded-xl border-continuous">
                 <CameraView
                   barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
                   onBarcodeScanned={handleQrScan}
@@ -229,7 +229,7 @@ export function ConnectionsNewRouteScreen({
                 />
               </View>
             ) : (
-              <View className="items-center gap-3 rounded-[24px] border-continuous bg-grouped-card px-5 py-8">
+              <View className="items-center gap-3 rounded-xl border-continuous bg-grouped-card px-5 py-8">
                 <Text className="text-center text-sm leading-normal text-foreground-muted">
                   Camera permission is required to scan a QR code.
                 </Text>
@@ -245,7 +245,7 @@ export function ConnectionsNewRouteScreen({
               </View>
             )
           ) : (
-            <View collapsable={false} className="gap-4 rounded-[24px] bg-grouped-card p-4">
+            <View collapsable={false} className="gap-4 rounded-xl bg-grouped-card p-4">
               <ConnectionFormField
                 label="Host"
                 autoCapitalize="none"

@@ -38,6 +38,7 @@ import {
 } from "./commandPaletteItems";
 import { parseActiveThreadPath, type HardwareKeyboardCommand } from "./hardwareKeyboardCommands";
 import { threadJumpIndex } from "./threadKeyboardShortcuts";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 const PALETTE_COMMANDS: ReadonlyArray<HardwareKeyboardCommand> = [
   "commandPalette",
@@ -437,7 +438,7 @@ export function CommandPalette(props: {
               style={{
                 width: Math.min(600, width - 32),
                 height: Math.min(520, height - 80),
-                borderRadius: 20,
+                borderRadius: MOBILE_RADIUS.xl,
               }}
             >
               <View className="px-3 pb-2.5 pt-3.5">

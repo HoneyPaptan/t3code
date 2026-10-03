@@ -24,7 +24,7 @@ export function RequestActionButton({
       disabled={disabled}
       className={cn(
         "items-center justify-center active:opacity-70 disabled:opacity-50",
-        size === "large" ? "rounded-2xl px-4 py-3.5" : "rounded-[14px] px-3.5 py-3",
+        size === "large" ? "rounded-2xl px-4 py-3.5" : "rounded-lg px-3.5 py-3",
         tone === "primary" ? "bg-primary" : tone === "danger" ? "bg-danger" : "bg-subtle-strong",
       )}
     >

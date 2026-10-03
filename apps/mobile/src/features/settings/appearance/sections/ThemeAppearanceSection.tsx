@@ -151,7 +151,7 @@ function ThemeCard(props: {
   );
 
   return (
-    <View className="min-w-36 flex-1 basis-[47%] gap-3 rounded-[24px] border border-border bg-grouped-card px-2 py-4">
+    <View className="min-w-36 flex-1 basis-[47%] gap-3 rounded-xl border border-border bg-grouped-card px-2 py-4">
       <Pressable
         accessibilityHint="Sets both light and dark appearances"
         accessibilityLabel={`${props.label} theme`}
@@ -160,7 +160,7 @@ function ThemeCard(props: {
           disabled: props.disabled,
           selected: props.lightSelected && props.darkSelected,
         }}
-        className="absolute inset-0 rounded-[24px] active:bg-subtle"
+        className="absolute inset-0 rounded-xl active:bg-subtle"
         disabled={props.disabled}
         onPress={props.onSelectBoth}
       />
@@ -212,8 +212,8 @@ function ModePreview(props: { readonly mode: MobileThemeMode; readonly themeIds:
   const { themeVariablesByAppearance } = useAppearancePreferences();
   if (props.mode === "system") {
     return (
-      <View className="h-24 w-14 self-center rounded-[16px] border-[1.5px] border-border bg-drawer p-[3px]">
-        <View className="flex-1 flex-row overflow-hidden rounded-[11px]">
+      <View className="h-24 w-14 self-center rounded-lg border-[1.5px] border-border bg-drawer p-[3px]">
+        <View className="flex-1 flex-row overflow-hidden rounded-md">
           <ScopedTheme theme={getMobileUniwindThemeName(props.themeIds.light, "light")}>
             <ScopedVariables variables={themeVariablesByAppearance.light}>
               <PreviewPane compact />
@@ -232,8 +232,8 @@ function ModePreview(props: { readonly mode: MobileThemeMode; readonly themeIds:
 
   return (
     <ScopedTheme theme={getMobileUniwindThemeName(props.themeIds[props.mode], props.mode)}>
-      <View className="h-24 w-14 self-center rounded-[16px] border-[1.5px] border-border bg-drawer p-[3px]">
-        <View className="flex-1 flex-row overflow-hidden rounded-[11px]">
+      <View className="h-24 w-14 self-center rounded-lg border-[1.5px] border-border bg-drawer p-[3px]">
+        <View className="flex-1 flex-row overflow-hidden rounded-md">
           <ScopedVariables variables={themeVariablesByAppearance[props.mode]}>
             <PreviewPane />
           </ScopedVariables>
@@ -258,7 +258,7 @@ function ModeCard(props: {
       accessibilityRole="radio"
       accessibilityState={{ checked: props.selected, disabled: props.disabled }}
       className={cn(
-        "min-w-0 flex-1 gap-2 rounded-[24px] p-2 active:scale-[0.97]",
+        "min-w-0 flex-1 gap-2 rounded-xl p-2 active:scale-[0.97]",
         props.selected
           ? "border-2 border-primary bg-subtle"
           : "border border-border bg-grouped-card",

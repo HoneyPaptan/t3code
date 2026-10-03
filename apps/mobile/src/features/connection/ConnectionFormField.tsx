@@ -19,11 +19,7 @@ export function ConnectionFormField({ label, className, ...inputProps }: Connect
       >
         {label}
       </AppText>
-      <AppTextInput
-        {...inputProps}
-        accessibilityLabel={label}
-        className="rounded-[14px] px-4 py-3.5"
-      />
+      <AppTextInput {...inputProps} accessibilityLabel={label} className="rounded-lg px-4 py-3.5" />
     </View>
   );
 }

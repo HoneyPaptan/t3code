@@ -52,6 +52,7 @@ import {
 } from "./threadListV2";
 import { QueuedMessageIcon } from "./queued-message-icon";
 import { ThreadSearchMatchExcerpt } from "./thread-search-match";
+import { MOBILE_RADIUS } from "../../lib/radius";
 
 /**
  * Thread List v2 renders one flat native list: rich edge-to-edge rows for
@@ -97,7 +98,7 @@ const LEGACY_MENU_ACTIONS: MenuAction[] = [
 ];
 
 /** Rounded-row radius shared with the v1 sidebar rows. */
-const SIDEBAR_V2_ROW_RADIUS = 12;
+const SIDEBAR_V2_ROW_RADIUS = MOBILE_RADIUS.md;
 
 function ThreadListV2Section(props: {
   readonly label: string;

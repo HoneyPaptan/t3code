@@ -92,7 +92,7 @@ export function ConfirmDialogHost() {
     >
       {presented === null ? null : (
         <View className="flex-1 items-center justify-center bg-backdrop px-8">
-          <View className="w-full rounded-[24px] bg-card px-6 pb-4 pt-5">
+          <View className="w-full rounded-xl bg-card px-6 pb-4 pt-5">
             <AppText className="text-lg font-t3-medium">{presented.request.title}</AppText>
             {presented.kind === "confirm" && presented.request.message !== undefined ? (
               <AppText className="mt-2 text-sm text-foreground-secondary">

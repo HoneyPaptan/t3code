@@ -24,11 +24,8 @@ export function LocalEnvironmentList({
 }) {
   if (environments.length === 0) {
     return (
-      <View
-        collapsable={false}
-        className="items-center gap-3 rounded-[24px] bg-grouped-card px-6 py-8"
-      >
-        <View className="h-12 w-12 items-center justify-center rounded-[16px] bg-subtle">
+      <View collapsable={false} className="items-center gap-3 rounded-xl bg-grouped-card px-6 py-8">
+        <View className="h-12 w-12 items-center justify-center rounded-lg bg-subtle">
           <SymbolView
             name="point.3.connected.trianglepath.dotted"
             size={20}
@@ -45,7 +42,7 @@ export function LocalEnvironmentList({
   }
 
   return (
-    <View collapsable={false} className="overflow-hidden rounded-[24px] bg-grouped-card">
+    <View collapsable={false} className="overflow-hidden rounded-xl bg-grouped-card">
       {environments.map((environment) => (
         <View key={environment.environmentId} collapsable={false}>
           <ConnectionEnvironmentRow
