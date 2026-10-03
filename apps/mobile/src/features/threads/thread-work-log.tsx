@@ -1028,7 +1028,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             {reasoning ? (
               props.renderReasoning(reasoning.text)
             ) : (
-              <Text selectable className="font-mono text-2xs leading-normal text-foreground-muted">
+              <Text selectable className="font-mono text-xs leading-normal text-foreground-muted">
                 {fullDetail}
               </Text>
             )}
@@ -1149,7 +1149,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
           props.onToggle();
         }}
         onLongPress={props.onCopy}
-        className="rounded-xl border border-border-subtle bg-card px-2.5 py-2 active:bg-subtle"
+        className="rounded-lg border border-border-subtle bg-card px-2.5 py-2 active:bg-subtle"
       >
         <View className="flex-row items-center gap-2">
           <View className="h-6 w-6 shrink-0 items-center justify-center">
@@ -1215,7 +1215,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
                 {member.detail ? (
                   <Text
                     selectable
-                    className="pl-3 font-mono text-2xs leading-normal text-foreground-muted"
+                    className="pl-3 font-mono text-xs leading-normal text-foreground-muted"
                     numberOfLines={expanded ? 6 : 1}
                   >
                     {member.detail}

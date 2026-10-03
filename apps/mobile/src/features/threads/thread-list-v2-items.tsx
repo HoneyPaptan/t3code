@@ -328,7 +328,7 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
         ) : (
           <Text
             className={cn(
-              "text-xs text-foreground-tertiary",
+              "text-xs text-foreground-muted/60",
               sidebarPane && "text-drawer-foreground-muted",
             )}
           >
@@ -372,7 +372,7 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
             {props.environmentLabel ? (
               <Text
                 className={cn(
-                  "text-xs text-foreground-tertiary",
+                  "text-xs text-foreground-muted/60",
                   sidebarPane && "text-drawer-foreground-muted",
                 )}
               >
