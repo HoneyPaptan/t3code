@@ -348,7 +348,10 @@ export function NewTaskRouteScreen({ route }: StaticScreenProps<NewTaskRoutePara
                   </View>
                   <View className="min-w-0 flex-1">
                     <Text className="text-base font-t3-bold leading-snug">No project</Text>
-                    <Text className="text-xs leading-snug text-foreground-muted" numberOfLines={1}>
+                    <Text
+                      className="text-xs leading-snug text-foreground-muted/60"
+                      numberOfLines={1}
+                    >
                       Start a task without a project
                     </Text>
                   </View>
@@ -507,7 +510,7 @@ export function NewTaskRouteScreen({ route }: StaticScreenProps<NewTaskRoutePara
                           {scope.title}
                         </Text>
                         <Text
-                          className="text-xs leading-snug text-foreground-muted"
+                          className="text-xs leading-snug text-foreground-muted/60"
                           ellipsizeMode="middle"
                           numberOfLines={1}
                         >

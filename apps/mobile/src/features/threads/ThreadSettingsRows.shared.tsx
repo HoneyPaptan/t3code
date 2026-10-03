@@ -83,7 +83,7 @@ export function ModelRowContent(
           </View>
           {props.option.subtitle ? (
             <Text
-              className="text-xs text-foreground-muted"
+              className="text-xs text-foreground-muted/60"
               numberOfLines={props.labelNumberOfLines}
             >
               {props.option.subtitle}
@@ -131,7 +131,7 @@ export function ChoiceRowContent(props: ChoiceRowProps & RowSelectionProps) {
       <View className="min-w-0 flex-1 gap-0.5">
         <Text className="text-base font-t3-medium text-foreground">{props.label}</Text>
         {props.description ? (
-          <Text className="text-sm leading-5 text-foreground-muted">{props.description}</Text>
+          <Text className="text-sm leading-5 text-foreground-muted/60">{props.description}</Text>
         ) : null}
       </View>
       {props.trailingSelection}

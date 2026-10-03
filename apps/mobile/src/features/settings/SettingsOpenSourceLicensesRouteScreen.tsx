@@ -51,7 +51,7 @@ function LicenseRow(props: {
           <Text className="text-base font-t3-medium text-foreground" numberOfLines={2}>
             {props.entry.name}
           </Text>
-          <Text className="text-sm text-foreground-muted" numberOfLines={2}>
+          <Text className="text-sm text-foreground-muted/60" numberOfLines={2}>
             {props.entry.version ? `${props.entry.version} · ` : ""}
             {props.entry.license}
           </Text>

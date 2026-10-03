@@ -60,7 +60,7 @@ export function GitHubRoutingSettings() {
                   <Text className="text-base font-t3-bold text-foreground">
                     {entry.target.label}
                   </Text>
-                  <Text className="text-xs text-foreground-muted" numberOfLines={1}>
+                  <Text className="text-xs text-foreground-muted/60" numberOfLines={1}>
                     {connectionCatalogDisplayUrl(entry) ?? "T3 Connect"}
                   </Text>
                 </View>
@@ -95,7 +95,7 @@ export function GitHubRoutingSettings() {
                     >
                       <View className="min-w-0 flex-1 gap-1">
                         <Text className="text-base text-foreground">{option.label}</Text>
-                        <Text className="text-sm leading-normal text-foreground-muted">
+                        <Text className="text-sm leading-normal text-foreground-muted/60">
                           {option.description}
                         </Text>
                       </View>
@@ -114,7 +114,7 @@ export function GitHubRoutingSettings() {
           );
         })}
       </SettingsSection>
-      <Text className="px-2 text-sm text-foreground-muted">
+      <Text className="px-2 text-sm text-foreground-muted/60">
         Choose environments you trust to share PR data and use each other's GitHub access. Enable
         both environments. This applies only to this client.
       </Text>
