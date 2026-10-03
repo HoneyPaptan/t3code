@@ -35,7 +35,7 @@ export function TerminalContextSheet(props: {
       version: 1 as const,
       kind: "terminal" as const,
       contextId: ComposerContextId.make(uuidv4()),
-      label: `${props.terminalLabel} · visible lines ${range.start + 1}–${range.end + 1}`,
+      label: `${props.terminalLabel} · visible lines ${range.start + 1} to ${range.end + 1}`,
       terminalId: props.terminalId,
       terminalLabel: `${props.terminalLabel} (visible output)`,
       lineStart: range.start + 1,
@@ -108,7 +108,7 @@ export function TerminalContextSheet(props: {
           accessibilityRole="button"
           disabled={!selectedText.trim() || tooLarge}
           onPress={attach}
-          className="m-4 mb-10 rounded-xl bg-subtle p-4"
+          className="m-4 mb-10 rounded-lg bg-subtle p-3"
         >
           <Text className="text-center text-foreground">Attach selected output</Text>
         </Pressable>
