@@ -92,7 +92,7 @@ function compareEntries(left: ServerFontEntry, right: ServerFontEntry): number {
 
 export function parseFontCatalog(
   output: string,
-  pathOps: Pick<Path.Path["Service"], "extname" | "basename">,
+  pathOps: Pick<Path.Path, "extname" | "basename">,
 ): ReadonlyArray<ServerFontEntry> {
   const entriesById = new Map<string, ServerFontEntry>();
   for (const line of output.split(/\r?\n/u)) {
@@ -103,7 +103,7 @@ export function parseFontCatalog(
 }
 
 const scanInstalledFonts = (
-  path: Path.Path["Service"],
+  path: Path.Path,
   spawner: ChildProcessSpawner.ChildProcessSpawner["Service"],
 ) =>
   spawner

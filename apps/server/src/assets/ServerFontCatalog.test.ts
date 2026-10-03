@@ -2,11 +2,11 @@ import * as NodeServices from "@effect/platform-node/NodeServices";
 import { describe, expect, it } from "@effect/vitest";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
+import * as Path from "effect/Path";
 import * as PlatformError from "effect/PlatformError";
 import * as Sink from "effect/Sink";
 import * as Stream from "effect/Stream";
 import { ChildProcessSpawner } from "effect/unstable/process";
-import * as NodePath from "node:path";
 
 import * as ServerFontCatalog from "./ServerFontCatalog.ts";
 
@@ -21,7 +21,11 @@ const FIXTURE = [
   "",
 ].join("\n");
 
-const posixPath = { extname: NodePath.posix.extname, basename: NodePath.posix.basename };
+const posixPath = Effect.runSync(
+  Effect.gen(function* () {
+    return yield* Path.Path;
+  }).pipe(Effect.provide(Path.layer)),
+);
 
 function spawnerPrinting(output: string) {
   return ChildProcessSpawner.make(() =>
@@ -101,7 +105,9 @@ describe("ServerFontCatalog service", () => {
       const catalog = yield* ServerFontCatalog.ServerFontCatalog;
       const fonts = yield* catalog.list;
       expect(fonts).toHaveLength(3);
-      expect(JSON.stringify(fonts)).not.toContain("/usr/share");
+      expect(fonts.flatMap((font) => Object.values(font).map(String))).not.toContainEqual(
+        expect.stringContaining("/usr/share"),
+      );
       const found = yield* catalog.find(fonts[0]!.fontId);
       expect(found?.absolutePath).toBe("/usr/share/fonts/OTF/GeistMono-Regular.otf");
     }).pipe(Effect.provide(catalogLayerPrinting(FIXTURE))),
