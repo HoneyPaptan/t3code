@@ -112,7 +112,7 @@ export function ConfirmDialogHost() {
               />
             ) : null}
             <View className="mt-5 flex-row justify-end gap-1">
-              <View className="overflow-hidden rounded-full">
+              <View className="overflow-hidden rounded-lg">
                 <Pressable
                   accessibilityRole="button"
                   className="min-h-10 items-center justify-center px-4 active:bg-subtle"
@@ -123,7 +123,7 @@ export function ConfirmDialogHost() {
                   </AppText>
                 </Pressable>
               </View>
-              <View className="overflow-hidden rounded-full">
+              <View className="overflow-hidden rounded-lg">
                 <Pressable
                   accessibilityRole="button"
                   disabled={confirmDisabled}

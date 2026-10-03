@@ -47,7 +47,7 @@ export function CompactBrandTitle(
         Code
       </Text>
       <View
-        className="rounded-full bg-subtle px-1.5 py-0.5"
+        className="rounded-sm bg-subtle px-1.5 py-0.5"
         style={
           Platform.OS === "android"
             ? { paddingHorizontal: 5.25 * scale, paddingVertical: 1.75 * scale }

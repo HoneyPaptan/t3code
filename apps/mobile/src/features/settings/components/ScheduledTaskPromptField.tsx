@@ -44,7 +44,7 @@ export function ScheduledTaskPromptField(props: {
           className="max-h-40 min-h-24 font-sans text-base text-foreground"
         />
         {showsIdleTrigger ? (
-          <View className="absolute right-0 bottom-0 rounded-full bg-card">
+          <View className="absolute right-0 bottom-0 rounded-lg bg-card">
             <ComposerDictationStartAction
               state={voice.state}
               isAvailable={voice.isAvailable}

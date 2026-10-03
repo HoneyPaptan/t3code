@@ -197,7 +197,7 @@ function DeviceStreamDocumentView({
           {status === "error" ? (
             <Pressable
               accessibilityRole="button"
-              className="rounded-full border border-secondary-border bg-secondary px-6 py-3"
+              className="rounded-lg border border-secondary-border bg-secondary px-6 py-3"
               onPress={onRetry}
             >
               <AppText className="text-secondary-foreground">Reconnect</AppText>

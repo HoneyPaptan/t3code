@@ -262,8 +262,8 @@ export function ResetCredits(props: {
           onPress={confirm}
           className={
             dense
-              ? "rounded-full bg-subtle-strong px-2.5 py-1"
-              : "min-h-[44px] justify-center rounded-full bg-subtle-strong px-3 py-1.5"
+              ? "rounded-sm bg-subtle-strong px-2.5 py-1"
+              : "min-h-[44px] justify-center rounded-lg bg-subtle-strong px-3 py-1.5"
           }
         >
           <Text

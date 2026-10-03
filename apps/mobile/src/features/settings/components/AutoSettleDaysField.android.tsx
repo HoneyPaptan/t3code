@@ -23,7 +23,7 @@ export function AutoSettleDaysField(props: AutoSettleDaysFieldProps) {
       {/* Match the 32dp switch track while retaining 48dp button touch targets. */}
       <View
         pointerEvents="none"
-        className="absolute inset-x-0 rounded-full bg-subtle"
+        className="absolute inset-x-0 rounded-lg bg-subtle"
         style={{ height: 32 }}
       />
       <MaterialIconButton

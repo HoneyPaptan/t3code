@@ -28,7 +28,7 @@ export function MaterialButton(props: MaterialButtonProps) {
       disabled={disabled}
       onPress={props.onPress}
       className={cn(
-        "min-h-12 justify-center rounded-full px-6 active:opacity-70",
+        "min-h-12 justify-center rounded-lg px-6 active:opacity-70",
         props.fullWidth ? "w-full" : "self-start",
         disabled ? "bg-subtle-strong" : containerClassName,
       )}

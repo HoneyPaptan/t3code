@@ -529,7 +529,7 @@ export function BranchPickerScreen(props: {
           {!props.loading && props.error ? (
             <Pressable
               accessibilityRole="button"
-              className="rounded-full bg-card px-4 py-2 active:opacity-70"
+              className="rounded-lg bg-card px-4 py-2 active:opacity-70"
               onPress={props.onRefresh}
             >
               <Text className="text-sm font-t3-medium text-foreground">Try again</Text>
@@ -580,7 +580,7 @@ export function BranchPickerScreen(props: {
             autoCapitalize="none"
             autoCorrect={false}
             accessibilityLabel="Find a branch"
-            className="h-12 rounded-full border border-input-border bg-input px-4 font-sans text-base text-foreground"
+            className="h-12 rounded-lg border border-input-border bg-input px-4 font-sans text-base text-foreground"
             selectionColorClassName="accent-focus/32"
             cursorColorClassName="accent-focus"
             selectionHandleColorClassName="accent-focus"

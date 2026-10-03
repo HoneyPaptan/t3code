@@ -170,7 +170,7 @@ export function PendingUserInputCard(props: PendingUserInputCardProps) {
       pointerEvents={props.collapsed ? "auto" : "none"}
       accessibilityElementsHidden={!props.collapsed}
       importantForAccessibility={props.collapsed ? "auto" : "no-hide-descendants"}
-      className="flex-row items-center gap-2 rounded-full border border-border bg-card-alt py-1.5 pl-4 pr-1.5"
+      className="flex-row items-center gap-2 rounded-lg border border-border bg-card-alt py-1.5 pl-4 pr-1.5"
     >
       <Pressable
         accessibilityRole="button"
@@ -244,7 +244,7 @@ export function PendingUserInputCard(props: PendingUserInputCardProps) {
           </Text>
           <Text className="font-t3-bold text-lg text-foreground">Fill in the pending answers</Text>
         </View>
-        <View className="h-8 w-8 items-center justify-center rounded-full bg-subtle-strong">
+        <View className="h-8 w-8 items-center justify-center rounded-lg bg-subtle-strong">
           <SymbolView
             name="chevron.down"
             size={13}

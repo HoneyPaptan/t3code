@@ -54,7 +54,7 @@ function SubagentAvatar(props: {
   return (
     <View
       accessible={false}
-      className="h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-card"
+      className="h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-card"
     >
       <ProviderIcon provider={props.item.driver} iconUrl={props.iconUrl} size={15} />
     </View>
@@ -114,7 +114,7 @@ export function ThreadSubagentGroup(props: {
               </View>
             ))}
             {agents.length > 3 ? (
-              <View className="-ml-2 h-7 w-7 items-center justify-center rounded-full border border-border bg-card">
+              <View className="-ml-2 h-7 w-7 items-center justify-center rounded-lg border border-border bg-card">
                 <Text className="text-2xs text-foreground-muted">+{agents.length - 3}</Text>
               </View>
             ) : null}

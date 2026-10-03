@@ -22,7 +22,7 @@ export function EmptyState(props: {
           <View className="mt-5">{props.action}</View>
         ) : props.actionLabel && props.onAction ? (
           <Pressable
-            className="mt-5 rounded-full bg-primary px-5 py-3 active:opacity-70"
+            className="mt-5 rounded-lg bg-primary px-5 py-3 active:opacity-70"
             onPress={props.onAction}
           >
             <Text className="text-sm font-t3-bold text-primary-foreground">
@@ -44,7 +44,7 @@ export function EmptyState(props: {
         <View className="mt-4 self-start">{props.action}</View>
       ) : props.actionLabel && props.onAction ? (
         <Pressable
-          className="mt-4 self-start rounded-full bg-primary px-4 py-2.5 active:opacity-70"
+          className="mt-4 self-start rounded-lg bg-primary px-4 py-2.5 active:opacity-70"
           onPress={props.onAction}
         >
           <Text className="text-sm font-t3-bold text-primary-foreground">{props.actionLabel}</Text>
