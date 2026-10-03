@@ -173,7 +173,7 @@ function OpenVideoPreviewModal(props: {
         {playback.uri === null && !playback.unavailable ? (
           <View className="flex-1 items-center justify-center gap-3 px-6">
             <ActivityIndicator colorClassName="accent-scrim-foreground" />
-            <AppText className="text-sm text-scrim-foreground/80">Loading video...</AppText>
+            <AppText className="text-sm text-scrim-foreground/70">Loading video...</AppText>
           </View>
         ) : (
           <MediaVideoPlayer
@@ -188,7 +188,7 @@ function OpenVideoPreviewModal(props: {
           />
         )}
         {playback.error ? (
-          <AppText accessibilityRole="alert" className="px-4 pb-3 text-sm text-scrim-foreground/80">
+          <AppText accessibilityRole="alert" className="px-4 pb-3 text-sm text-scrim-foreground/70">
             {playback.error}
           </AppText>
         ) : null}

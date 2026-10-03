@@ -83,7 +83,7 @@ function LoadedMediaVideo(props: {
       />
       {loadState === "error" || (loadState === "complete" && status === "error") ? (
         <View className="absolute inset-0 items-center justify-center gap-2 bg-scrim px-4">
-          <AppText className="text-center text-sm text-scrim-foreground/80">
+          <AppText className="text-center text-sm text-scrim-foreground/70">
             Video unavailable
           </AppText>
           <Pressable
@@ -162,7 +162,7 @@ function MediaVideoPlayerContent(props: MediaVideoPlayerProps) {
               />
             ) : null}
             {props.unavailable ? (
-              <AppText className="text-sm text-scrim-foreground/80">Video unavailable</AppText>
+              <AppText className="text-sm text-scrim-foreground/70">Video unavailable</AppText>
             ) : props.uri === null ? (
               <ActivityIndicator
                 colorClassName="accent-scrim-foreground"
