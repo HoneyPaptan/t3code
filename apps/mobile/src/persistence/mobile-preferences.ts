@@ -9,6 +9,7 @@ import type { ProviderInstanceId, SidebarProjectGroupingMode } from "@t3tools/co
 import type { ComposerEnterBehavior } from "../lib/composerEnterBehavior";
 import type { FollowUpBehavior } from "../lib/followUpBehavior";
 import { MOBILE_THEME_IDS, type MobileThemeId, type MobileThemeMode } from "../lib/mobileTheme";
+import { sanitizeFontPreferences, type FontPreferences } from "../lib/fontPreferences";
 import * as MobileDatabase from "./mobile-database";
 import * as MobileSecureStorage from "./mobile-secure-storage";
 import { MobileStorageDecodeError, MobileStorageEncodeError } from "./mobile-storage";
@@ -27,6 +28,7 @@ export interface Preferences {
   readonly markdownFontSize?: number;
   readonly codeFontSize?: number | null;
   readonly codeWordBreak?: boolean;
+  readonly fonts?: FontPreferences;
   readonly connectOnboardingOptOutAccounts?: ReadonlyArray<string>;
   readonly collapsedProjectGroups?: readonly string[];
   /** What the Return key does in the composer on a hardware keyboard. iOS only. */
@@ -100,6 +102,7 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     markdownFontSize?: number;
     codeFontSize?: number | null;
     codeWordBreak?: boolean;
+    fonts?: FontPreferences;
     connectOnboardingOptOutAccounts?: ReadonlyArray<string>;
     collapsedProjectGroups?: readonly string[];
     composerEnterBehavior?: ComposerEnterBehavior;
@@ -151,6 +154,8 @@ function sanitizePreferences(parsed: Preferences): Preferences {
     preferences.codeFontSize = parsed.codeFontSize;
   }
   if (typeof parsed.codeWordBreak === "boolean") preferences.codeWordBreak = parsed.codeWordBreak;
+  const fonts = sanitizeFontPreferences(parsed.fonts);
+  if (fonts !== undefined) preferences.fonts = fonts;
   if (Array.isArray(parsed.connectOnboardingOptOutAccounts)) {
     preferences.connectOnboardingOptOutAccounts = parsed.connectOnboardingOptOutAccounts.filter(
       (account): account is string => typeof account === "string",
