@@ -202,7 +202,7 @@ export function ComposerContextSheet(props: {
           />
         ) : null}
         <View
-          className="overflow-hidden rounded-t-3xl bg-sheet-solid"
+          className="overflow-hidden rounded-t-2xl bg-sheet-solid"
           style={
             Platform.OS === "android"
               ? {
@@ -227,8 +227,8 @@ export function ComposerContextSheet(props: {
                 {terminal?.terminalLabel ?? props.label}
               </Text>
               {terminal ? (
-                <Text className="text-xs text-foreground-muted">
-                  Lines {terminal.lineStart}–{terminal.lineEnd}
+                <Text className="text-xs text-foreground-muted/60">
+                  Lines {terminal.lineStart} to {terminal.lineEnd}
                 </Text>
               ) : null}
             </View>
@@ -362,7 +362,7 @@ export function ComposerContextSheet(props: {
                             threadId: record.threadId,
                           })
                         }
-                        className="rounded-xl bg-subtle p-4"
+                        className="rounded-lg bg-subtle p-3"
                       >
                         <Text className="text-foreground">Open thread</Text>
                       </Pressable>
@@ -382,7 +382,7 @@ export function ComposerContextSheet(props: {
                       <Pressable
                         accessibilityRole="button"
                         onPress={props.onOpenSkill}
-                        className="rounded-xl bg-subtle p-4"
+                        className="rounded-lg bg-subtle p-3"
                       >
                         <Text className="text-foreground">View instructions</Text>
                       </Pressable>
@@ -414,7 +414,7 @@ export function ComposerContextSheet(props: {
                     Alert.alert("Could not open pull request", "Try again when connected."),
                   );
                 }}
-                className="rounded-xl bg-subtle p-4"
+                className="rounded-lg bg-subtle p-3"
               >
                 <Text className="text-foreground">Open pull request</Text>
               </Pressable>
@@ -423,7 +423,7 @@ export function ComposerContextSheet(props: {
               <Pressable
                 accessibilityRole="button"
                 onPress={props.onOpenAttachment}
-                className="rounded-xl bg-subtle p-4"
+                className="rounded-lg bg-subtle p-3"
               >
                 <Text className="text-foreground">Open attachment</Text>
               </Pressable>
@@ -432,7 +432,7 @@ export function ComposerContextSheet(props: {
               <Pressable
                 accessibilityRole="button"
                 onPress={props.onOpenPullRequest}
-                className="rounded-xl bg-subtle p-4"
+                className="rounded-lg bg-subtle p-3"
               >
                 <Text className="text-foreground">Open pull request</Text>
               </Pressable>
@@ -441,7 +441,7 @@ export function ComposerContextSheet(props: {
               <Pressable
                 accessibilityRole="button"
                 onPress={props.onRemove}
-                className="rounded-xl bg-subtle p-4"
+                className="rounded-lg bg-subtle p-3"
               >
                 <Text className="text-foreground">Remove from draft</Text>
               </Pressable>

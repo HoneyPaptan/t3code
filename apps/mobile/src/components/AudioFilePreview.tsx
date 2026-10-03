@@ -44,7 +44,7 @@ export function AudioFilePreview(props: { uri: string; onRetry: () => void }) {
             else if (status.didJustFinish || status.currentTime >= status.duration) seek(0, true);
             else player.play();
           }}
-          className="rounded-xl bg-subtle px-6 py-4"
+          className="rounded-lg bg-subtle px-6 py-3"
         >
           <Text className="text-foreground">
             {!status.isLoaded ? "Loading…" : status.playing ? "Pause" : "Play"}

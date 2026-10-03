@@ -136,7 +136,7 @@ export function ConfirmDialogHost() {
                       presented.kind === "confirm" &&
                         presented.request.destructive &&
                         "text-danger-foreground",
-                      confirmDisabled && "text-foreground-tertiary",
+                      confirmDisabled && "text-foreground-muted/60",
                     )}
                   >
                     {presented.request.confirmText}

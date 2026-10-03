@@ -115,7 +115,7 @@ export function ComposerContextAttachment(props: {
           accessibilityRole="button"
           disabled={sharing}
           onPress={() => void share()}
-          className="rounded-xl bg-subtle p-4"
+          className="rounded-lg bg-subtle p-3"
         >
           <Text className="text-foreground">
             {sharing ? "Opening attachment…" : "Open or share attachment"}
