@@ -33,6 +33,7 @@ import * as WorkspacePaths from "../workspace/WorkspacePaths.ts";
 import { assetFileResponse } from "../http.ts";
 import { ASSET_ROUTE_PREFIX, issueAssetUrl, resolveAsset } from "./AssetAccess.ts";
 import * as NativeAppIconResolver from "./NativeAppIconResolver.ts";
+import * as ServerFontCatalog from "./ServerFontCatalog.ts";
 import { openMediaFile } from "./MediaFile.ts";
 import { symlinksSupported } from "@t3tools/shared/testing/symlinks";
 import * as GitHubCredentials from "../sourceControl/GitHubCredentials.ts";
@@ -122,6 +123,7 @@ const layerTest = Layer.mergeAll(
     Layer.provide(T3ProjectFileLoader.layer),
   ),
   NativeAppIconResolver.layer.pipe(Layer.provide(layerConfig)),
+  ServerFontCatalog.layer,
   ServerSecretStore.layer.pipe(Layer.provide(layerConfig)),
 ).pipe(Layer.provideMerge(NodeServices.layer));
 
@@ -981,6 +983,44 @@ describe("AssetAccess", () => {
       expect(result.expiresAt).toBeGreaterThan(0);
     }).pipe(Effect.provide(layerTest)),
   );
+
+  it.effect("signs server fonts by id and resolves them through the catalog only", () => {
+    const font = {
+      fontId: "0123456789abcdef",
+      family: "Test Sans",
+      style: "Regular",
+      weight: 400,
+      italic: false,
+      format: "ttf" as const,
+      fileName: "TestSans-Regular.ttf",
+      absolutePath: "/usr/share/fonts/test/TestSans-Regular.ttf",
+    };
+    const catalogLayer = Layer.succeed(
+      ServerFontCatalog.ServerFontCatalog,
+      ServerFontCatalog.ServerFontCatalog.of({
+        list: Effect.succeed([]),
+        find: (fontId) => Effect.succeed(fontId === font.fontId ? font : null),
+      }),
+    );
+    return Effect.gen(function* () {
+      const result = yield* issueAssetUrl({
+        resource: { _tag: "server-font", fontId: font.fontId },
+      });
+      expect(result.relativeUrl).toMatch(
+        new RegExp(`^${ASSET_ROUTE_PREFIX}/[^/]+/TestSans-Regular\\.ttf$`, "u"),
+      );
+      const suffix = result.relativeUrl.slice(`${ASSET_ROUTE_PREFIX}/`.length);
+      const separatorIndex = suffix.indexOf("/");
+      expect(
+        yield* resolveAsset(suffix.slice(0, separatorIndex), suffix.slice(separatorIndex + 1)),
+      ).toEqual({ kind: "file", path: font.absolutePath });
+
+      const unknown = yield* issueAssetUrl({
+        resource: { _tag: "server-font", fontId: "fedcba9876543210" },
+      }).pipe(Effect.flip);
+      expect(unknown._tag).toBe("AssetServerFontNotFoundError");
+    }).pipe(Effect.provide(Layer.provideMerge(catalogLayer, testLayer)));
+  });
 
   it.effect("serves document attachments inline when a viewer requests it", () =>
     Effect.gen(function* () {

@@ -181,6 +181,7 @@ import * as DeviceService from "./device/DeviceService.ts";
 import { remoteSshDeviceHosts } from "./device/localSshDeviceHost.ts";
 import * as PreviewManager from "./preview/Manager.ts";
 import { issueAssetUrl } from "./assets/AssetAccess.ts";
+import * as ServerFontCatalog from "./assets/ServerFontCatalog.ts";
 import { attachmentRelativePath, createDeterministicAttachmentId } from "./attachmentStore.ts";
 import { parseBase64DataUrl } from "./imageMime.ts";
 import { deletePendingAttachment, issueAttachmentUploadUrl } from "./assets/AttachmentUpload.ts";
@@ -1249,6 +1250,7 @@ const layerWsRpc = (
       const repositoryIdentityResolver =
         yield* RepositoryIdentityResolver.RepositoryIdentityResolver;
       const agentSessionScanner = yield* AgentSessionScanner.AgentSessionScanner;
+      const serverFontCatalog = yield* ServerFontCatalog.ServerFontCatalog;
       const agentSessionImporter = yield* AgentSessionImporter.AgentSessionImporter;
       const checkpointDiffQuery = yield* CheckpointDiffQuery.CheckpointDiffQuery;
       const keybindings = yield* Keybindings.Keybindings;
@@ -2675,6 +2677,8 @@ const layerWsRpc = (
         [WS_METHODS.agentSessionsScan]: () => agentSessionScanner.scan,
         [WS_METHODS.agentSessionsImport]: (input) =>
           agentSessionImporter.importRecentAgentThreads(input),
+        [WS_METHODS.fontsList]: () =>
+          Effect.map(serverFontCatalog.list, (fonts) => ({ fonts })),
         [WS_METHODS.assetsCreateUrl]: (input) =>
           Effect.gen(function* () {
             const path = yield* Path.Path;
@@ -2683,6 +2687,7 @@ const layerWsRpc = (
               input.resource._tag === "attachment" ||
               input.resource._tag === "native-app-icon" ||
               input.resource._tag === "tool-output-image" ||
+              input.resource._tag === "server-font" ||
               // GitHub media names the repository it authenticates through itself.
               input.resource._tag === "github-media" ||
               (input.resource._tag === "media-file" && path.isAbsolute(input.resource.path))
