@@ -46,7 +46,7 @@ export function MaterialListRow({
           {title}
         </AppText>
         {subtitle ? (
-          <AppText className="text-sm text-foreground-muted" numberOfLines={2}>
+          <AppText className="text-sm text-foreground-muted/60" numberOfLines={2}>
             {subtitle}
           </AppText>
         ) : null}

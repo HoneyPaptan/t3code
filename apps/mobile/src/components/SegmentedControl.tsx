@@ -52,7 +52,7 @@ export function SegmentedControl<Value extends number | string>(
             onPress={() => props.onSelect(option.value)}
             className={cn(
               "flex-1 items-center justify-center rounded-full",
-              compact ? "h-9" : "h-11",
+              compact ? "min-h-9" : "min-h-11",
             )}
           >
             <Text

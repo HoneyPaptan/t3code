@@ -12,6 +12,7 @@ import { Pressable, View, type StyleProp, type ViewStyle } from "react-native";
 import { useAndroidControlSizing } from "./useAndroidControlSizing";
 import { useAppearancePreferences } from "../features/settings/appearance/AppearancePreferencesProvider";
 import { resolveScaledTextRole } from "../lib/appearancePreferences";
+import { MOBILE_RADIUS } from "../lib/radius";
 
 /** Keep the animated width and icon positioning entirely inside Compose, not Yoga. */
 export function MaterialScrollComposeButton(props: {
@@ -98,7 +99,7 @@ export function MaterialScrollComposeButton(props: {
           bottom: 0,
           // Release the label area as soon as collapse starts, before native measurements arrive.
           width: props.expanded ? buttonWidth * scale : fabSize,
-          borderRadius: 16 * scale,
+          borderRadius: MOBILE_RADIUS.lg * scale,
           overflow: "hidden",
         }}
       />

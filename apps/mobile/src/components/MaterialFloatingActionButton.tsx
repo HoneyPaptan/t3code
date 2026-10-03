@@ -14,7 +14,7 @@ export function MaterialFloatingActionButton(
       accessibilityLabel={props.label}
       onPress={props.onPress}
       className={cn(
-        "min-h-14 min-w-14 flex-row items-center justify-center gap-2 rounded-2xl px-4",
+        "min-h-14 min-w-14 flex-row items-center justify-center gap-2 rounded-lg px-4",
         props.tone === "primary" ? "bg-primary" : "bg-secondary",
         props.className,
       )}
