@@ -239,13 +239,13 @@ export const ThreadListV2ShowMoreRow = memo(function ThreadListV2ShowMoreRow(pro
 
 function ThreadListV2ProjectLabel(props: {
   readonly projectTitle: string | null;
-  readonly projectIcon: EnvironmentProject["projectIcon"] | undefined;
+  readonly project: EnvironmentProject | null;
   readonly textClassName: string;
 }) {
   return (
     <>
-      <ProjectChip projectTitle={props.projectTitle} projectIcon={props.projectIcon} />
-      <Text className={cn("flex-1 text-xs", props.textClassName)} numberOfLines={1}>
+      <ProjectChip projectTitle={props.projectTitle} project={props.project} />
+      <Text className={cn("flex-1 text-sm", props.textClassName)} numberOfLines={1}>
         {props.projectTitle ?? NO_PROJECT_LABEL}
       </Text>
     </>
@@ -307,7 +307,7 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
       <View className="flex-row items-center gap-2">
         <ThreadListV2ProjectLabel
           projectTitle={projectTitle}
-          projectIcon={props.project?.projectIcon}
+          project={props.project}
           textClassName={sidebarPane ? "text-drawer-foreground-muted" : "text-foreground-muted"}
         />
         {isDraft ? (
@@ -919,8 +919,8 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
       <View className="flex-row items-center gap-2">
         <ThreadListV2ProjectLabel
           projectTitle={rowProjectTitle}
-          projectIcon={props.project?.projectIcon}
-          textClassName={mutedTextClassName}
+          project={props.project}
+          textClassName={onAccentSurface || sidebarPane ? mutedTextClassName : "text-foreground/60"}
         />
         {props.hasQueuedMessages ? <QueuedMessageIcon selected={onAccentSurface} /> : null}
         <Text
@@ -1120,11 +1120,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
             sidebarPane ? "px-3" : "px-4",
           )}
         >
-          <ProjectChip
-            dimmed
-            projectTitle={rowProjectTitle}
-            projectIcon={props.project?.projectIcon}
-          />
+          <ProjectChip dimmed projectTitle={rowProjectTitle} project={props.project} />
           <View className="min-w-0 flex-1">
             <Text
               className={cn(

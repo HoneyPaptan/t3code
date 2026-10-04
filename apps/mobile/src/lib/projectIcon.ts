@@ -80,24 +80,22 @@ export function projectIconColorClassNames(color: ProjectIconColor) {
   return PROJECT_ICON_COLOR_CLASSES[color];
 }
 
-const PROJECT_CHIP_PALETTE: ReadonlyArray<ProjectIconColor> = [
-  "blue",
-  "emerald",
-  "amber",
-  "violet",
-  "rose",
-  "sky",
-  "teal",
-  "orange",
-  "indigo",
-  "pink",
-];
+const PROJECT_CHIP_PALETTE = Object.keys(
+  PROJECT_ICON_COLOR_CLASSES,
+) as ReadonlyArray<ProjectIconColor>;
 
-function hashProjectTitle(projectTitle: string): number {
-  return Array.from(projectTitle).reduce(
-    (hash, character) => (hash * 31 + (character.codePointAt(0) ?? 0)) >>> 0,
+function normalizeProjectTitle(projectTitle: string): string {
+  return projectTitle.normalize("NFKC").trim();
+}
+
+export function projectChipColor(projectTitle: string): ProjectIconColor {
+  const seed = normalizeProjectTitle(projectTitle).toLocaleLowerCase("en-US") || "project";
+  const index = Array.from(seed).reduce(
+    (hash, character) =>
+      (hash * 31 + (character.codePointAt(0) ?? 0)) % PROJECT_CHIP_PALETTE.length,
     0,
   );
+  return PROJECT_CHIP_PALETTE[index] ?? "blue";
 }
 
 export function resolveProjectChipGlyph(
@@ -108,7 +106,7 @@ export function resolveProjectChipGlyph(
     resolveProjectIconGlyph(projectIcon, projectTitle) ?? {
       kind: "monogram",
       text: projectMonogram(projectTitle),
-      color: PROJECT_CHIP_PALETTE[hashProjectTitle(projectTitle) % PROJECT_CHIP_PALETTE.length]!,
+      color: projectChipColor(projectTitle),
     }
   );
 }
