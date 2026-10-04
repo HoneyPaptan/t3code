@@ -234,7 +234,6 @@ class T3TerminalView(context: Context, appContext: AppContext) : ExpoView(contex
       EditorInfo.IME_FLAG_NO_FULLSCREEN or
       EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING
     inputView.inputType = InputType.TYPE_CLASS_TEXT or
-      InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD or
       InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
     inputView.setPadding(0, 0, 0, 0)
     inputView.setOnEditorActionListener { _, actionId, event ->
