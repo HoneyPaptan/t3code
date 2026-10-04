@@ -142,6 +142,7 @@ import {
 import { uuidv4 } from "../../lib/uuid";
 import {
   resolveChatMarkdownTypography,
+  resolveScaledTextRole,
   resolveMarkdownFontSizes,
   resolveNativeMarkdownTypography,
 } from "../../lib/appearancePreferences";
@@ -711,11 +712,26 @@ interface MarkdownStyleSets {
   readonly reasoning: MarkdownStyleSet;
 }
 
-function mutedMarkdownStyleSet(base: MarkdownStyleSet, color: string): MarkdownStyleSet {
+function mutedMarkdownStyleSet(
+  base: MarkdownStyleSet,
+  color: string,
+  text: { readonly fontSize: number; readonly lineHeight: number },
+): MarkdownStyleSet {
   return {
     ...base,
-    theme: { ...base.theme, colors: { ...base.theme.colors, text: color } },
-    nativeTextStyle: { ...base.nativeTextStyle, color, mutedColor: color },
+    theme: {
+      ...base.theme,
+      colors: { ...base.theme.colors, text: color },
+      fontSizes: { ...base.theme.fontSizes, m: text.fontSize },
+    },
+    styles: { ...base.styles, text: { lineHeight: text.lineHeight } },
+    nativeTextStyle: {
+      ...base.nativeTextStyle,
+      color,
+      mutedColor: color,
+      fontSize: text.fontSize,
+      lineHeight: text.lineHeight,
+    },
   };
 }
 
@@ -1082,7 +1098,14 @@ function useMarkdownStyles(
   const themeMode = themeAppearance;
   const theme = useUniwindTheme();
   const markdownBodyColor = theme["--color-md-body"];
-  const markdownMutedColor = theme["--color-foreground-muted"];
+  const reasoningTextColor = flattenThemeColor(
+    themeColorWithAlpha(theme["--color-foreground"], 0.6),
+    theme["--color-screen"],
+  );
+  const reasoningTypography = useMemo(
+    () => resolveScaledTextRole("footnote", appearance.baseFontSize),
+    [appearance.baseFontSize],
+  );
   const markdownStrongColor = theme["--color-md-strong"];
   const markdownLinkColor = theme["--color-md-link"];
   const markdownBlockquoteBg = theme["--color-md-blockquote-bg"];
@@ -1453,7 +1476,7 @@ function useMarkdownStyles(
     };
     return {
       ...sets,
-      reasoning: mutedMarkdownStyleSet(sets.assistant, markdownMutedColor),
+      reasoning: mutedMarkdownStyleSet(sets.assistant, reasoningTextColor, reasoningTypography),
     };
   }, [
     boldFontFamily,
@@ -1472,7 +1495,8 @@ function useMarkdownStyles(
     markdownHrColor,
     markdownInlineCodeText,
     markdownLinkColor,
-    markdownMutedColor,
+    reasoningTextColor,
+    reasoningTypography,
     markdownStrongColor,
     markdownUserBodyColor,
     markdownUserCodeBg,

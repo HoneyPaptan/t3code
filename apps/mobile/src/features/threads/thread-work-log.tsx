@@ -86,6 +86,8 @@ const WORK_LOG_DETAIL_ENTER_TRANSITION = FadeIn.duration(140);
 const WORK_LOG_DETAIL_EXIT_TRANSITION = FadeOut.duration(120);
 const WORK_ICON_SIZE = 16;
 const WORK_ICON_COLOR_CLASS = "accent-foreground-muted/60";
+const REASONING_ICON_SIZE = 14;
+const REASONING_ICON_COLOR_CLASS = "accent-foreground-muted/50";
 const DISCLOSURE_CHEVRON_SIZE = 14;
 const DISCLOSURE_CHEVRON_COLOR_CLASS = "accent-foreground-muted/50";
 type WorkContentIcon = AppSymbolName | "browser" | "device" | "t3-code" | "pull-request";
@@ -95,9 +97,10 @@ function WorkLogIcon(props: {
   readonly colorClassName?: string;
   readonly highlighted?: boolean;
 }) {
+  const isReasoning = props.icon === "brain";
   const colorClassName = props.highlighted
     ? "accent-foreground"
-    : (props.colorClassName ?? WORK_ICON_COLOR_CLASS);
+    : (props.colorClassName ?? (isReasoning ? REASONING_ICON_COLOR_CLASS : WORK_ICON_COLOR_CLASS));
   if (props.icon === "t3-code") {
     return <T3Wordmark height={10} colorClassName={colorClassName} />;
   }
@@ -112,7 +115,7 @@ function WorkLogIcon(props: {
               ? { ios: "iphone", android: "smartphone" }
               : props.icon
       }
-      size={WORK_ICON_SIZE}
+      size={isReasoning ? REASONING_ICON_SIZE : WORK_ICON_SIZE}
       weight="medium"
       tintColorClassName={colorClassName}
       type="monochrome"

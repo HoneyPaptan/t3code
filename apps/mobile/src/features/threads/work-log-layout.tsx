@@ -11,7 +11,7 @@ export const WORK_LABEL_ROLE_STYLE: Record<
   name: { text: "font-t3-medium text-xs", color: "text-foreground/70" },
   argument: { text: "font-mono text-xs", color: "text-foreground-muted/60" },
   heading: { text: "text-xs", color: "text-foreground-muted/70" },
-  group: { text: "text-xs", color: "text-foreground-muted/50" },
+  group: { text: "font-t3-medium text-xs", color: "text-foreground/50" },
 };
 
 const LABEL_TONE_CLASS = {
