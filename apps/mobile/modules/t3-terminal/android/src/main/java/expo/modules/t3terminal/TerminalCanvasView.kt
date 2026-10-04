@@ -43,6 +43,17 @@ internal object TerminalTypefaces {
       Log.w("TerminalCanvasView", "bundled terminal font unavailable, using monospace", error)
     }
   }
+
+  @Suppress("TooGenericExceptionCaught")
+  fun loadFromFile(path: String?): Typeface? {
+    if (path == null) return null
+    return try {
+      Typeface.createFromFile(path)
+    } catch (error: RuntimeException) {
+      Log.w("TerminalCanvasView", "terminal font file unreadable, using bundled font", error)
+      null
+    }
+  }
 }
 
 /**
@@ -84,10 +95,11 @@ internal class TerminalCanvasView(context: Context) : View(context) {
     TerminalTypefaces.ensureLoaded(context)
   }
 
-  private val regularTypeface = TerminalTypefaces.regular
-  private val boldTypeface = TerminalTypefaces.bold
-  private val italicTypeface = Typeface.create(TerminalTypefaces.regular, Typeface.ITALIC)
-  private val boldItalicTypeface = Typeface.create(TerminalTypefaces.bold, Typeface.ITALIC)
+  var regularTypeface: Typeface = TerminalTypefaces.regular
+    private set
+  private var boldTypeface: Typeface = TerminalTypefaces.bold
+  private var italicTypeface: Typeface = Typeface.create(regularTypeface, Typeface.ITALIC)
+  private var boldItalicTypeface: Typeface = Typeface.create(boldTypeface, Typeface.ITALIC)
   private val gestureDetector = GestureDetector(context, TerminalGestureListener())
   private val contentPadding = 8f * density
   private var frame: TerminalFrame? = null
@@ -170,6 +182,19 @@ internal class TerminalCanvasView(context: Context) : View(context) {
     isFocusableInTouchMode = true
     paint.typeface = regularTypeface
     updateCellMetrics()
+  }
+
+  fun setFontFamilyPaths(regularPath: String?, boldPath: String?) {
+    val customRegular = TerminalTypefaces.loadFromFile(regularPath)
+    val customBold = TerminalTypefaces.loadFromFile(boldPath)
+    regularTypeface = customRegular ?: TerminalTypefaces.regular
+    boldTypeface = customBold
+      ?: customRegular?.let { Typeface.create(it, Typeface.BOLD) }
+      ?: TerminalTypefaces.bold
+    italicTypeface = Typeface.create(regularTypeface, Typeface.ITALIC)
+    boldItalicTypeface = Typeface.create(boldTypeface, Typeface.ITALIC)
+    updateCellMetrics()
+    requestLayout()
   }
 
   fun setFrame(value: TerminalFrame) {

@@ -34,6 +34,8 @@ export interface NativeTerminalSurfaceProps extends ViewProps {
   readonly terminalKey: string;
   readonly initialBuffer: string;
   readonly fontSize: number;
+  readonly fontFamilyRegularPath?: string | null;
+  readonly fontFamilyBoldPath?: string | null;
   readonly onInput?: (event: NativeSyntheticEvent<TerminalInputEvent>) => void;
   readonly onResize?: (event: NativeSyntheticEvent<TerminalResizeEvent>) => void;
 }
