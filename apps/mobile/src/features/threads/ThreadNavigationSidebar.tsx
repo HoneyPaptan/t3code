@@ -1058,7 +1058,7 @@ function ThreadNavigationSidebarPane(
               size="pageTitle"
               brand={
                 <View className="h-11 flex-1 justify-center">
-                  <CompactBrandTitle allowFontScaling={false} />
+                  <CompactBrandTitle />
                 </View>
               }
             />

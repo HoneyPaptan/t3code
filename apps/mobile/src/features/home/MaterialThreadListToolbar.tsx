@@ -106,7 +106,7 @@ export function MaterialThreadListToolbar(props: {
                 <WorkspaceConnectionTitle
                   grow
                   onPress={props.onOpenEnvironments}
-                  brand={<CompactBrandTitle allowFontScaling={false} />}
+                  brand={<CompactBrandTitle />}
                 />
               </View>
               <AndroidHeaderIconButton
