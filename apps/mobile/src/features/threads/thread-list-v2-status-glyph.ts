@@ -3,6 +3,12 @@ import type { ThreadListV2Status } from "./threadListV2";
 
 export type ThreadListV2StatusGlyph = "running" | "snoozed" | "settled" | "pinned" | "idle";
 
+export const THREAD_LIST_V2_STATUS_SLOT_FOOTPRINT = 16;
+
+export function threadListV2StatusSlotOverhang(slotSize: number): number {
+  return Math.min(0, (THREAD_LIST_V2_STATUS_SLOT_FOOTPRINT - slotSize) / 2);
+}
+
 export function resolveThreadListV2StatusGlyph(input: {
   readonly status: ThreadListV2Status;
   readonly variant: "card" | "slim";
