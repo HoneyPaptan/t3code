@@ -2,12 +2,37 @@ import { filterComposerPullRequestMatches } from "@t3tools/shared/composerPullRe
 import { describe, expect, it } from "@effect/vitest";
 import { EnvironmentId, ThreadId } from "@t3tools/contracts";
 
-import { buildCheckpointDiffTargets, normalizeComposerPathSearchQuery } from "./queryTargets";
+import {
+  buildCheckpointDiffTargets,
+  buildComposerPathSearchTarget,
+  normalizeComposerPathSearchQuery,
+} from "./queryTargets";
 
 describe("appQueries", () => {
   it("normalizes composer path search input", () => {
     expect(normalizeComposerPathSearchQuery("  src/app  ")).toBe("src/app");
     expect(normalizeComposerPathSearchQuery(null)).toBe("");
+  });
+
+  it("searches the project for a bare @ so the menu can browse files", () => {
+    const environmentId = EnvironmentId.make("environment-a");
+
+    expect(buildComposerPathSearchTarget({ environmentId, cwd: "/repo", query: "" }, 20)).toEqual({
+      environmentId,
+      input: { cwd: "/repo", query: "", limit: 20 },
+    });
+  });
+
+  it("skips the path search without a project or a path trigger", () => {
+    const environmentId = EnvironmentId.make("environment-a");
+
+    expect(buildComposerPathSearchTarget({ environmentId, cwd: null, query: "" }, 20)).toBeNull();
+    expect(
+      buildComposerPathSearchTarget({ environmentId, cwd: "/repo", query: null }, 20),
+    ).toBeNull();
+    expect(
+      buildComposerPathSearchTarget({ environmentId: null, cwd: "/repo", query: "" }, 20),
+    ).toBeNull();
   });
 
   it("routes the first turn range through the full-thread diff query", () => {

@@ -26,6 +26,7 @@ import { vcsEnvironment } from "./vcs";
 import { composerPullRequests } from "./pull-requests";
 import {
   buildCheckpointDiffTargets,
+  buildComposerPathSearchTarget,
   normalizeComposerPathSearchQuery,
   type CheckpointDiffTarget,
 } from "./queryTargets";
@@ -302,24 +303,14 @@ export function useComposerPathSearch(target: ComposerPathSearchTarget) {
     () => ({
       environmentId: target.environmentId,
       cwd: target.cwd,
-      query: normalizeComposerPathSearchQuery(target.query),
+      query: target.query === null ? null : normalizeComposerPathSearchQuery(target.query),
     }),
     [target.cwd, target.environmentId, target.query],
   );
   const debouncedTarget = useDebouncedValue(normalizedTarget, COMPOSER_PATH_SEARCH_DEBOUNCE_MS);
+  const searchTarget = buildComposerPathSearchTarget(debouncedTarget, COMPOSER_PATH_SEARCH_LIMIT);
   const result = useEnvironmentQuery(
-    debouncedTarget.environmentId !== null &&
-      debouncedTarget.cwd !== null &&
-      debouncedTarget.query.length > 0
-      ? projectEnvironment.searchEntries({
-          environmentId: debouncedTarget.environmentId,
-          input: {
-            cwd: debouncedTarget.cwd,
-            query: debouncedTarget.query,
-            limit: COMPOSER_PATH_SEARCH_LIMIT,
-          },
-        })
-      : null,
+    searchTarget === null ? null : projectEnvironment.searchEntries(searchTarget),
   );
 
   return {

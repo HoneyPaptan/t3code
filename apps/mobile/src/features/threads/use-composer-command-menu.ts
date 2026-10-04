@@ -44,6 +44,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ComposerEditorSelection } from "../../components/ComposerEditor";
 import { serverEnvironment } from "../../state/server";
 import { useAtomCommand } from "../../state/use-atom-command";
+import { buildComposerPathItems } from "./composerPathMenu";
 import { useComposerPathSearch, useComposerPullRequestSearch } from "../../state/queries";
 import type { ComposerCommandItem } from "./ComposerCommandPopover";
 import { matchesSlashSkillQuery } from "./composerSlashSkillSearch";
@@ -466,20 +467,7 @@ export function useComposerCommandMenu({
             query: trigger.query,
           })
         : [];
-      return [
-        ...threadItems,
-        ...pathSearch.entries.map((entry) => {
-          const parts = entry.path.split("/");
-          return {
-            id: `path:${entry.path}`,
-            type: "path" as const,
-            path: entry.path,
-            kind: entry.kind,
-            label: parts[parts.length - 1] ?? entry.path,
-            description: parts.length > 1 ? parts.slice(0, -1).join("/") : "",
-          };
-        }),
-      ];
+      return [...threadItems, ...buildComposerPathItems(pathSearch.entries)];
     }
 
     return [];
@@ -610,14 +598,20 @@ export function useComposerCommandMenu({
     ],
   );
 
+  const resolveIsLoading = () => {
+    if (trigger?.kind === "pull-request") return pullRequestSearch.isPending;
+    if (trigger?.kind === "path") return projectCwd !== null && pathSearch.isPending;
+    return false;
+  };
+
   return {
     selection,
     onSelectionChange,
     trigger,
     items,
     skills,
-    isLoading:
-      trigger?.kind === "pull-request" ? pullRequestSearch.isPending : pathSearch.isPending,
+    hasProject: projectCwd !== null,
+    isLoading: resolveIsLoading(),
     error:
       trigger?.kind === "pull-request"
         ? pullRequestProjectId === null || pullRequestRepository === null
