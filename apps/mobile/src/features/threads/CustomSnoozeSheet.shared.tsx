@@ -35,15 +35,15 @@ export function CustomSnoozeSheet(props: {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
-          className="max-h-[80%] w-full max-w-md grow-0 rounded-xl bg-screen"
+          className="max-h-[80%] w-full max-w-md grow-0 rounded-2xl border border-border-subtle bg-grouped-card"
           keyboardShouldPersistTaps="handled"
           contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={{ padding: 24, paddingBottom: 24, gap: 20 }}
+          contentContainerStyle={{ padding: 20, gap: 16 }}
         >
-          <AppText accessibilityRole="header" className="text-xl font-t3-semibold">
+          <AppText accessibilityRole="header" className="text-base font-t3-medium text-foreground">
             Custom snooze
           </AppText>
-          <AppText className="text-base text-foreground-secondary">
+          <AppText className="text-sm text-foreground-muted">
             Choose when snoozed threads return to your inbox.
           </AppText>
           <SegmentedControl
@@ -68,11 +68,13 @@ export function CustomSnoozeSheet(props: {
                   key={value}
                   accessibilityRole="button"
                   accessibilityLabel={value === "date" ? "Choose date" : "Choose time"}
-                  className="min-h-12 flex-row items-center justify-between rounded-xl bg-subtle px-3"
+                  className="min-h-12 flex-row items-center justify-between rounded-lg bg-subtle px-3"
                   onPress={() => setPicker(value)}
                 >
-                  <AppText>{value === "date" ? "Date" : "Time"}</AppText>
-                  <AppText>
+                  <AppText className="text-sm text-foreground">
+                    {value === "date" ? "Date" : "Time"}
+                  </AppText>
+                  <AppText className="text-sm text-foreground-muted">
                     {value === "date"
                       ? date.toLocaleDateString()
                       : date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
@@ -102,10 +104,10 @@ export function CustomSnoozeSheet(props: {
             </View>
           ) : (
             <View className="gap-3">
-              <AppText>Snooze for</AppText>
+              <AppText className="text-sm text-foreground-muted">Snooze for</AppText>
               <TextInput
                 accessibilityLabel="Duration"
-                className="min-h-12 rounded-xl bg-subtle px-3 text-base text-foreground"
+                className="min-h-12 rounded-lg bg-subtle px-3 text-base text-foreground"
                 keyboardType="decimal-pad"
                 value={amount}
                 onChangeText={(value) => {
@@ -121,15 +123,15 @@ export function CustomSnoozeSheet(props: {
                     accessibilityState={{ checked: unit === value }}
                     className={
                       unit === value
-                        ? "min-h-12 flex-1 items-center justify-center rounded-xl bg-subtle"
-                        : "min-h-12 flex-1 items-center justify-center rounded-xl"
+                        ? "min-h-11 flex-1 items-center justify-center rounded-lg bg-subtle"
+                        : "min-h-11 flex-1 items-center justify-center rounded-lg"
                     }
                     onPress={() => {
                       setUnit(value);
                       setError(null);
                     }}
                   >
-                    <AppText>
+                    <AppText className="text-sm text-foreground">
                       {value === "minutes" ? "Minutes" : value === "hours" ? "Hours" : "Days"}
                     </AppText>
                   </Pressable>
@@ -138,21 +140,21 @@ export function CustomSnoozeSheet(props: {
             </View>
           )}
           {error && (
-            <AppText accessibilityRole="alert" className="text-danger-foreground">
+            <AppText accessibilityRole="alert" className="text-sm text-danger-foreground">
               {error}
             </AppText>
           )}
-          <View className="flex-row justify-end gap-3">
+          <View className="flex-row justify-end gap-1">
             <Pressable
               accessibilityRole="button"
-              className="min-h-12 justify-center px-3"
+              className="min-h-11 justify-center rounded-lg px-4 active:bg-subtle"
               onPress={props.onClose}
             >
-              <AppText>Cancel</AppText>
+              <AppText className="text-sm font-t3-medium text-foreground-muted">Cancel</AppText>
             </Pressable>
             <Pressable
               accessibilityRole="button"
-              className="min-h-12 justify-center rounded-xl bg-subtle px-3"
+              className="min-h-11 justify-center rounded-lg px-4 active:bg-subtle"
               onPress={() => {
                 const input: CustomSnoozeInput =
                   mode === "date"
@@ -171,7 +173,7 @@ export function CustomSnoozeSheet(props: {
                 props.onClose();
               }}
             >
-              <AppText className="text-foreground">Snooze</AppText>
+              <AppText className="text-sm font-t3-medium text-primary-text">Snooze</AppText>
             </Pressable>
           </View>
         </ScrollView>

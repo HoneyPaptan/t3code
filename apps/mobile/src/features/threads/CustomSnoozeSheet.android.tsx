@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import { AppState, useWindowDimensions } from "react-native";
 
 import { OverlayPortal } from "../../components/OverlayPortal";
+import { MOBILE_RADIUS } from "../../lib/radius";
 import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
 import { useScaledTextRole } from "../settings/appearance/useScaledTextRole";
 import type { CustomSnoozeSheet as SharedCustomSnoozeSheet } from "./CustomSnoozeSheet.shared";
@@ -66,7 +67,8 @@ export function CustomSnoozeSheet(props: Props) {
     });
     return () => subscription.remove();
   }, []);
-  const titleTypography = useScaledTextRole("title");
+  const titleTypography = useScaledTextRole("body");
+  const stepperTypography = useScaledTextRole("headline");
   const bodyTypography = useScaledTextRole("footnote");
   const { width: windowWidth } = useWindowDimensions();
   const [mode, setMode] = useState<CustomSnoozeInput["mode"]>("date");
@@ -91,7 +93,7 @@ export function CustomSnoozeSheet(props: Props) {
     props.onClose();
   };
   const pickerColors = {
-    containerColor: colors["--color-card-alt"],
+    containerColor: colors["--color-grouped-card"],
     titleContentColor: colors["--color-foreground-secondary"],
     headlineContentColor: colors["--color-foreground"],
     weekdayContentColor: colors["--color-foreground-secondary"],
@@ -120,7 +122,6 @@ export function CustomSnoozeSheet(props: Props) {
     timeSelectorUnselectedContentColor: colors["--color-foreground"],
   };
   return (
-    // Recycled thread rows can detach a zero-sized native dialog host.
     <OverlayPortal>
       <Host colorScheme={themeAppearance} style={{ height: 0, width: 0 }}>
         <BasicAlertDialog
@@ -129,10 +130,16 @@ export function CustomSnoozeSheet(props: Props) {
           modifiers={[width(Math.min(360, windowWidth - 32))]}
         >
           <Surface
-            color={colors["--color-card-alt"]}
+            color={colors["--color-grouped-card"]}
             contentColor={colors["--color-foreground"]}
+            border={{ width: 1, color: colors["--color-border-subtle"] }}
             shape={roundedCorner({
-              cornerRadii: { topStart: 28, topEnd: 28, bottomStart: 28, bottomEnd: 28 },
+              cornerRadii: {
+                topStart: MOBILE_RADIUS["2xl"],
+                topEnd: MOBILE_RADIUS["2xl"],
+                bottomStart: MOBILE_RADIUS["2xl"],
+                bottomEnd: MOBILE_RADIUS["2xl"],
+              },
             })}
           >
             <Column modifiers={[fillMaxWidth(), verticalScroll()]}>
@@ -207,9 +214,9 @@ export function CustomSnoozeSheet(props: Props) {
                       }}
                       modifiers={[size(48, 48), testID("snooze-decrease-duration")]}
                     >
-                      <Text style={titleTypography}>−</Text>
+                      <Text style={stepperTypography}>−</Text>
                     </FilledTonalIconButton>
-                    <Text style={titleTypography} modifiers={[testID("snooze-duration")]}>
+                    <Text style={stepperTypography} modifiers={[testID("snooze-duration")]}>
                       {String(amount)}
                     </Text>
                     <FilledTonalIconButton
@@ -221,7 +228,7 @@ export function CustomSnoozeSheet(props: Props) {
                       }}
                       modifiers={[size(48, 48), testID("snooze-increase-duration")]}
                     >
-                      <Text style={titleTypography}>+</Text>
+                      <Text style={stepperTypography}>+</Text>
                     </FilledTonalIconButton>
                   </Row>
                   <MaterialSegmentedButtons options={units} selected={unit} onSelect={setUnit} />
@@ -239,13 +246,13 @@ export function CustomSnoozeSheet(props: Props) {
                 <Row horizontalArrangement="end" modifiers={[fillMaxWidth()]}>
                   <TextButton
                     onClick={props.onClose}
-                    colors={{ contentColor: colors["--color-foreground"] }}
+                    colors={{ contentColor: colors["--color-foreground-muted"] }}
                   >
                     <Text style={bodyTypography}>Cancel</Text>
                   </TextButton>
                   <TextButton
                     onClick={submit}
-                    colors={{ contentColor: colors["--color-foreground"] }}
+                    colors={{ contentColor: colors["--color-primary-text"] }}
                   >
                     <Text style={bodyTypography}>Snooze</Text>
                   </TextButton>
@@ -266,7 +273,6 @@ function SnoozeDateTimePicker(props: {
   readonly colors: React.ComponentProps<typeof DateTimePicker>["elementColors"];
   readonly onChange: (date: Date) => void;
 }) {
-  // Changing initialDate resets Compose's picker state, including its active clock dial.
   const [initialDate] = useState(() =>
     props.picker === "date" ? snoozeDateToPickerDate(props.date) : props.date.toISOString(),
   );
