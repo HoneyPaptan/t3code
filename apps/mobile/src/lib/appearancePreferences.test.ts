@@ -80,16 +80,20 @@ describe("appearancePreferences", () => {
     });
   });
 
-  it("renders chat text at 15 over 23 and 22 by default and scales with the base size", () => {
+  it("renders chat text at 15 over 23 and code at 14 over 22 by default and scales with the base size", () => {
     expect(resolveChatMarkdownTypography(16)).toEqual({
       fontSize: 15,
       assistantLineHeight: 23,
-      userLineHeight: 22,
+      userLineHeight: 23,
+      codeFontSize: 14,
+      codeLineHeight: 22,
     });
     expect(resolveChatMarkdownTypography(22)).toEqual({
       fontSize: 21,
       assistantLineHeight: 32,
-      userLineHeight: 30,
+      userLineHeight: 32,
+      codeFontSize: 19,
+      codeLineHeight: 30,
     });
   });
 
