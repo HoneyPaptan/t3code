@@ -2,6 +2,7 @@ import { AppText as Text } from "../../components/AppText";
 import type { ComponentProps, ReactNode } from "react";
 import { Pressable, View } from "react-native";
 import { THREAD_WORK_ROW_MIN_HEIGHT, type deriveThreadWorkLogSizing } from "../../lib/layout";
+import { workLogBlockBottomGap } from "./thread-feed-item-size";
 import type { WorkRowLabelRole } from "./work-row-presentation";
 
 export const WORK_LABEL_ROLE_STYLE: Record<
@@ -25,15 +26,6 @@ function labelClassName(role: WorkRowLabelRole, tone: "default" | "danger" | "wa
   return `${style.text} ${style.color}`;
 }
 
-function workLogBlockClassName(
-  layout: "standalone" | "group-header",
-  continues: boolean,
-  opensRows: boolean,
-): string {
-  if (layout === "group-header") return opensRows ? "-mx-1 mb-[6px] px-1" : "-mx-1 mb-[12px] px-1";
-  return continues ? "-mx-1 px-1" : "-mx-1 mb-[12px] px-1";
-}
-
 export function WorkLogBlock({
   children,
   layout = "standalone",
@@ -45,7 +37,14 @@ export function WorkLogBlock({
   continues?: boolean | undefined;
   opensRows?: boolean | undefined;
 }) {
-  return <View className={workLogBlockClassName(layout, continues, opensRows)}>{children}</View>;
+  return (
+    <View
+      className="-mx-1 px-1"
+      style={{ marginBottom: workLogBlockBottomGap(layout, continues, opensRows) }}
+    >
+      {children}
+    </View>
+  );
 }
 
 export function WorkLogRows({ children }: { children: ReactNode }) {
