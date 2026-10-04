@@ -7,6 +7,7 @@ import {
   resolveAppearancePreferences,
   resolveMarkdownFontSizes,
   resolveMobileCodeSurface,
+  resolveChatMarkdownTypography,
   resolveNativeMarkdownTypography,
   resolveTextScaleVariables,
   stepTerminalFontSize,
@@ -76,6 +77,19 @@ describe("appearancePreferences", () => {
       bodyLineHeight: 22,
       codeBlockFontSize: 12,
       codeBlockLineHeight: 18,
+    });
+  });
+
+  it("renders chat text at 15 over 23 and 22 by default and scales with the base size", () => {
+    expect(resolveChatMarkdownTypography(16)).toEqual({
+      fontSize: 15,
+      assistantLineHeight: 23,
+      userLineHeight: 22,
+    });
+    expect(resolveChatMarkdownTypography(22)).toEqual({
+      fontSize: 21,
+      assistantLineHeight: 32,
+      userLineHeight: 30,
     });
   });
 

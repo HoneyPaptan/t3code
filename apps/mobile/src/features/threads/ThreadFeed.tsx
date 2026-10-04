@@ -94,7 +94,7 @@ import {
 } from "react-native";
 import { FilePreviewModal, type FilePreviewSource } from "../../components/FilePreviewModal";
 import { isPdfFile } from "../../lib/filePreview";
-import { flattenThemeColor } from "../../lib/mobileTheme";
+import { flattenThemeColor, themeColorWithAlpha } from "../../lib/mobileTheme";
 import { PresentationSource } from "../../components/NativePresentation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInUp, type SharedValue } from "react-native-reanimated";
@@ -144,6 +144,7 @@ import {
 } from "../../lib/layout";
 import { uuidv4 } from "../../lib/uuid";
 import {
+  resolveChatMarkdownTypography,
   resolveMarkdownFontSizes,
   resolveNativeMarkdownTypography,
 } from "../../lib/appearancePreferences";
@@ -243,9 +244,9 @@ function formatMessageTime(input: string): string {
 
 // Fixed heights mirror renderFeedEntry's classNames and are only used while
 // text fits at the current font settings. Larger accessibility text is measured.
-// Tailwind spacing on the mobile 14px rem: px-3.5 on the user bubble, px-1 on
+// Tailwind spacing on the mobile 14px rem: px-4 on the user bubble, px-1 on
 // assistant rows. Images size their frame from these before their own layout.
-const USER_BUBBLE_HORIZONTAL_PADDING = 3.5 * 3.5;
+const USER_BUBBLE_HORIZONTAL_PADDING = 4 * 3.5;
 const ASSISTANT_ROW_HORIZONTAL_PADDING = 3.5;
 // Let neighboring rows move out of the new rows' space before showing their text.
 const THREAD_FEED_DISCLOSURE_ENTER_TRANSITION = FadeIn.delay(
@@ -377,7 +378,7 @@ function AssistantForkButton(props: {
       ) : (
         <SymbolView
           name="arrow.triangle.branch"
-          size={13}
+          size={16}
           tintColor={props.iconColor}
           type="monochrome"
         />
@@ -797,6 +798,7 @@ function MarkdownInlineCode(props: {
   readonly content: string;
   readonly textColor: string;
   readonly codeColor: string;
+  readonly backgroundColor?: string | undefined;
   readonly fontSize: number;
   readonly lineHeight: number;
   readonly onLinkPress: (href: string) => void;
@@ -809,6 +811,7 @@ function MarkdownInlineCode(props: {
       onPress={presentation ? () => props.onLinkPress(presentation.href) : undefined}
       style={{
         color: presentation ? props.textColor : props.codeColor,
+        backgroundColor: presentation ? undefined : props.backgroundColor,
         fontSize: props.fontSize,
         lineHeight: props.lineHeight,
       }}
@@ -861,25 +864,25 @@ function ArtifactTemplateCard(props: {
   readonly onUse?: ((template: CodexArtifactTemplate) => void) | undefined;
 }) {
   return (
-    <View className="my-2 min-w-0 flex-row items-center gap-3 rounded-2xl border border-border bg-card px-3 py-3">
-      <View className="relative h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-subtle">
+    <View className="my-2 min-w-0 flex-row items-center gap-3 rounded-lg border border-border-subtle bg-grouped-card px-3 py-3">
+      <View className="relative h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-subtle">
         <SymbolView
           name={ARTIFACT_TEMPLATE_SYMBOL_BY_KIND[props.template.artifactKind]}
           size={20}
           tintColorClassName="accent-foreground-muted"
           type="monochrome"
         />
-        <View className="absolute -right-1 -bottom-1 h-4 w-4 items-center justify-center rounded-full bg-merged">
+        <View className="absolute -right-1 -bottom-1 h-4 w-4 items-center justify-center rounded-full bg-subtle-strong">
           <SymbolView
             name={{ ios: "sparkles", android: "auto_awesome" }}
             size={9}
-            tintColorClassName="accent-scrim-foreground"
+            tintColorClassName="accent-foreground-muted"
             type="monochrome"
           />
         </View>
       </View>
       <View className="min-w-0 flex-1">
-        <Text className="font-t3-bold text-sm text-foreground" numberOfLines={1}>
+        <Text className="font-t3-medium text-sm text-foreground" numberOfLines={1}>
           {props.template.displayName}
         </Text>
         <Text className="text-xs text-foreground-muted">
@@ -890,10 +893,10 @@ function ArtifactTemplateCard(props: {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Use ${props.template.displayName} template`}
-          className="min-h-9 justify-center rounded-lg border border-border bg-subtle px-3 active:opacity-65"
+          className="min-h-9 justify-center rounded-lg border border-border-subtle px-3 active:opacity-65"
           onPress={() => props.onUse?.(props.template)}
         >
-          <Text className="font-t3-bold text-xs text-foreground">Use template</Text>
+          <Text className="font-t3-medium text-xs text-foreground/70">Use template</Text>
         </Pressable>
       ) : null}
     </View>
@@ -1078,13 +1081,25 @@ function useMarkdownStyles(
   renderImage: MarkdownImageRenderer,
 ): MarkdownStyleSets {
   const { appearance, themeAppearance } = useAppearancePreferences();
-  const markdownFontSizes = useMemo(
-    () => resolveMarkdownFontSizes(appearance.baseFontSize),
+  const chatTypography = useMemo(
+    () => resolveChatMarkdownTypography(appearance.baseFontSize),
     [appearance.baseFontSize],
   );
+  const markdownFontSizes = useMemo(
+    () => ({
+      ...resolveMarkdownFontSizes(appearance.baseFontSize),
+      m: chatTypography.fontSize,
+      bodyLineHeight: chatTypography.assistantLineHeight,
+    }),
+    [appearance.baseFontSize, chatTypography],
+  );
   const nativeMarkdownTypography = useMemo(
-    () => resolveNativeMarkdownTypography(appearance.baseFontSize),
-    [appearance.baseFontSize],
+    () => ({
+      ...resolveNativeMarkdownTypography(appearance.baseFontSize),
+      fontSize: chatTypography.fontSize,
+      lineHeight: chatTypography.assistantLineHeight,
+    }),
+    [appearance.baseFontSize, chatTypography],
   );
   const themeMode = themeAppearance;
   const theme = useUniwindTheme();
@@ -1094,7 +1109,9 @@ function useMarkdownStyles(
   const markdownLinkColor = theme["--color-md-link"];
   const markdownBlockquoteBg = theme["--color-md-blockquote-bg"];
   const markdownBlockquoteBorder = theme["--color-md-blockquote-border"];
-  const markdownCodeBg = theme["--color-md-code-bg"];
+  const markdownCodeBg = theme["--color-grouped-card"];
+  const markdownNativeCodeBg = flattenThemeColor(markdownCodeBg, theme["--color-screen"]);
+  const markdownCodeBorder = theme["--color-border-subtle"];
   const markdownCodeText = theme["--color-md-code-text"];
   const markdownInlineCodeText = theme["--color-foreground-secondary"];
   const markdownHrColor = theme["--color-md-hr"];
@@ -1207,6 +1224,8 @@ function useMarkdownStyles(
       inlineCodeTextColor: string,
       blockBackgroundColor: string,
       blockTextColor: string,
+      blockBorderColor: string,
+      inlineCodeBackgroundColor: string | undefined,
       copyTintColor: ColorValue,
       preserveSoftBreaks: boolean,
       highlightCode: boolean,
@@ -1304,6 +1323,7 @@ function useMarkdownStyles(
           content={content ?? ""}
           textColor={inlineTextColor}
           codeColor={inlineCodeTextColor}
+          backgroundColor={inlineCodeBackgroundColor}
           fontSize={markdownFontSizes.codeBlockFontSize}
           lineHeight={markdownFontSizes.bodyLineHeight}
           onLinkPress={onLinkPress}
@@ -1317,7 +1337,7 @@ function useMarkdownStyles(
       code_block: ({ content = "", language }) => (
         <MarkdownCodeBlock
           backgroundColor={blockBackgroundColor}
-          borderColor={markdownHrColor}
+          borderColor={blockBorderColor}
           content={content}
           copyTintColor={copyTintColor}
           fontSize={markdownFontSizes.codeBlockFontSize}
@@ -1346,6 +1366,7 @@ function useMarkdownStyles(
     const userStyles: NodeStyleOverrides = {
       ...baseStyles,
       paragraph: { marginTop: 0, marginBottom: 0 },
+      text: { lineHeight: chatTypography.userLineHeight },
       bold: {
         fontWeight: "700",
         color: markdownUserBodyColor,
@@ -1369,7 +1390,7 @@ function useMarkdownStyles(
         ...baseTheme.colors,
         code: markdownCodeText,
         codeBackground: markdownCodeBg,
-        border: markdownCodeBg,
+        border: markdownCodeBorder,
       },
     };
     const assistantStyles: NodeStyleOverrides = {
@@ -1385,6 +1406,8 @@ function useMarkdownStyles(
           markdownUserInlineCodeText,
           markdownUserFenceBg,
           markdownUserFenceText,
+          markdownHrColor,
+          undefined,
           userBubbleForegroundMuted,
           true,
           false,
@@ -1404,7 +1427,7 @@ function useMarkdownStyles(
           dividerColor: markdownUserBodyColor,
           contextChipBorderColor,
           fontSize: nativeMarkdownTypography.fontSize,
-          lineHeight: nativeMarkdownTypography.lineHeight,
+          lineHeight: chatTypography.userLineHeight,
           headingFontSizes: nativeMarkdownTypography.headingFontSizes,
           fontFamily: regularFontFamily,
           headingFontFamily: boldFontFamily,
@@ -1419,6 +1442,8 @@ function useMarkdownStyles(
           markdownInlineCodeText,
           markdownCodeBg,
           markdownCodeText,
+          markdownCodeBorder,
+          markdownCodeBg,
           iconSubtleColor,
           false,
           true,
@@ -1430,8 +1455,8 @@ function useMarkdownStyles(
           linkColor: markdownLinkColor,
           inlineCodeColor: markdownInlineCodeText,
           codeColor: markdownCodeText,
-          codeBackgroundColor: markdownCodeBg,
-          codeBlockBackgroundColor: markdownCodeBg,
+          codeBackgroundColor: markdownNativeCodeBg,
+          codeBlockBackgroundColor: markdownNativeCodeBg,
           fileTextColor: markdownCodeText,
           skillTextColor: inlineSkillForeground,
           quoteMarkerColor: markdownBlockquoteBorder,
@@ -1452,6 +1477,7 @@ function useMarkdownStyles(
     };
   }, [
     boldFontFamily,
+    chatTypography,
     contextChipBorderColor,
     iconSubtleColor,
     inlineSkillForeground,
@@ -1459,8 +1485,10 @@ function useMarkdownStyles(
     markdownBlockquoteBorder,
     markdownBodyColor,
     markdownCodeBg,
+    markdownCodeBorder,
     markdownCodeText,
     markdownFontSizes,
+    markdownNativeCodeBg,
     markdownHrColor,
     markdownInlineCodeText,
     markdownLinkColor,
@@ -1697,7 +1725,7 @@ function renderFeedEntry(
       );
       return (
         <Animated.View
-          className="mb-5 items-end"
+          className="mb-4 items-end"
           {...(enterAnimated ? { entering: FadeInUp.duration(220) } : {})}
         >
           {presentation.isAutomation ? (
@@ -1711,7 +1739,7 @@ function renderFeedEntry(
             />
           ) : null}
           <View
-            className="min-w-0 gap-2 rounded-2xl bg-user-bubble px-3.5 py-2.5"
+            className="min-w-0 gap-2 rounded-2xl bg-user-bubble px-4 py-2.5"
             style={{
               maxWidth: props.userBubbleMaxWidth,
               ...(hasReviewCommentContext
@@ -1792,7 +1820,7 @@ function renderFeedEntry(
               </MarkdownImageAvailableWidthContext>
             ) : null}
           </View>
-          <View className="mt-1 flex-row items-center justify-end gap-1 pr-0.5">
+          <View className="mt-1 min-h-9 flex-row items-center justify-end gap-3 pr-0.5">
             {intentBadge ? (
               <View
                 accessible
@@ -1836,7 +1864,7 @@ function renderFeedEntry(
                   }
                 }}
               >
-                <SymbolView name="pencil" size={14} tintColor={iconSubtleColor} />
+                <SymbolView name="pencil" size={16} tintColor={iconSubtleColor} />
               </Pressable>
             ) : null}
             {presentation.text.trim().length > 0 ? (
@@ -1855,7 +1883,7 @@ function renderFeedEntry(
                 }
                 tintColor={iconSubtleColor}
                 buttonSize={28}
-                iconSize={13}
+                iconSize={16}
               />
             ) : null}
           </View>
@@ -1878,7 +1906,7 @@ function renderFeedEntry(
       <Animated.View
         className={cn(
           showAssistantMeta && !(message.runId && props.failedRunIds.has(message.runId))
-            ? "mb-5 px-1"
+            ? "mb-4 px-1"
             : "mb-1 px-1",
           hasWideBlock && "w-full",
         )}
@@ -1920,7 +1948,7 @@ function renderFeedEntry(
           );
         })}
         {showAssistantMeta ? (
-          <View className="mt-1 flex-row items-center gap-1">
+          <View className="mt-1 min-h-9 flex-row items-center gap-3">
             {message.projectedItem ? (
               <AssistantForkButton
                 environmentId={props.environmentId}
@@ -1934,7 +1962,7 @@ function renderFeedEntry(
               text={renderedText}
               tintColor={iconSubtleColor}
               buttonSize={28}
-              iconSize={13}
+              iconSize={16}
             />
             <Text className="text-xs tabular-nums text-foreground-muted/60">{timestampLabel}</Text>
           </View>
@@ -2267,7 +2295,7 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
     : topContentInset;
 
   const theme = useUniwindTheme();
-  const iconSubtleColor = theme["--color-icon-subtle"];
+  const iconSubtleColor = themeColorWithAlpha(theme["--color-foreground-muted"], 0.5);
   const screenColor = theme["--color-screen"];
   const onMarkdownLinkPress = useCallback(
     (href: string) => {
@@ -3225,14 +3253,14 @@ function ThreadFeedLoadEarlierControl(props: ThreadFeedHistoryControls) {
           accessibilityLabel="Load earlier activity"
           disabled={props.loading}
           onPress={props.onLoadEarlier}
-          className="min-h-9 flex-row items-center justify-center gap-2 rounded-lg border border-border/60 bg-surface/80 px-4 py-2 disabled:opacity-50"
+          className="min-h-9 flex-row items-center justify-center gap-2 rounded-lg border border-border-subtle bg-grouped-card px-3 disabled:opacity-50"
         >
           {props.loading ? (
             <ActivityIndicator size="small" color={accentColor} />
           ) : (
             <SymbolView name="chevron.up" size={12} tintColor={accentColor} type="monochrome" />
           )}
-          <Text className="text-sm font-medium text-foreground">
+          <Text className="font-t3-medium text-xs text-foreground/70">
             {props.loading ? "Loading earlier activity…" : "Load earlier activity"}
           </Text>
         </Pressable>
