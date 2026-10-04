@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vite-plus/test";
+import { DRAY_THEMES } from "@t3tools/shared/drayThemes";
 import { BUILT_IN_THEMES } from "@t3tools/shared/themePalettes";
 
 import {
@@ -87,6 +88,29 @@ describe("theme files", () => {
           expect(toCanonicalThemeColor(value)).toBe(value);
         }
       }
+    }
+  });
+
+  it("keeps every Dray palette value in canonical OKLCH form", () => {
+    for (const theme of DRAY_THEMES) {
+      for (const colors of [theme.colors, ...Object.values(theme.variants ?? {})]) {
+        for (const value of Object.values(colors)) {
+          expect(toCanonicalThemeColor(value)).toBe(value);
+        }
+      }
+    }
+  });
+
+  it("resolves every Dray theme as a built-in definition", () => {
+    expect(DRAY_THEMES.map((theme) => theme.id)).toEqual([
+      "gruvbox",
+      "dray",
+      "catppuccin",
+      "one-dark-pro",
+      "cobalt2",
+    ]);
+    for (const theme of DRAY_THEMES) {
+      expect(getThemeDefinition(theme.id)).toBe(theme);
     }
   });
 
