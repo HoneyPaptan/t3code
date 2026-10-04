@@ -2249,7 +2249,7 @@ it("stops stranded thinking after a steer and follows the next thought or tool",
   expect(first.status).toBe("running");
 });
 
-it("previews a settled thought in its collapsed header and labels its expanded header", () => {
+it("labels a settled thought Thought whether its header is collapsed or expanded", () => {
   const thought: OrchestrationV2TurnItem = {
     ...base("thought-preview", "2026-06-20T00:00:02.000Z", 1),
     type: "reasoning",
@@ -2269,7 +2269,7 @@ it("previews a settled thought in its collapsed header and labels its expanded h
   };
   const collapsed = deriveThreadFeedPresentation(feed, run, new Set([runId]));
   const header = collapsed.find((row) => row.type === "work-toggle");
-  expect(header).toMatchObject({ summary: "First paragraph. Second paragraph." });
+  expect(header).toMatchObject({ summary: "Thought" });
   if (header?.type !== "work-toggle") throw new Error("Expected thought toggle");
   const expanded = deriveThreadFeedPresentation(
     feed,
