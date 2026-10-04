@@ -24,7 +24,7 @@ export function AndroidHeaderIconButton(props: {
   readonly disabled?: boolean;
   readonly selected?: boolean;
 }) {
-  return <MaterialIconButton {...props} tintColorClassName="accent-header-foreground" />;
+  return <MaterialIconButton {...props} compact tintColorClassName="accent-header-foreground" />;
 }
 
 export function AndroidScreenHeader(props: {
@@ -51,7 +51,7 @@ export function AndroidScreenHeader(props: {
   return (
     <View
       onLayout={(event) => setHeaderWidth(event.nativeEvent.layout.width)}
-      className="border-b border-header-border bg-header px-2"
+      className="border-b border-border-subtle bg-header px-2"
       style={{
         ...headerPadding,
         borderBottomWidth: props.hideBottomBorder ? 0 : undefined,
@@ -62,6 +62,7 @@ export function AndroidScreenHeader(props: {
           <MaterialIconButton
             accessibilityLabel="Navigate up"
             icon="arrow.left"
+            compact
             tintColorClassName="accent-header-foreground"
             onPress={props.onBack}
           />
@@ -70,14 +71,14 @@ export function AndroidScreenHeader(props: {
         {props.leading}
 
         <View className={cn("min-w-0 flex-1", !props.onBack && "pl-1")}>
-          <Text numberOfLines={1} style={titleTypography} className="text-header-foreground">
+          <Text numberOfLines={1} style={titleTypography} className="text-foreground">
             {props.title}
           </Text>
           {props.subtitle ? (
             <Text
               numberOfLines={1}
               style={subtitleTypography}
-              className="mt-px text-xs font-t3-medium text-foreground-muted"
+              className="mt-px text-xs font-t3-medium text-foreground-muted/60"
             >
               {props.subtitle}
             </Text>
@@ -112,6 +113,7 @@ export function AndroidScreenHeader(props: {
               <MaterialIconButton
                 accessibilityLabel="More actions"
                 icon="ellipsis"
+                compact
                 tintColorClassName="accent-header-foreground"
                 onPress={open}
               />

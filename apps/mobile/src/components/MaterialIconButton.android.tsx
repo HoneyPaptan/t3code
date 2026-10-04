@@ -19,9 +19,12 @@ export function MaterialIconButton(props: {
   readonly selected?: boolean;
   readonly variant?: "standard" | "primary" | "tonal" | "danger";
   readonly tintColorClassName?: string;
+  readonly compact?: boolean;
 }) {
   const { themeAppearance, themeVariables: colors } = useAppearancePreferences();
-  const { iconSize, buttonSize } = useAndroidControlSizing();
+  const sizing = useAndroidControlSizing();
+  const iconSize = props.compact ? sizing.compactIconSize : sizing.iconSize;
+  const buttonSize = props.compact ? sizing.compactButtonSize : sizing.buttonSize;
   const variant = props.variant ?? "standard";
   const Component =
     variant === "standard"

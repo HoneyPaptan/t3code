@@ -183,7 +183,6 @@ function ThreadHeader(
               }
         }
         actions={androidHeaderActions}
-        hideBottomBorder
       />
       {native.fallback}
     </>
@@ -987,7 +986,7 @@ function ThreadRouteContent(
     <>
       <GitActionProgressOverlay progress={gitActionProgress} onDismiss={dismissGitActionResult} />
 
-      <View className="flex-1 bg-screen android:overflow-hidden android:rounded-t-[28px] android:bg-thread-canvas">
+      <View className="flex-1 bg-screen">
         <ThreadDetailScreen
           selectedThread={selectedThreadWithDraftSettings ?? selectedThread}
           contentPresentation={contentPresentation}

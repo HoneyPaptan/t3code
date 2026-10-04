@@ -15,4 +15,15 @@ describe("Android control sizing", () => {
       menuWidth,
     });
   });
+
+  it.each([
+    [11, 15, 44],
+    [16, 20, 44],
+    [22, 28, 61],
+  ])("scales compact controls at %ipt", (fontSize, compactIconSize, compactButtonSize) => {
+    expect(resolveAndroidControlSizing(fontSize)).toMatchObject({
+      compactIconSize,
+      compactButtonSize,
+    });
+  });
 });
