@@ -113,6 +113,24 @@ describe("subscription widget snapshots", () => {
       expect.objectContaining({ name, totalWindows: 0, windows: [] }),
     ]);
   });
+  it("carries the theme palette into every timeline entry", () => {
+    const palette = {
+      surface: "#111111",
+      foreground: "#eeeeee",
+      foregroundMuted: "#999999",
+      hairline: "#222222",
+      track: "#333333",
+      fill: "#44aa44",
+      danger: "#cc3333",
+    };
+    const snapshot = {
+      ...buildSubscriptionUsageSnapshot(presentations(), deepLink),
+      palette,
+    };
+    for (const entry of subscriptionUsageTimeline(snapshot, now)) {
+      expect(entry.props.palette).toEqual(palette);
+    }
+  });
   it("keeps an enabled provider visible before its first usage read", () => {
     const snapshot = buildSubscriptionUsageSnapshot(
       presentations([provider({ usageLimits: undefined })]),
