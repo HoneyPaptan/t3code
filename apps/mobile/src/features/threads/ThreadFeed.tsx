@@ -237,10 +237,6 @@ function formatMessageTime(input: string): string {
   return MESSAGE_TIME_FORMATTER.format(timestamp);
 }
 
-// Fixed heights mirror renderFeedEntry's classNames and are only used while
-// text fits at the current font settings. Larger accessibility text is measured.
-// Tailwind spacing on the mobile 14px rem: px-4 on the user bubble, px-1 on
-// assistant rows. Images size their frame from these before their own layout.
 const USER_BUBBLE_HORIZONTAL_PADDING = 4 * 3.5;
 const ASSISTANT_ROW_HORIZONTAL_PADDING = 3.5;
 // Let neighboring rows move out of the new rows' space before showing their text.
