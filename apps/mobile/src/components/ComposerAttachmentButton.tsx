@@ -22,13 +22,14 @@ export function ComposerAttachmentButton(props: {
       accessibilityLabel="Add attachment"
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
-      className="size-[44px] shrink-0 items-center justify-center rounded-lg active:opacity-70 disabled:opacity-50"
+      className="size-9 shrink-0 items-center justify-center rounded-md active:bg-subtle disabled:opacity-50"
+      hitSlop={4}
       disabled={props.disabled}
       onPress={props.supportsFiles ? undefined : () => void props.onPickMedia()}
     >
       <SymbolView
         name="plus"
-        size={Math.round(20 * scale)}
+        size={Math.round(18 * scale)}
         weight="regular"
         tintColorClassName="accent-icon"
         type="monochrome"
