@@ -4,4 +4,5 @@ export const MOBILE_RADIUS = {
   lg: 10,
   xl: 14,
   "2xl": 18,
+  "3xl": 24,
 } as const;
