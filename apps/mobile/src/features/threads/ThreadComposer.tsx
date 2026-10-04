@@ -122,39 +122,22 @@ import {
   type NavigationWithFinishTransitioning,
 } from "./use-thread-settings-sheet-presentation";
 import { MOBILE_RADIUS } from "../../lib/radius";
+import {
+  COMPOSER_BODY_EXPANDED_PADDING_BOTTOM,
+  COMPOSER_BODY_EXPANDED_PADDING_TOP,
+  COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT,
+  COMPOSER_EDITOR_MAX_HEIGHT,
+  COMPOSER_EDITOR_MIN_HEIGHT,
+  COMPOSER_EDITOR_PADDING_HORIZONTAL,
+  COMPOSER_FOOTER_EXPANDED_PADDING_BOTTOM,
+  COMPOSER_FOOTER_ROW_HEIGHT,
+  COMPOSER_SURFACE_COLLAPSED_PADDING_VERTICAL,
+  COMPOSER_SURFACE_PADDING_HORIZONTAL,
+  composerDockPaddingVertical,
+  composerEditorVerticalPadding,
+} from "./composerChrome";
 
-const COMPOSER_EDITOR_MIN_HEIGHT = 32;
-const COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT = 72;
-const COMPOSER_EDITOR_MAX_HEIGHT = 160;
-const COMPOSER_EDITOR_PADDING_HORIZONTAL = 4;
-const COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL = 4;
-const COMPOSER_SURFACE_PADDING_HORIZONTAL = 16;
-const COMPOSER_BODY_EXPANDED_PADDING_TOP = 16;
-const COMPOSER_BODY_EXPANDED_PADDING_BOTTOM = 8;
-const COMPOSER_SURFACE_COLLAPSED_PADDING_VERTICAL = 8;
-const COMPOSER_FOOTER_EXPANDED_PADDING_BOTTOM = 16;
-const COMPOSER_FOOTER_ROW_HEIGHT = 36;
-const COMPOSER_DOCK_PADDING = 12;
-const COMPOSER_DOCK_EXPANDED_PADDING = 16;
-
-export const COMPOSER_COLLAPSED_CHROME =
-  COMPOSER_EDITOR_MIN_HEIGHT +
-  COMPOSER_SURFACE_COLLAPSED_PADDING_VERTICAL * 2 +
-  COMPOSER_FOOTER_ROW_HEIGHT +
-  COMPOSER_DOCK_PADDING;
-
-export const COMPOSER_EXPANDED_CHROME =
-  COMPOSER_BODY_EXPANDED_PADDING_TOP +
-  COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT +
-  COMPOSER_BODY_EXPANDED_PADDING_BOTTOM +
-  COMPOSER_FOOTER_ROW_HEIGHT +
-  COMPOSER_FOOTER_EXPANDED_PADDING_BOTTOM +
-  COMPOSER_DOCK_EXPANDED_PADDING;
-
-function composerEditorVerticalPadding(isExpanded: boolean, lineHeight: number): number {
-  if (isExpanded) return COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL;
-  return Math.max(0, Math.floor((COMPOSER_EDITOR_MIN_HEIGHT - lineHeight) / 2));
-}
+export { COMPOSER_COLLAPSED_CHROME, COMPOSER_EXPANDED_CHROME } from "./composerChrome";
 
 export interface ThreadComposerProps {
   readonly canOperateThread: boolean;
@@ -801,8 +784,8 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
     <Animated.View
       className="px-[12px]"
       style={{
-        paddingTop: isExpanded ? 8 : 6,
-        paddingBottom: (props.bottomInset ?? 0) + (isExpanded ? 8 : 6),
+        paddingTop: composerDockPaddingVertical(isExpanded),
+        paddingBottom: (props.bottomInset ?? 0) + composerDockPaddingVertical(isExpanded),
         backgroundColor:
           Platform.OS === "android" ? themeColorWithAlpha(composerPanel, 1) : undefined,
       }}
