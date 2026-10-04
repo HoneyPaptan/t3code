@@ -186,7 +186,7 @@ import {
 } from "./thread-work-log";
 import { appendPendingThreadMessages, type PendingThreadFeedEntry } from "./pending-thread-feed";
 import type { QueuedThreadMessage } from "../../state/thread-outbox-model";
-import { resolveThreadFeedFixedItemSize } from "./thread-feed-item-size";
+import { resolveThreadFeedFixedItemSize, threadFeedChromeRowGap } from "./thread-feed-item-size";
 import { htmlRenderFrameHeight } from "@t3tools/shared/htmlRender";
 import { htmlRenderRowHeight, ThreadHtmlRender } from "./HtmlRenderWebView";
 import { useMarkdownCodeHighlight } from "./markdownCodeHighlightState";
@@ -1603,12 +1603,16 @@ function renderFeedEntry(
         accessibilityState={{ expanded: entry.expanded }}
         onPress={() => props.onToggleTurnFold(entry.runId)}
         hitSlop={4}
-        className="mb-[12px] flex-row items-center gap-2 px-2"
-        style={{ minHeight: props.workRowSizing.estimatedRowHeight }}
+        className="flex-row items-center gap-2 px-2"
+        style={{
+          minHeight: props.workRowSizing.estimatedRowHeight,
+          marginBottom: threadFeedChromeRowGap("run-fold"),
+        }}
       >
         <Text
           key={props.workRowSizing.textSizeKey}
-          className="text-chat tabular-nums text-foreground-muted"
+          className="min-w-0 shrink text-chat tabular-nums text-foreground-muted"
+          numberOfLines={1}
         >
           {entry.label}
         </Text>
@@ -2923,14 +2927,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
     [props.environmentId],
   );
 
-  // Rows whose height is known before they ever render. Without this, every
-  // row above the viewport is assumed to be estimatedItemSize tall, and
-  // scrolling up through unmeasured content corrects each row's height as it
-  // mounts — the feed visibly jumps. Fixed sizes make the small chrome rows
-  // exact; message rows stay undefined and use LegendList's per-type running
-  // average once one of their type has been measured. Prominent v2 items,
-  // expanded details, and compaction rows retain native measurement; their
-  // cards and related-thread links can exceed the compact row height.
   const getFixedItemSize = useCallback(
     (entry: ThreadFeedEntry) => {
       if (entry.type === "html-render") {
@@ -2958,8 +2954,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
           ) {
             return undefined;
           }
-          // Expanded rows append a variable detail block — fall back to
-          // measurement for those groups.
           return entry.activities.some(
             (activity) => activity.prominent || expandedWorkRows[activity.id],
           )

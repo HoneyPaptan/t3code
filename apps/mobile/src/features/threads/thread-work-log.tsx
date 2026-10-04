@@ -15,6 +15,7 @@ import {
   shouldShowWorkRowFailureGlyph,
 } from "./work-row-presentation";
 import { QuestionAnswerHistory } from "./QuestionAnswerHistory";
+import { threadFeedChromeRowGap } from "./thread-feed-item-size";
 import {
   getQuestionAnswerPreview,
   hasQuestionAnswer,
@@ -457,13 +458,21 @@ function workLogRowsHeight(
   );
 }
 
+function isFailedErrorRow(activity: ThreadFeedActivity): boolean {
+  const item = activity.projectedItem.item;
+  return item.type === "error" && item.status === "failed";
+}
+
 export function collapsedWorkLogHeight(
   activities: ReadonlyArray<ThreadFeedActivity>,
   continues = false,
-): number {
+): number | undefined {
   const bottomMargin = continues ? 0 : WORK_LOG_BOTTOM_MARGIN;
   if (activities.length === 0) {
     return 0;
+  }
+  if (activities.some(isFailedErrorRow)) {
+    return undefined;
   }
   if (activities[0]?.projectedItem.item.type === "subagent") {
     return bottomMargin + WORK_ROW_HEIGHT;
@@ -1449,8 +1458,11 @@ export function ThreadThinkingRow(props: {
     <View
       accessible
       accessibilityLabel={LIVE_THINKING_ROW_PRESENTATION.label}
-      className="-mx-1 mb-[12px] min-h-9 flex-row items-center px-1.5 py-0"
-      style={{ minHeight: props.rowSizing.estimatedRowHeight }}
+      className="-mx-1 flex-row items-center px-1.5 py-0"
+      style={{
+        minHeight: props.rowSizing.estimatedRowHeight,
+        marginBottom: threadFeedChromeRowGap("thinking"),
+      }}
     >
       <ShimmeringWorkContent
         key={props.rowSizing.textSizeKey}
