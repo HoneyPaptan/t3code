@@ -1310,8 +1310,13 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
                   style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
                   offset={{ closed: 0, opened: 0 }}
                 >
-                  <View className="min-h-13 border-t border-border-subtle bg-screen">
-                    <ComposerToolbarRow paddingBottom={4} paddingHorizontal={8} paddingTop={4}>
+                  <View className="min-h-11 border-t border-border-subtle bg-screen">
+                    <ComposerToolbarRow
+                      paddingBottom={4}
+                      paddingHorizontal={8}
+                      paddingTop={4}
+                      style={{ gap: 8 }}
+                    >
                       <ComposerToolbarScroller
                         contentPaddingRight={2}
                         fadeOpaque={terminalTheme.background}
