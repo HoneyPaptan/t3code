@@ -39,7 +39,7 @@ const TOOLBAR_FLIP_TIMING = {
   easing: Easing.inOut(Easing.cubic),
   reduceMotion: ReduceMotion.System,
 } as const;
-const TOOLBAR_HALF_HEIGHT = 22;
+const TOOLBAR_HALF_HEIGHT = 18;
 const TOOLBAR_PERSPECTIVE = 600;
 
 /** Moves each face around the same horizontal axis, keeping their edges together. */
@@ -84,6 +84,7 @@ const DRAFT_TOOLBAR_ENTERING = toolbarFlip(90, 0);
 const DRAFT_TOOLBAR_EXITING = toolbarFlip(0, 90);
 const DICTATION_TOOLBAR_ENTERING = toolbarFlip(-90, 0);
 const DICTATION_TOOLBAR_EXITING = toolbarFlip(0, -90);
+const VOICE_ACTION_ICON_SIZE = 16;
 const WAVEFORM_BAR_HEIGHT = 32;
 const WAVEFORM_MIN_BAR_HEIGHT = 2;
 const WAVEFORM_BAR_SPACING = 5;
@@ -138,7 +139,7 @@ export function ComposerDictationToolbar(props: {
   readonly visible?: boolean;
 }) {
   return (
-    <View className="relative min-h-11 overflow-hidden">
+    <View className="relative min-h-9 overflow-hidden">
       {props.visible !== false ? (
         <Animated.View
           key={props.showsDictation ? "dictation" : "draft"}
@@ -238,7 +239,10 @@ function VoiceActionButton(props: {
       accessibilityLabel={props.accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ busy: props.loading, disabled: props.disabled }}
-      className="size-9 shrink-0 items-center justify-center active:opacity-70"
+      className={cn(
+        "size-9 shrink-0 items-center justify-center rounded-full",
+        variant === "primary" ? "active:opacity-70" : "active:bg-subtle",
+      )}
       disabled={props.disabled}
       hitSlop={4}
       onPress={props.onPress}
@@ -246,8 +250,8 @@ function VoiceActionButton(props: {
     >
       <View
         className={cn(
-          "items-center justify-center",
-          variant === "primary" ? "size-[30px] rounded-full bg-subtle" : "size-9",
+          "size-9 items-center justify-center rounded-full",
+          variant === "primary" && "bg-subtle",
         )}
       >
         {variant === "primary" ? (
@@ -262,10 +266,10 @@ function VoiceActionButton(props: {
           ) : (
             <SymbolView
               name={props.icon}
-              size={variant === "primary" ? 16 : 20}
+              size={VOICE_ACTION_ICON_SIZE}
               weight={variant === "primary" ? "semibold" : "regular"}
               tintColorClassName={
-                variant === "primary" ? "accent-primary-foreground" : "accent-icon"
+                variant === "primary" ? "accent-primary-foreground" : "accent-foreground-muted"
               }
               type="monochrome"
             />
@@ -301,7 +305,10 @@ export function ComposerDictationStatus(props: {
     <View className="relative min-h-9 min-w-0 flex-1 justify-center">
       {isError ? (
         <View className="min-w-0 flex-row items-center gap-1.5 px-2">
-          <Text className="min-w-0 flex-1 text-sm text-danger-foreground" numberOfLines={2}>
+          <Text
+            className="min-w-0 flex-1 text-[13px] leading-[18px] text-danger-foreground"
+            numberOfLines={2}
+          >
             {props.presentation.statusLabel}
           </Text>
           <Pressable
@@ -332,7 +339,7 @@ export function ComposerDictationStatus(props: {
           >
             <VoiceWaveform audioLevels={props.audioLevels} />
             <Text
-              className="text-xs text-foreground-muted"
+              className="text-[13px] leading-[18px] text-foreground-muted"
               numberOfLines={1}
               style={{ fontVariant: ["tabular-nums"] }}
             >
@@ -340,7 +347,10 @@ export function ComposerDictationStatus(props: {
             </Text>
           </Animated.View>
           <Animated.View className="absolute inset-0 justify-center px-2" style={labelStyle}>
-            <Text className="text-center text-sm text-foreground-muted" numberOfLines={1}>
+            <Text
+              className="text-center text-[13px] leading-[18px] text-foreground-muted"
+              numberOfLines={1}
+            >
               {props.presentation.statusLabel}
             </Text>
           </Animated.View>
