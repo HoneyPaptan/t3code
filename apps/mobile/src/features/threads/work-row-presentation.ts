@@ -52,7 +52,6 @@ export function resolveWorkRowHead(input: {
 }
 
 export const LIVE_WORK_GROUP_TITLE = "Working…";
-export const LIVE_THINKING_LABEL = "Thinking";
 
 export interface WorkGroupHeaderPresentation {
   readonly title: string | null;
@@ -85,12 +84,12 @@ export function resolveWorkGroupHeaderPresentation(input: {
 
 export interface LiveThinkingRowPresentation {
   readonly label: string;
-  readonly orbState: null;
+  readonly orbState: "listening";
   readonly showIcon: false;
 }
 
 export const LIVE_THINKING_ROW_PRESENTATION: LiveThinkingRowPresentation = {
-  label: LIVE_THINKING_LABEL,
-  orbState: null,
+  label: LIVE_WORK_GROUP_TITLE,
+  orbState: "listening",
   showIcon: false,
 };
