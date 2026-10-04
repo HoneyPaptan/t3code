@@ -18,6 +18,7 @@ export function MaterialIconButton(props: {
   readonly selected?: boolean;
   readonly variant?: "standard" | "primary" | "tonal" | "danger";
   readonly tintColorClassName?: string;
+  readonly compact?: boolean;
 }) {
   const variant = props.variant ?? "standard";
   const [containerClassName, iconTintClassName] = VARIANT_CLASS_NAMES[variant];
@@ -29,7 +30,9 @@ export function MaterialIconButton(props: {
       accessibilityRole="button"
       accessibilityState={{ disabled: Boolean(props.disabled), selected: props.selected }}
       className={cn(
-        "size-12 items-center justify-center",
+        props.compact
+          ? "size-11 items-center justify-center"
+          : "size-12 items-center justify-center",
         props.disabled && variant !== "standard"
           ? "rounded-lg bg-subtle-strong"
           : containerClassName,
@@ -37,7 +40,7 @@ export function MaterialIconButton(props: {
     >
       <SymbolView
         name={props.icon}
-        size={24}
+        size={props.compact ? 20 : 24}
         tintColorClassName={
           props.disabled
             ? "accent-icon-subtle"
