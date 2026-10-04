@@ -1,9 +1,14 @@
 import type { ProviderInteractionMode, RuntimeMode } from "@t3tools/contracts";
-import type { ComponentProps } from "react";
-import { ScrollView, View } from "react-native";
+import type { ComponentProps, ReactNode } from "react";
+import { View } from "react-native";
 
 import { ComposerAttachmentButton } from "../../components/ComposerAttachmentButton";
-import { ComposerInlineControl } from "../../components/ComposerToolbar";
+import {
+  type ComposerControlSize,
+  ComposerControlSeparator,
+  ComposerInlineControl,
+  ComposerToolbarScroller,
+} from "../../components/ComposerToolbar";
 import { ProviderIcon } from "../../components/ProviderIcon";
 import type { ModelOption } from "../../lib/modelOptions";
 import { runtimeModeLabel } from "./thread-settings-options";
@@ -11,9 +16,11 @@ import { runtimeModeLabel } from "./thread-settings-options";
 const PLAN_ICON = { ios: "list.bullet.clipboard", android: "auto_awesome" } as const;
 const LOCK_ICON = { ios: "lock", android: "lock" } as const;
 const BUILD_ICON = { ios: "hammer", android: "construction" } as const;
+const COMPOSER_CONTROL_GAP = 4;
 
 export function ComposerFooterControls(props: {
   readonly attachment: ComponentProps<typeof ComposerAttachmentButton>;
+  readonly attachmentPlacement?: "leading" | "trailing";
   readonly disabled?: boolean;
   readonly interactionMode?: {
     readonly mode: ProviderInteractionMode;
@@ -24,48 +31,50 @@ export function ComposerFooterControls(props: {
   readonly onOpenSettings: () => void;
   readonly reasoningLabel: string | null;
   readonly runtimeMode: RuntimeMode;
+  readonly size?: ComposerControlSize;
 }) {
+  const size = props.size ?? "sm";
   const isPlan = props.interactionMode?.mode === "plan";
-  return (
-    <View className="min-w-0 flex-1 flex-row items-center gap-0.5">
-      <ComposerAttachmentButton {...props.attachment} />
-      <ScrollView
-        horizontal
-        className="min-w-0 flex-1"
-        contentContainerClassName="items-center gap-0.5"
-        keyboardShouldPersistTaps="always"
-        showsHorizontalScrollIndicator={false}
-      >
-        <ComposerInlineControl
-          accessibilityLabel="Model and reasoning settings"
-          disabled={props.disabled}
-          renderIcon={(size) => (
-            <ProviderIcon
-              iconUrl={props.modelOption?.providerIconUrl}
-              provider={props.modelOption?.providerDriver}
-              size={size}
-            />
-          )}
-          label={props.modelOption?.label ?? props.modelFallbackLabel}
-          onPress={props.onOpenSettings}
-        />
-        {props.reasoningLabel === null ? null : (
-          <ComposerInlineControl
-            accessibilityLabel={`Reasoning: ${props.reasoningLabel}`}
-            disabled={props.disabled}
-            label={props.reasoningLabel}
-            onPress={props.onOpenSettings}
-            quiet
+  const attachmentButton = <ComposerAttachmentButton {...props.attachment} />;
+  const isTrailingAttachment = props.attachmentPlacement === "trailing";
+  const controls = (
+    <>
+      <ComposerInlineControl
+        accessibilityLabel="Model and reasoning settings"
+        disabled={props.disabled}
+        renderIcon={(iconSize) => (
+          <ProviderIcon
+            iconUrl={props.modelOption?.providerIconUrl}
+            provider={props.modelOption?.providerDriver}
+            size={iconSize}
           />
         )}
+        label={props.modelOption?.label ?? props.modelFallbackLabel}
+        onPress={props.onOpenSettings}
+        size={size}
+      />
+      {props.reasoningLabel === null ? null : (
         <ComposerInlineControl
-          accessibilityLabel={`Access: ${runtimeModeLabel(props.runtimeMode)}`}
+          accessibilityLabel={`Reasoning: ${props.reasoningLabel}`}
           disabled={props.disabled}
-          icon={LOCK_ICON}
-          label={runtimeModeLabel(props.runtimeMode)}
+          label={props.reasoningLabel}
           onPress={props.onOpenSettings}
+          quiet
+          size={size}
         />
-        {props.interactionMode === undefined ? null : (
+      )}
+      <ComposerControlSeparator size={size} />
+      <ComposerInlineControl
+        accessibilityLabel={`Access: ${runtimeModeLabel(props.runtimeMode)}`}
+        disabled={props.disabled}
+        icon={LOCK_ICON}
+        label={runtimeModeLabel(props.runtimeMode)}
+        onPress={props.onOpenSettings}
+        size={size}
+      />
+      {props.interactionMode === undefined ? null : (
+        <>
+          <ComposerControlSeparator size={size} />
           <ComposerInlineControl
             accessibilityHint={`Switches to ${isPlan ? "Build" : "Plan"} mode`}
             accessibilityLabel={`Interaction mode: ${isPlan ? "Plan" : "Build"}`}
@@ -73,10 +82,35 @@ export function ComposerFooterControls(props: {
             icon={isPlan ? PLAN_ICON : BUILD_ICON}
             label={isPlan ? "Plan" : "Build"}
             onPress={props.interactionMode.onToggle}
+            selected={isPlan}
             showChevron={false}
+            size={size}
           />
-        )}
-      </ScrollView>
+        </>
+      )}
+    </>
+  );
+  return (
+    <View className="min-w-0 flex-1 flex-row items-center gap-2">
+      {isTrailingAttachment ? null : attachmentButton}
+      <ComposerControlTrack size={size}>{controls}</ComposerControlTrack>
+      {isTrailingAttachment ? attachmentButton : null}
     </View>
+  );
+}
+
+function ComposerControlTrack(props: {
+  readonly children: ReactNode;
+  readonly size: ComposerControlSize;
+}) {
+  if (props.size === "xs") {
+    return (
+      <View className="min-w-0 flex-1 flex-row items-center gap-1 overflow-hidden">
+        {props.children}
+      </View>
+    );
+  }
+  return (
+    <ComposerToolbarScroller gap={COMPOSER_CONTROL_GAP}>{props.children}</ComposerToolbarScroller>
   );
 }
