@@ -23,6 +23,28 @@ const COMPOSER_CONTROL_CHEVRON_SIZE = 12;
 const COMPOSER_ACTION_ICON_SIZE = 16;
 const COMPOSER_TOOLBAR_FADE_WIDTH = 18;
 const COMPOSER_TOOLBAR_SCROLL_EPSILON = 4;
+const COMPOSER_CONTROL_HIT_SLOP = { top: 8, bottom: 8 } as const;
+
+export type ComposerControlSize = "sm" | "xs";
+
+const COMPOSER_CONTROL_SIZES = {
+  sm: {
+    iconSize: 16,
+    frameClassName: "gap-1.5 px-2.5",
+    labelClassName: "text-foreground-muted",
+    quietLabelClassName: "text-foreground-muted/60",
+    iconClassName: undefined,
+    chevronClassName: "opacity-60",
+  },
+  xs: {
+    iconSize: COMPOSER_CONTROL_ICON_SIZE,
+    frameClassName: "gap-1 px-[7px]",
+    labelClassName: "text-foreground-muted/70",
+    quietLabelClassName: "text-foreground-muted/50",
+    iconClassName: "opacity-70",
+    chevronClassName: "opacity-50",
+  },
+} as const;
 
 export function ComposerInlineControl(props: {
   readonly accessibilityHint?: string;
@@ -36,11 +58,13 @@ export function ComposerInlineControl(props: {
   readonly onPress?: () => void;
   readonly quiet?: boolean;
   readonly selected?: boolean;
+  readonly size?: ComposerControlSize;
   readonly static?: boolean;
   readonly chevronDirection?: "down" | "right";
   readonly showChevron?: boolean;
 }) {
   const isHighlighted = props.emphasized || props.selected;
+  const metrics = COMPOSER_CONTROL_SIZES[props.size ?? "sm"];
   return (
     <Pressable
       accessibilityLabel={props.accessibilityLabel ?? props.label}
@@ -49,23 +73,31 @@ export function ComposerInlineControl(props: {
       accessibilityState={
         props.static ? undefined : { disabled: props.disabled, selected: props.selected }
       }
-      className="min-h-9 flex-row items-center gap-1 rounded-md px-1.5 active:bg-subtle"
+      className={cn(
+        "min-h-7 shrink-0 flex-row items-center rounded-md active:bg-subtle",
+        metrics.frameClassName,
+      )}
       disabled={props.disabled || props.static}
-      hitSlop={{ top: 4, bottom: 4 }}
+      hitSlop={COMPOSER_CONTROL_HIT_SLOP}
       onPress={props.onPress}
       style={{ maxWidth: props.maxWidth, opacity: props.disabled ? 0.45 : 1 }}
     >
       {props.renderIcon ? (
-        <View className="size-3.5 shrink-0 items-center justify-center">
-          {props.renderIcon(COMPOSER_CONTROL_ICON_SIZE)}
+        <View
+          className={cn("shrink-0 items-center justify-center", metrics.iconClassName)}
+          style={{ width: metrics.iconSize, height: metrics.iconSize }}
+        >
+          {props.renderIcon(metrics.iconSize)}
         </View>
       ) : props.icon ? (
-        <SymbolView
-          name={props.icon}
-          size={COMPOSER_CONTROL_ICON_SIZE}
-          tintColorClassName={isHighlighted ? "accent-icon" : "accent-icon-muted"}
-          type="monochrome"
-        />
+        <View className={metrics.iconClassName}>
+          <SymbolView
+            name={props.icon}
+            size={metrics.iconSize}
+            tintColorClassName={isHighlighted ? "accent-icon" : "accent-foreground-muted"}
+            type="monochrome"
+          />
+        </View>
       ) : null}
       <Text
         className={cn(
@@ -73,15 +105,15 @@ export function ComposerInlineControl(props: {
           isHighlighted
             ? "text-foreground"
             : props.quiet
-              ? "text-foreground-muted/60"
-              : "text-foreground-muted",
+              ? metrics.quietLabelClassName
+              : metrics.labelClassName,
         )}
         numberOfLines={1}
       >
         {props.label}
       </Text>
       {props.showChevron === false ? null : (
-        <View className="opacity-60">
+        <View className={metrics.chevronClassName}>
           <SymbolView
             name={props.chevronDirection === "right" ? "chevron.right" : "chevron.down"}
             size={COMPOSER_CONTROL_CHEVRON_SIZE}
@@ -91,6 +123,14 @@ export function ComposerInlineControl(props: {
         </View>
       )}
     </Pressable>
+  );
+}
+
+export function ComposerControlSeparator(props: { readonly size?: ComposerControlSize }) {
+  return (
+    <View
+      className={cn("mx-0.5 w-px shrink-0 bg-border-subtle", props.size === "xs" ? "h-3.5" : "h-4")}
+    />
   );
 }
 
@@ -121,12 +161,10 @@ export function ComposerToolbarRow(props: {
 export function ComposerToolbarScroller(props: {
   readonly children: ReactNode;
   readonly align?: "start" | "end";
-  /** Only for non-Uniwind surfaces such as the native terminal palette. */
   readonly fadeOpaque?: string;
-  /** Only for non-Uniwind surfaces such as the native terminal palette. */
   readonly fadeTransparent?: string;
-  /** Semantic Uniwind surface behind the toolbar. Defaults to card. */
   readonly fadeSurface?: "card" | "sheet";
+  readonly gap?: number;
   readonly contentPaddingRight?: number;
 }) {
   const [metrics, setMetrics] = useState({
@@ -177,7 +215,7 @@ export function ComposerToolbarScroller(props: {
           alignItems: "center",
           flexGrow: props.align === "end" ? 1 : undefined,
           justifyContent: props.align === "end" ? "flex-end" : undefined,
-          gap: COMPOSER_TOOLBAR_GAP,
+          gap: props.gap ?? COMPOSER_TOOLBAR_GAP,
           paddingLeft: 0,
           paddingRight: props.contentPaddingRight ?? 1,
         }}
