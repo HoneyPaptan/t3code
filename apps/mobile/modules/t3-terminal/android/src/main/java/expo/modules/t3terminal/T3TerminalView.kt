@@ -2,7 +2,6 @@ package expo.modules.t3terminal
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -80,6 +79,20 @@ class T3TerminalView(context: Context, appContext: AppContext) : ExpoView(contex
       terminalCanvas.fontSizeSp = value
       inputView.textSize = max(value, 13f)
       emitResize()
+    }
+
+  var fontFamilyRegularPath: String? = null
+    set(value) {
+      if (field == value) return
+      field = value
+      applyFontFamily()
+    }
+
+  var fontFamilyBoldPath: String? = null
+    set(value) {
+      if (field == value) return
+      field = value
+      applyFontFamily()
     }
 
   var appearanceScheme: String = "dark"
@@ -230,12 +243,17 @@ class T3TerminalView(context: Context, appContext: AppContext) : ExpoView(contex
     destroyTerminal()
   }
 
+  private fun applyFontFamily() {
+    terminalCanvas.setFontFamilyPaths(fontFamilyRegularPath, fontFamilyBoldPath)
+    inputView.typeface = terminalCanvas.regularTypeface
+  }
+
   private fun configureInputView() {
     inputView.setSingleLine(true)
     inputView.setTextColor(Color.TRANSPARENT)
     inputView.setHintTextColor(Color.TRANSPARENT)
     inputView.setBackgroundColor(Color.TRANSPARENT)
-    inputView.typeface = Typeface.MONOSPACE
+    inputView.typeface = terminalCanvas.regularTypeface
     inputView.textSize = max(fontSize, 13f)
     inputView.alpha = 0.01f
     inputView.isFocusableInTouchMode = true

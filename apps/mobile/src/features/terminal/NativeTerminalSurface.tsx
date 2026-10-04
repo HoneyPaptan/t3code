@@ -12,7 +12,7 @@ import {
 
 import { AppText as Text } from "../../components/AppText";
 import { MOBILE_TYPOGRAPHY } from "../../lib/typography";
-import { MONO_FONT_FAMILY } from "../../lib/useFontFamily";
+import { useFontFamily } from "../../lib/useFontFamily";
 import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
 import {
   getNativeTerminalHardwareKeyRevision,
@@ -25,6 +25,7 @@ import {
 } from "./terminalTheme";
 import { terminalDebugLog } from "./terminalDebugLog";
 import { useTerminalSurfaceBuffer } from "./useTerminalSurfaceBuffer";
+import { useTerminalFontFaces } from "./useTerminalFontFaces";
 
 interface TerminalInputEvent {
   readonly data: string;
@@ -72,8 +73,9 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface(
 ) {
   const fontSize = props.fontSize ?? MOBILE_TYPOGRAPHY.label.fontSize;
   const inputRef = useRef<TextInputInstance>(null);
-  const { themeAppearance, themeId } = useAppearancePreferences();
-  const theme = props.theme ?? getMobileTerminalTheme(themeId, themeAppearance);
+  const monoFontFamily = useFontFamily("mono");
+  const { themeAppearance, themeId, themeVariables } = useAppearancePreferences();
+  const theme = props.theme ?? getMobileTerminalTheme(themeId, themeAppearance, themeVariables);
   const statusLabel = props.readOnly
     ? "Viewing terminal output."
     : props.isRunning
@@ -126,7 +128,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface(
             selectable
             style={{
               color: theme.foreground,
-              fontFamily: MONO_FONT_FAMILY,
+              fontFamily: monoFontFamily,
               fontSize,
               lineHeight: Math.round(fontSize * 1.35),
             }}
@@ -154,7 +156,7 @@ const FallbackTerminalSurface = memo(function FallbackTerminalSurface(
           style={{
             color: theme.foreground,
             flex: 1,
-            fontFamily: MONO_FONT_FAMILY,
+            fontFamily: monoFontFamily,
             padding: 0,
           }}
           onSubmitEditing={(event) => {
@@ -192,8 +194,9 @@ export const TerminalSurface = memo(function TerminalSurface(props: TerminalSurf
 
 const ReadyTerminalSurface = memo(function ReadyTerminalSurface(props: ReadyTerminalSurfaceProps) {
   const fontSize = props.fontSize ?? MOBILE_TYPOGRAPHY.label.fontSize;
-  const { themeAppearance, themeId } = useAppearancePreferences();
-  const theme = props.theme ?? getMobileTerminalTheme(themeId, themeAppearance);
+  const { themeAppearance, themeId, themeVariables } = useAppearancePreferences();
+  const theme = props.theme ?? getMobileTerminalTheme(themeId, themeAppearance, themeVariables);
+  const fontFaces = useTerminalFontFaces();
   const { onInput, onResize } = props;
   const NativeTerminalSurfaceView = resolveNativeTerminalSurfaceView();
   const hasNativeSurface = Boolean(NativeTerminalSurfaceView);
@@ -202,7 +205,6 @@ const ReadyTerminalSurface = memo(function ReadyTerminalSurface(props: ReadyTerm
     terminalDebugLog("native:surface", {
       terminalKey: props.terminalKey,
       native: hasNativeSurface,
-      // null = installed binary predates native hardware-key handling (rebuild needed).
       hardwareKeyRevision: getNativeTerminalHardwareKeyRevision(),
       bufferLen: props.buffer.length,
       isRunning: props.isRunning,
@@ -244,6 +246,8 @@ const ReadyTerminalSurface = memo(function ReadyTerminalSurface(props: ReadyTerm
           terminalKey={props.terminalKey}
           initialBuffer={props.buffer}
           fontSize={fontSize}
+          fontFamilyRegularPath={fontFaces?.regularPath ?? null}
+          fontFamilyBoldPath={fontFaces?.boldPath ?? null}
           style={{ flex: 1 }}
           themeConfig={buildGhosttyThemeConfig(theme)}
           onInput={handleNativeInput}

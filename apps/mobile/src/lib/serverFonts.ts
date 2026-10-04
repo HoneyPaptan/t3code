@@ -32,6 +32,11 @@ function isCached(face: FontFace): boolean {
   return faceFile(face).exists;
 }
 
+export function cachedFacePath(face: FontFace): string | null {
+  const file = faceFile(face);
+  return file.exists ? decodeURI(file.uri.replace(/^file:\/\//, "")) : null;
+}
+
 async function downloadFace(face: FontFace, resolveUrl: FaceUrlResolver): Promise<void> {
   const url = await resolveUrl(face);
   if (url === null) throw new Error("The laptop did not hand out this font.");
