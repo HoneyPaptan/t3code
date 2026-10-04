@@ -1658,8 +1658,6 @@ export function NewTaskDraftScreen(props: {
             <ComposerAttachmentStrip
               environmentId={selectedProject.environmentId}
               attachments={stripAttachments}
-              imageBorderRadius={16}
-              imageSize={72}
               onRemove={
                 isComposerInteractionLocked || voiceInput.isBusy
                   ? () => undefined
