@@ -35,6 +35,7 @@ import { ThreadNotificationCoordinator } from "../components/ThreadNotificationC
 import { ReopenClosedViewShortcut } from "../components/ReopenClosedViewShortcut";
 import { ProjectCloneToastCoordinator } from "../components/ProjectCloneToastCoordinator";
 import { ServerFontSync } from "../components/ServerFontSync";
+import { BackgroundPictureLayer } from "../components/BackgroundPictureLayer";
 import { SlowRpcRequestToastCoordinator } from "../components/SlowRpcRequestToastCoordinator";
 import { ChatGptWelcomeCoordinator } from "../components/settings/ChatGptWelcomeCoordinator";
 import { ProviderAuthCallbackCoordinator } from "../components/settings/ProviderAuthCallbackCoordinator";
@@ -181,6 +182,7 @@ function RootRouteView() {
           <GlassAppearanceSync />
           <FontAppearanceSync />
           <ServerFontSync />
+          <BackgroundPictureLayer />
           <ProviderAuthCallbackCoordinator />
           <CustomSnoozeDialogHost />
           <CommandPalette>
@@ -223,6 +225,7 @@ function RootRouteView() {
         <GlassAppearanceSync />
         <FontAppearanceSync />
         <ServerFontSync />
+        <BackgroundPictureLayer />
         <ProviderAuthCallbackCoordinator />
         <ChatGptWelcomeCoordinator />
         <FirstRunGate

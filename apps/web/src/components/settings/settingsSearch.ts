@@ -218,6 +218,24 @@ export const SETTINGS_SEARCH_ITEMS = [
     searchTerms: ["transparent transparency solid menus dialogs composer"],
   },
   {
+    id: "setting-background-picture",
+    title: "Background picture",
+    to: "/settings/appearance",
+    searchTerms: ["wallpaper image photo backdrop"],
+  },
+  {
+    id: "setting-background-picture-strength",
+    title: "Picture strength",
+    to: "/settings/appearance",
+    searchTerms: ["wallpaper image backdrop intensity visibility"],
+  },
+  {
+    id: "setting-background-picture-blur",
+    title: "Picture blur",
+    to: "/settings/appearance",
+    searchTerms: ["wallpaper image backdrop soften"],
+  },
+  {
     id: "diff-color-scheme",
     title: "Diff colors",
     to: "/settings/appearance",

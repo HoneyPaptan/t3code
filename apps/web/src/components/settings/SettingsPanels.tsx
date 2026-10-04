@@ -170,6 +170,7 @@ import {
 import { searchableSetting } from "./settingsSearch";
 import { ProjectFavicon } from "../ProjectFavicon";
 import { PanelAnimationsPreview } from "./PanelAnimationsPreview";
+import { BackgroundPictureSettings } from "./BackgroundPictureSettings";
 
 const ENVIRONMENT_IDENTIFICATION_LABELS: Record<EnvironmentIdentificationMode, string> = {
   artwork: "Artwork",
@@ -542,6 +543,12 @@ export function useSettingsRestore(onRestored?: () => void) {
         ? ["Contrast"]
         : []),
       ...(settings.glassOpacity !== DEFAULT_UNIFIED_SETTINGS.glassOpacity ? ["Glass opacity"] : []),
+      ...(settings.backgroundPictureStrength !== DEFAULT_UNIFIED_SETTINGS.backgroundPictureStrength
+        ? ["Picture strength"]
+        : []),
+      ...(settings.backgroundPictureBlur !== DEFAULT_UNIFIED_SETTINGS.backgroundPictureBlur
+        ? ["Picture blur"]
+        : []),
       ...(settings.diffColorScheme !== DEFAULT_UNIFIED_SETTINGS.diffColorScheme
         ? ["Diff colors"]
         : []),
@@ -700,6 +707,8 @@ export function useSettingsRestore(onRestored?: () => void) {
       settings.fontSizePrompt,
       settings.fontSizeTerminal,
       settings.glassOpacity,
+      settings.backgroundPictureStrength,
+      settings.backgroundPictureBlur,
       settings.panelAnimationDurationMs,
       settings.responseStreamingMode,
       settings.persistComposerContextStrip,
@@ -807,6 +816,8 @@ export function useSettingsRestore(onRestored?: () => void) {
       contextWindowMeterEnabled: DEFAULT_UNIFIED_SETTINGS.contextWindowMeterEnabled,
       environmentIdentificationMode: DEFAULT_UNIFIED_SETTINGS.environmentIdentificationMode,
       glassOpacity: DEFAULT_UNIFIED_SETTINGS.glassOpacity,
+      backgroundPictureStrength: DEFAULT_UNIFIED_SETTINGS.backgroundPictureStrength,
+      backgroundPictureBlur: DEFAULT_UNIFIED_SETTINGS.backgroundPictureBlur,
       panelAnimationDurationMs: DEFAULT_UNIFIED_SETTINGS.panelAnimationDurationMs,
       sidebarThreadPreviewCount: DEFAULT_UNIFIED_SETTINGS.sidebarThreadPreviewCount,
       sidebarProjectGroupingMode: DEFAULT_UNIFIED_SETTINGS.sidebarProjectGroupingMode,
@@ -1301,6 +1312,8 @@ export function AppearanceSettingsPanel() {
             </div>
           }
         />
+
+        <BackgroundPictureSettings />
 
         {showEnvironmentIdentification ? (
           <SettingsRow
