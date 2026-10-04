@@ -229,6 +229,25 @@ export function resolveScaledTextRole(role: keyof typeof MOBILE_TYPOGRAPHY, base
   };
 }
 
+const CHAT_BODY_FONT_SIZE = 15;
+const CHAT_ASSISTANT_LINE_HEIGHT = 23;
+const CHAT_USER_LINE_HEIGHT = 22;
+
+export interface ChatMarkdownTypography {
+  readonly fontSize: number;
+  readonly assistantLineHeight: number;
+  readonly userLineHeight: number;
+}
+
+export function resolveChatMarkdownTypography(baseFontSize: number): ChatMarkdownTypography {
+  const scale = normalizeBaseFontSize(baseFontSize) / DEFAULT_BASE_FONT_SIZE;
+  return {
+    fontSize: Math.max(10, Math.round(CHAT_BODY_FONT_SIZE * scale)),
+    assistantLineHeight: Math.max(16, Math.round(CHAT_ASSISTANT_LINE_HEIGHT * scale)),
+    userLineHeight: Math.max(16, Math.round(CHAT_USER_LINE_HEIGHT * scale)),
+  };
+}
+
 export function resolveNativeMarkdownTypography(baseFontSize: number): NativeMarkdownTypography {
   const fontSizes = resolveMarkdownFontSizes(baseFontSize);
   return {
