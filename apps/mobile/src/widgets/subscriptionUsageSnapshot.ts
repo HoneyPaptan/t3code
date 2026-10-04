@@ -4,10 +4,12 @@ import {
   type LimitAccount,
   type LimitPresentations,
 } from "@t3tools/shared/usageLimits";
+import type { SubscriptionUsagePalette } from "./subscriptionUsagePalette";
 
 export interface SubscriptionUsageSnapshot {
   url?: string;
   checkedAt: number;
+  palette?: SubscriptionUsagePalette;
   providers: Array<{
     name: string;
     detail: string;
