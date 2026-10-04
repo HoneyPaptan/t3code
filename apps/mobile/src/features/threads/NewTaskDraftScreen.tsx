@@ -662,7 +662,7 @@ export function NewTaskDraftScreen(props: {
   const theme = useUniwindTheme();
   const foregroundColor = theme["--color-foreground"];
   const regularFontFamily = useFontFamily("regular");
-  const bodyText = useScaledTextRole("body");
+  const promptText = useScaledTextRole("prompt");
 
   // A new navigation to this mounted screen delivers a fresh initialProjectRef
   // reference — treat it as a new request and let it apply again.
@@ -1468,11 +1468,12 @@ export function NewTaskDraftScreen(props: {
         singleLineCentered={false}
         contentInsetVertical={0}
         style={{
-          minHeight: 56,
+          minHeight: 72,
           maxHeight: 160,
-          paddingVertical: 6,
+          paddingHorizontal: 4,
+          paddingVertical: 4,
         }}
-        textStyle={{ ...bodyText, color: foregroundColor, fontFamily: regularFontFamily }}
+        textStyle={{ ...promptText, color: foregroundColor, fontFamily: regularFontFamily }}
       />
     </>
   );
@@ -1695,12 +1696,10 @@ export function NewTaskDraftScreen(props: {
         style={{
           borderRadius: MOBILE_RADIUS["2xl"],
           overflow: "hidden",
-          paddingBottom: 6,
-          paddingTop: 12,
         }}
       >
         {stripAttachments.length > 0 ? (
-          <View className="px-[14px] pb-2.5">
+          <View className="px-2 pt-2">
             <ComposerAttachmentStrip
               environmentId={selectedProject.environmentId}
               attachments={stripAttachments}
@@ -1730,9 +1729,9 @@ export function NewTaskDraftScreen(props: {
           </View>
         ) : null}
 
-        <View className="flex-row items-end gap-1 pl-[14px] pr-1.5">
+        <View className="flex-row items-end gap-1 p-2">
           <View className="min-w-0 flex-1">{promptEditor}</View>
-          <View className="flex-row items-center">
+          <View className="flex-row items-end gap-1">
             {!isVoiceInputPresented ? (
               <ComposerDictationStartAction
                 state={voiceInput.state}
@@ -1771,12 +1770,7 @@ export function NewTaskDraftScreen(props: {
         </View>
       </ComposerSurface>
       <ComposerFooterTray showsDictation={isVoiceInputPresented}>
-        <ComposerToolbarRow
-          paddingBottom={4}
-          paddingHorizontal={0}
-          paddingTop={4}
-          style={{ gap: 8 }}
-        >
+        <ComposerToolbarRow>
           <ComposerDictationCancelAction
             presentation={voicePresentation}
             onCancel={voiceInput.cancel}

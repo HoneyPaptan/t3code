@@ -121,42 +121,32 @@ import {
   useThreadSettingsSheetPresentation,
   type NavigationWithFinishTransitioning,
 } from "./use-thread-settings-sheet-presentation";
-import { cn } from "../../lib/cn";
 import { MOBILE_RADIUS } from "../../lib/radius";
 
-const COMPOSER_EDITOR_MIN_HEIGHT = 40;
+const COMPOSER_EDITOR_MIN_HEIGHT = 36;
 const COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT = 72;
 const COMPOSER_EDITOR_MAX_HEIGHT = 160;
-const COMPOSER_PILL_PADDING_TOP = 4;
-const COMPOSER_PILL_PADDING_BOTTOM = 4;
-const COMPOSER_PILL_EXPANDED_PADDING_TOP = 12;
-const COMPOSER_PILL_EXPANDED_PADDING_BOTTOM = 6;
-const COMPOSER_PILL_COLLAPSED_RADIUS =
-  (COMPOSER_EDITOR_MIN_HEIGHT + COMPOSER_PILL_PADDING_TOP + COMPOSER_PILL_PADDING_BOTTOM) / 2;
-const COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL = 6;
-const COMPOSER_CONTROLS_ROW_HEIGHT = 44;
+const COMPOSER_EDITOR_PADDING_HORIZONTAL = 4;
+const COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL = 4;
+const COMPOSER_ROW_PADDING = 8;
+const COMPOSER_TOOLBAR_PADDING_TOP = 6;
+const COMPOSER_TOOLBAR_ROW_HEIGHT = 36;
 const COMPOSER_DOCK_PADDING = 12;
-const COMPOSER_CONTROLS_GAP = 8;
+const COMPOSER_DOCK_EXPANDED_PADDING = 16;
+
+const COMPOSER_TOOLBAR_HEIGHT = COMPOSER_TOOLBAR_PADDING_TOP + COMPOSER_TOOLBAR_ROW_HEIGHT;
 
 export const COMPOSER_COLLAPSED_CHROME =
   COMPOSER_EDITOR_MIN_HEIGHT +
-  COMPOSER_PILL_PADDING_TOP +
-  COMPOSER_PILL_PADDING_BOTTOM +
-  COMPOSER_CONTROLS_GAP +
-  COMPOSER_CONTROLS_ROW_HEIGHT +
+  COMPOSER_ROW_PADDING * 2 +
+  COMPOSER_TOOLBAR_HEIGHT +
   COMPOSER_DOCK_PADDING;
 
 export const COMPOSER_EXPANDED_CHROME =
   COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT +
-  COMPOSER_PILL_EXPANDED_PADDING_TOP +
-  COMPOSER_PILL_EXPANDED_PADDING_BOTTOM +
-  COMPOSER_CONTROLS_GAP +
-  COMPOSER_CONTROLS_ROW_HEIGHT +
-  COMPOSER_DOCK_PADDING;
-
-function composerSurfaceRadius(isExpanded: boolean): number {
-  return isExpanded ? MOBILE_RADIUS["2xl"] : COMPOSER_PILL_COLLAPSED_RADIUS;
-}
+  COMPOSER_ROW_PADDING * 2 +
+  COMPOSER_TOOLBAR_HEIGHT +
+  COMPOSER_DOCK_EXPANDED_PADDING;
 
 function composerEditorVerticalPadding(isExpanded: boolean, lineHeight: number): number {
   if (isExpanded) return COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL;
@@ -338,11 +328,7 @@ export function ComposerFooterTray(props: {
   readonly showsDictation: boolean;
 }) {
   return (
-    <Animated.View
-      collapsable={false}
-      layout={COMPOSER_LAYOUT_TRANSITION}
-      className="mx-3.5 overflow-hidden rounded-b-xl border border-t-0 border-border-subtle bg-grouped-card px-1"
-    >
+    <Animated.View collapsable={false} layout={COMPOSER_LAYOUT_TRANSITION} className="pt-1.5">
       <ComposerDictationToolbar showsDictation={props.showsDictation}>
         {props.children}
       </ComposerDictationToolbar>
@@ -387,8 +373,8 @@ export function ComposerSurface(props: {
     >
       <AnimatedGlassSurface
         chrome="none"
-        className="border border-border-subtle bg-grouped-card"
-        fallbackColor={colors["--color-grouped-card"]}
+        className="border border-border-subtle bg-card"
+        fallbackColor={colors["--color-card"]}
         fallbackClassName="border border-border-subtle"
         glassEffectStyle="none"
         pointerEvents="none"
@@ -415,7 +401,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
   const composerPanel = materialTheme["--color-composer-panel"];
   const navigation = useNavigation();
   const foregroundColor = useUniwindTheme()["--color-foreground"];
-  const bodyText = useScaledTextRole("body");
+  const promptText = useScaledTextRole("prompt");
   const fallbackInputRef = useRef<ComposerEditorHandle>(null);
   const inputRef = props.editorRef ?? fallbackInputRef;
   const [isFocused, setIsFocused] = useState(false);
@@ -836,32 +822,34 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
             }
             className={
               selectedProviderStatus.compatibilityAdvisory.status === "broken"
-                ? "bg-danger px-3 py-2 text-xs text-danger-foreground"
-                : "px-3 py-2 text-xs text-foreground"
+                ? "rounded-lg bg-danger px-3 py-2 text-[13px] leading-[18px] text-danger-foreground"
+                : "rounded-lg px-3 py-2 text-[13px] leading-[18px] text-foreground"
             }
           >
             {selectedProviderStatus.compatibilityAdvisory.message}
           </Text>
         ) : null}
         {modelUnavailable ? (
-          <Pressable accessibilityRole="button" className="px-3 py-2" onPress={openSettings}>
-            <Text className="text-xs text-foreground">Model unavailable. Open model settings.</Text>
+          <Pressable
+            accessibilityRole="button"
+            className="rounded-lg px-3 py-2"
+            onPress={openSettings}
+          >
+            <Text className="text-[13px] leading-[18px] text-foreground">
+              Model unavailable. Open model settings.
+            </Text>
           </Pressable>
         ) : null}
 
         <ComposerSurface
           style={{
-            borderRadius: composerSurfaceRadius(isExpanded),
+            borderRadius: MOBILE_RADIUS["2xl"],
             overflow: "hidden" as const,
-            paddingTop: isExpanded ? COMPOSER_PILL_EXPANDED_PADDING_TOP : COMPOSER_PILL_PADDING_TOP,
-            paddingBottom: isExpanded
-              ? COMPOSER_PILL_EXPANDED_PADDING_BOTTOM
-              : COMPOSER_PILL_PADDING_BOTTOM,
           }}
         >
           {isExpanded && queuedEdit !== null && queuedEdit.existingAttachments.length > 0 ? (
             <Animated.View
-              className="px-[14px] pb-2.5"
+              className="px-2 pt-2"
               entering={COMPOSER_ATTACHMENT_ENTERING}
               exiting={FadeOut.duration(120)}
             >
@@ -875,7 +863,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
           ) : null}
           {isExpanded && stripAttachments.length > 0 ? (
             <Animated.View
-              className="px-[14px] pb-2.5"
+              className="px-2 pt-2"
               entering={COMPOSER_ATTACHMENT_ENTERING}
               exiting={FadeOut.duration(120)}
             >
@@ -899,12 +887,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
               />
             </Animated.View>
           ) : null}
-          <View
-            className={cn(
-              "flex-row gap-1 pl-[14px] pr-1.5",
-              isExpanded ? "items-end" : "items-center",
-            )}
-          >
+          <View className="flex-row items-end gap-1 p-2">
             <Animated.View className="min-w-0 flex-1" layout={COMPOSER_LAYOUT_TRANSITION}>
               <ComposerEditor
                 draftKey={composerDraftKey}
@@ -1022,16 +1005,17 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                     ? COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT
                     : COMPOSER_EDITOR_MIN_HEIGHT,
                   maxHeight: isExpanded ? COMPOSER_EDITOR_MAX_HEIGHT : COMPOSER_EDITOR_MIN_HEIGHT,
-                  paddingVertical: composerEditorVerticalPadding(isExpanded, bodyText.lineHeight),
+                  paddingHorizontal: COMPOSER_EDITOR_PADDING_HORIZONTAL,
+                  paddingVertical: composerEditorVerticalPadding(isExpanded, promptText.lineHeight),
                 }}
                 textStyle={{
-                  ...bodyText,
+                  ...promptText,
                   color: foregroundColor,
                 }}
               />
             </Animated.View>
             {!isExpanded && stripAttachments.length > 0 ? (
-              <View className="flex-row gap-1 pl-1">
+              <View className="flex-row gap-1 self-center pl-1">
                 {stripAttachments.slice(0, 3).map((attachment) => (
                   <ComposerAttachmentThumbnail
                     environmentId={props.environmentId}
@@ -1053,7 +1037,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                 ) : null}
               </View>
             ) : null}
-            <View className="flex-row items-center">
+            <View className="flex-row items-end gap-1">
               {!isVoiceInputPresented ? (
                 <ComposerDictationStartAction
                   state={voiceInput.state}
@@ -1082,12 +1066,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
           </View>
         </ComposerSurface>
         <ComposerFooterTray showsDictation={isVoiceInputPresented}>
-          <ComposerToolbarRow
-            paddingBottom={4}
-            paddingHorizontal={0}
-            paddingTop={4}
-            style={{ gap: 8 }}
-          >
+          <ComposerToolbarRow>
             <ComposerDictationCancelAction
               presentation={voicePresentation}
               onCancel={voiceInput.cancel}
