@@ -707,6 +707,15 @@ const MARKDOWN_MONO_FONT = MONO_FONT_FAMILY;
 interface MarkdownStyleSets {
   readonly user: MarkdownStyleSet;
   readonly assistant: MarkdownStyleSet;
+  readonly reasoning: MarkdownStyleSet;
+}
+
+function mutedMarkdownStyleSet(base: MarkdownStyleSet, color: string): MarkdownStyleSet {
+  return {
+    ...base,
+    theme: { ...base.theme, colors: { ...base.theme.colors, text: color } },
+    nativeTextStyle: { ...base.nativeTextStyle, color, mutedColor: color },
+  };
 }
 
 interface MarkdownStyleSet {
@@ -1058,6 +1067,7 @@ function useMarkdownStyles(
   const themeMode = themeAppearance;
   const theme = useUniwindTheme();
   const markdownBodyColor = theme["--color-md-body"];
+  const markdownMutedColor = theme["--color-foreground-muted"];
   const markdownStrongColor = theme["--color-md-strong"];
   const markdownLinkColor = theme["--color-md-link"];
   const markdownBlockquoteBg = theme["--color-md-blockquote-bg"];
@@ -1346,7 +1356,7 @@ function useMarkdownStyles(
       ...baseStyles,
     };
 
-    return {
+    const sets: Pick<MarkdownStyleSets, "user" | "assistant"> = {
       user: {
         theme: userTheme,
         styles: userStyles,
@@ -1416,6 +1426,10 @@ function useMarkdownStyles(
         },
       },
     };
+    return {
+      ...sets,
+      reasoning: mutedMarkdownStyleSet(sets.assistant, markdownMutedColor),
+    };
   }, [
     boldFontFamily,
     contextChipBorderColor,
@@ -1430,6 +1444,7 @@ function useMarkdownStyles(
     markdownHrColor,
     markdownInlineCodeText,
     markdownLinkColor,
+    markdownMutedColor,
     markdownStrongColor,
     markdownUserBodyColor,
     markdownUserCodeBg,
@@ -1508,7 +1523,6 @@ function renderFeedEntry(
     readonly renderReasoning: (text: string) => ReactNode;
     readonly iconSubtleColor: string | import("react-native").ColorValue;
     readonly screenColor: string;
-    readonly userBubbleColor: string | import("react-native").ColorValue;
     readonly markdownStyles: MarkdownStyleSets;
     readonly reviewCommentColors: ReviewCommentColors;
     readonly reviewCommentBubbleWidth: number;
@@ -1520,7 +1534,7 @@ function renderFeedEntry(
   },
 ) {
   const entry = info.item;
-  const { markdownStyles, iconSubtleColor, userBubbleColor } = props;
+  const { markdownStyles, iconSubtleColor } = props;
 
   if (entry.type === "run-fold") {
     return (
@@ -1653,9 +1667,8 @@ function renderFeedEntry(
             />
           ) : null}
           <View
-            className="min-w-0 gap-2 rounded-xl px-3.5 py-2.5"
+            className="min-w-0 gap-2 rounded-2xl bg-user-bubble px-3.5 py-2.5"
             style={{
-              backgroundColor: userBubbleColor,
               maxWidth: props.userBubbleMaxWidth,
               ...(hasReviewCommentContext
                 ? { width: props.reviewCommentBubbleWidth }
@@ -1760,7 +1773,7 @@ function renderFeedEntry(
                 </Text>
               </View>
             ) : null}
-            <Text className="font-t3-medium text-xs tabular-nums text-foreground-secondary">
+            <Text className="text-xs tabular-nums text-foreground-muted/60">
               {entry.pendingMessage && !entry.acknowledged ? "Pending" : timestampLabel}
             </Text>
             {props.onEditPendingMessage !== null &&
@@ -1879,9 +1892,7 @@ function renderFeedEntry(
               buttonSize={28}
               iconSize={13}
             />
-            <Text className="font-t3-medium text-xs tabular-nums text-foreground-secondary">
-              {timestampLabel}
-            </Text>
+            <Text className="text-xs tabular-nums text-foreground-muted/60">{timestampLabel}</Text>
           </View>
         ) : null}
       </Animated.View>
@@ -2213,7 +2224,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
   const theme = useUniwindTheme();
   const iconSubtleColor = theme["--color-icon-subtle"];
   const screenColor = theme["--color-screen"];
-  const userBubbleColor = theme["--color-user-bubble"];
   const onMarkdownLinkPress = useCallback(
     (href: string) => {
       const presentation = resolveMarkdownLinkPresentation(href);
@@ -2420,13 +2430,13 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
     (text: string) => (
       <AssistantMarkdownContent
         markdown={text}
-        markdownStyles={markdownStyles.assistant}
+        markdownStyles={markdownStyles.reasoning}
         linkHandlers={markdownLinkHandlers}
         renderImage={renderMarkdownImage}
         skills={props.skills}
       />
     ),
-    [markdownStyles.assistant, markdownLinkHandlers, renderMarkdownImage, props.skills],
+    [markdownStyles.reasoning, markdownLinkHandlers, renderMarkdownImage, props.skills],
   );
   const reviewCommentColors = useReviewCommentColors();
   const unsettledTurnId = threadFeedRunIsUnsettled(props.latestRun) ? props.latestRun.runId : null;
@@ -2447,7 +2457,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
       markdownStyles,
       reviewCommentColors,
       themeAppearance,
-      userBubbleColor,
       viewportWidth,
     }),
     [
@@ -2463,7 +2472,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
       markdownStyles,
       reviewCommentColors,
       themeAppearance,
-      userBubbleColor,
       viewportWidth,
     ],
   );
@@ -2913,7 +2921,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
             renderReasoning,
             iconSubtleColor,
             screenColor,
-            userBubbleColor,
             markdownStyles,
             reviewCommentColors,
             reviewCommentBubbleWidth,
@@ -2949,7 +2956,6 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
       failedRunIds,
       iconSubtleColor,
       screenColor,
-      userBubbleColor,
       markdownStyles,
       reviewCommentColors,
       reviewCommentBubbleWidth,
