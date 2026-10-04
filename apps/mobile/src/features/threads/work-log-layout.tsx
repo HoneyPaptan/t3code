@@ -53,7 +53,9 @@ export function WorkLogRows({ children }: { children: ReactNode }) {
 }
 
 export function WorkLogIconSlot({ children }: { children: ReactNode }) {
-  return <View className="relative size-5 shrink-0 items-center justify-center">{children}</View>;
+  return (
+    <View className="relative size-[20px] shrink-0 items-center justify-center">{children}</View>
+  );
 }
 
 export function WorkLogPressable({
@@ -67,7 +69,7 @@ export function WorkLogPressable({
   return (
     <Pressable {...props} hitSlop={4} className="rounded-md px-0.5 py-0 active:bg-subtle">
       <View
-        className="flex-row items-center gap-2"
+        className="flex-row items-center gap-[8px]"
         style={{ minHeight: rowSizing?.estimatedRowHeight ?? THREAD_WORK_ROW_MIN_HEIGHT }}
       >
         {children}
