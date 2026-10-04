@@ -16,9 +16,11 @@ import {
 import { cn } from "../lib/cn";
 import { AppText as Text } from "./AppText";
 import { SymbolView } from "./AppSymbol";
-import { useAndroidControlSizing } from "./useAndroidControlSizing";
 
 const COMPOSER_TOOLBAR_GAP = 8;
+const COMPOSER_CONTROL_ICON_SIZE = 14;
+const COMPOSER_CONTROL_CHEVRON_SIZE = 12;
+const COMPOSER_ACTION_ICON_SIZE = 16;
 const COMPOSER_TOOLBAR_FADE_WIDTH = 18;
 const COMPOSER_TOOLBAR_SCROLL_EPSILON = 4;
 
@@ -32,12 +34,13 @@ export function ComposerInlineControl(props: {
   readonly label: string;
   readonly maxWidth?: ViewStyle["maxWidth"];
   readonly onPress?: () => void;
+  readonly quiet?: boolean;
   readonly selected?: boolean;
   readonly static?: boolean;
   readonly chevronDirection?: "down" | "right";
   readonly showChevron?: boolean;
 }) {
-  const { scale, smallIconSize } = useAndroidControlSizing();
+  const isHighlighted = props.emphasized || props.selected;
   return (
     <Pressable
       accessibilityLabel={props.accessibilityLabel ?? props.label}
@@ -46,44 +49,43 @@ export function ComposerInlineControl(props: {
       accessibilityState={
         props.static ? undefined : { disabled: props.disabled, selected: props.selected }
       }
-      className="min-h-9 flex-row items-center gap-1.5 rounded-md px-2.5 active:bg-subtle"
+      className="min-h-9 flex-row items-center gap-1 rounded-md px-1.5 active:bg-subtle"
       disabled={props.disabled || props.static}
       hitSlop={{ top: 4, bottom: 4 }}
       onPress={props.onPress}
-      style={{ maxWidth: props.maxWidth ?? 190, opacity: props.disabled ? 0.45 : 1 }}
+      style={{ maxWidth: props.maxWidth, opacity: props.disabled ? 0.45 : 1 }}
     >
       {props.renderIcon ? (
-        <View
-          className="size-4 shrink-0 items-center justify-center"
-          style={Platform.OS === "android" ? { width: 14 * scale, height: 14 * scale } : undefined}
-        >
-          {props.renderIcon(smallIconSize)}
+        <View className="size-3.5 shrink-0 items-center justify-center">
+          {props.renderIcon(COMPOSER_CONTROL_ICON_SIZE)}
         </View>
       ) : props.icon ? (
         <SymbolView
           name={props.icon}
-          size={smallIconSize}
-          tintColorClassName={
-            props.emphasized || props.selected ? "accent-icon" : "accent-icon-muted"
-          }
+          size={COMPOSER_CONTROL_ICON_SIZE}
+          tintColorClassName={isHighlighted ? "accent-icon" : "accent-icon-muted"}
           type="monochrome"
         />
       ) : null}
       <Text
         className={cn(
-          "shrink text-xs font-t3-medium",
-          props.emphasized || props.selected ? "text-foreground" : "text-foreground/60",
+          "max-w-[176px] shrink text-[13px] leading-[18px]",
+          isHighlighted
+            ? "text-foreground"
+            : props.quiet
+              ? "text-foreground-muted/60"
+              : "text-foreground-muted",
         )}
         numberOfLines={1}
       >
         {props.label}
       </Text>
       {props.showChevron === false ? null : (
-        <View className="opacity-50">
+        <View className="opacity-60">
           <SymbolView
             name={props.chevronDirection === "right" ? "chevron.right" : "chevron.down"}
-            size={Math.round(14 * scale)}
-            tintColorClassName="accent-icon-muted"
+            size={COMPOSER_CONTROL_CHEVRON_SIZE}
+            tintColorClassName="accent-foreground-muted"
             type="monochrome"
           />
         </View>
@@ -101,12 +103,12 @@ export function ComposerToolbarRow(props: {
 }) {
   return (
     <View
-      className="flex-row items-center gap-1.5"
+      className="flex-row items-center gap-0.5"
       style={[
         {
-          paddingBottom: props.paddingBottom ?? 8,
-          paddingHorizontal: props.paddingHorizontal ?? 6,
-          paddingTop: props.paddingTop ?? 8,
+          paddingBottom: props.paddingBottom ?? 0,
+          paddingHorizontal: props.paddingHorizontal ?? 4,
+          paddingTop: props.paddingTop ?? 0,
         },
         props.style,
       ]}
@@ -231,38 +233,36 @@ export function ComposerActionButton(props: {
   readonly onLongPress?: PressableProps["onLongPress"];
   readonly onTouchStart?: PressableProps["onTouchStart"];
 }) {
-  const { scale } = useAndroidControlSizing();
-  const circleSize = Math.round(40 * scale);
-  const iconSize = Math.round(20 * scale);
+  const isDanger = props.variant === "danger";
+  const isQuiet = props.disabled && !isDanger;
   return (
     <Pressable
       accessibilityLabel={props.accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
-      className="min-h-10 min-w-10 shrink-0 items-center justify-center active:opacity-70"
+      className={cn(
+        "size-9 shrink-0 items-center justify-center rounded-full active:opacity-70",
+        isDanger ? "bg-danger" : isQuiet ? "bg-subtle" : "bg-primary",
+      )}
       disabled={props.disabled}
-      hitSlop={2}
+      hitSlop={4}
       onPress={props.onPress}
       onLongPress={props.onLongPress}
       onTouchStart={props.onTouchStart}
     >
-      <View
-        style={{ width: circleSize, height: circleSize }}
-        className={cn(
-          "items-center justify-center rounded-full",
-          props.variant === "danger" ? "bg-danger" : props.disabled ? "bg-send/15" : "bg-send",
-        )}
-      >
-        <SymbolView
-          name={props.icon}
-          size={iconSize}
-          weight="semibold"
-          tintColorClassName={
-            props.variant === "danger" ? "accent-danger-foreground" : "accent-send-foreground"
-          }
-          type="monochrome"
-        />
-      </View>
+      <SymbolView
+        name={props.icon}
+        size={COMPOSER_ACTION_ICON_SIZE}
+        weight="semibold"
+        tintColorClassName={
+          isDanger
+            ? "accent-danger-foreground"
+            : isQuiet
+              ? "accent-foreground-muted"
+              : "accent-primary-foreground"
+        }
+        type="monochrome"
+      />
     </Pressable>
   );
 }
@@ -301,13 +301,9 @@ export function ComposerToolbarButton(props: {
       disabled={props.disabled}
       onPress={props.onPress}
       className={cn(
-        // Default width cap lives in the class chain (not the inline style)
-        // so callers can lift it with max-w-full — flex-filling pills in the
-        // thread composer stretch to the row's edge. The numeric maxWidth
-        // prop still wins via the inline style below.
-        "min-h-11 max-w-[172px] flex-row items-center justify-center rounded-full border active:opacity-70",
+        "min-h-9 max-w-[172px] flex-row items-center justify-center rounded-full border active:opacity-70",
         variant === "primary" && "shadow-lg shadow-primary-shadow/20 disabled:shadow-none",
-        isCircle ? "w-11" : "gap-2 px-3.5",
+        isCircle ? "w-9" : "gap-1.5 px-3",
         variant === "primary"
           ? props.disabled
             ? "bg-subtle-strong"
@@ -315,8 +311,8 @@ export function ComposerToolbarButton(props: {
           : variant === "danger"
             ? "bg-danger"
             : props.active
-              ? "bg-subtle-strong"
-              : "bg-subtle",
+              ? "bg-subtle"
+              : undefined,
         variant === "default"
           ? props.active
             ? "border-border"
@@ -338,11 +334,11 @@ export function ComposerToolbarButton(props: {
       ]}
     >
       {props.iconNode ? (
-        <View className="h-4 w-4 items-center justify-center">{props.iconNode}</View>
+        <View className="size-3.5 items-center justify-center">{props.iconNode}</View>
       ) : props.icon ? (
         <SymbolView
           name={props.icon}
-          size={16}
+          size={COMPOSER_CONTROL_ICON_SIZE}
           tintColorClassName={iconTintClassName}
           type="monochrome"
         />
@@ -350,7 +346,7 @@ export function ComposerToolbarButton(props: {
       {props.label ? (
         <Text
           className={cn(
-            "shrink text-center text-sm font-t3-bold",
+            "shrink text-center text-[13px] leading-[18px]",
             variant === "primary"
               ? props.disabled
                 ? "text-foreground-muted"
@@ -367,7 +363,7 @@ export function ComposerToolbarButton(props: {
       {props.showChevron === false ? null : (
         <SymbolView
           name="chevron.down"
-          size={11}
+          size={COMPOSER_CONTROL_CHEVRON_SIZE}
           tintColorClassName={iconTintClassName}
           type="monochrome"
         />

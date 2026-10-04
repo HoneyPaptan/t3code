@@ -27,11 +27,12 @@ export function ComposerFooterControls(props: {
 }) {
   const isPlan = props.interactionMode?.mode === "plan";
   return (
-    <View className="min-w-0 flex-1 flex-row items-center">
+    <View className="min-w-0 flex-1 flex-row items-center gap-0.5">
+      <ComposerAttachmentButton {...props.attachment} />
       <ScrollView
         horizontal
         className="min-w-0 flex-1"
-        contentContainerClassName="items-center"
+        contentContainerClassName="items-center gap-0.5"
         keyboardShouldPersistTaps="always"
         showsHorizontalScrollIndicator={false}
       >
@@ -46,7 +47,6 @@ export function ComposerFooterControls(props: {
             />
           )}
           label={props.modelOption?.label ?? props.modelFallbackLabel}
-          maxWidth={170}
           onPress={props.onOpenSettings}
         />
         {props.reasoningLabel === null ? null : (
@@ -54,8 +54,8 @@ export function ComposerFooterControls(props: {
             accessibilityLabel={`Reasoning: ${props.reasoningLabel}`}
             disabled={props.disabled}
             label={props.reasoningLabel}
-            maxWidth={110}
             onPress={props.onOpenSettings}
+            quiet
           />
         )}
         <ComposerInlineControl
@@ -63,7 +63,6 @@ export function ComposerFooterControls(props: {
           disabled={props.disabled}
           icon={LOCK_ICON}
           label={runtimeModeLabel(props.runtimeMode)}
-          maxWidth={150}
           onPress={props.onOpenSettings}
         />
         {props.interactionMode === undefined ? null : (
@@ -78,7 +77,6 @@ export function ComposerFooterControls(props: {
           />
         )}
       </ScrollView>
-      <ComposerAttachmentButton {...props.attachment} />
     </View>
   );
 }
