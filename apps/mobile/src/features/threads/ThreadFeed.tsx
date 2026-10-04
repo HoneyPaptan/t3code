@@ -237,8 +237,7 @@ function formatMessageTime(input: string): string {
   return MESSAGE_TIME_FORMATTER.format(timestamp);
 }
 
-const USER_BUBBLE_HORIZONTAL_PADDING = 4 * 3.5;
-const ASSISTANT_ROW_HORIZONTAL_PADDING = 3.5;
+const USER_BUBBLE_HORIZONTAL_PADDING = 12;
 // Let neighboring rows move out of the new rows' space before showing their text.
 const THREAD_FEED_DISCLOSURE_ENTER_TRANSITION = FadeIn.delay(
   THREAD_DISCLOSURE_TRANSITION_MS,
@@ -701,6 +700,7 @@ function ThreadMarkdownVideo(props: { readonly source: MediaVideoPreviewSource }
 }
 
 const MARKDOWN_MONO_FONT = MONO_FONT_FAMILY;
+const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const;
 
 interface MarkdownStyleSets {
   readonly user: MarkdownStyleSet;
@@ -954,10 +954,8 @@ const AssistantMarkdownContent = memo(function AssistantMarkdownContent(props: {
 
 function MarkdownCodeBlock(props: {
   readonly backgroundColor: string;
-  readonly borderColor: string;
   readonly content: string;
   readonly copyTintColor: ColorValue;
-  readonly headerTextColor: string;
   readonly fontSize: number;
   readonly highlightCode: boolean;
   readonly language?: string | null;
@@ -966,7 +964,6 @@ function MarkdownCodeBlock(props: {
   readonly theme: ReviewDiffTheme;
 }) {
   const content = props.content.replace(/\n$/, "");
-  const languageLabel = props.language?.trim() || "text";
   const highlighted = useMarkdownCodeHighlight({
     code: content,
     enabled: props.highlightCode && Boolean(props.language?.trim()),
@@ -977,24 +974,10 @@ function MarkdownCodeBlock(props: {
 
   return (
     <View
-      className="my-3 min-w-0 max-w-full self-stretch overflow-hidden rounded-lg border"
-      style={{ backgroundColor: props.backgroundColor, borderColor: props.borderColor }}
+      className="my-[12px] min-w-0 max-w-full self-stretch overflow-hidden rounded-md"
+      style={{ backgroundColor: props.backgroundColor }}
     >
-      <View
-        className="flex-row items-center justify-between gap-2 border-b py-1 pr-1.5 pl-3.5"
-        style={{ borderBottomColor: props.borderColor }}
-      >
-        <NativeText
-          className="flex-1 font-mono uppercase opacity-70"
-          numberOfLines={1}
-          style={{
-            color: props.headerTextColor,
-            fontSize: props.fontSize,
-            ...(Platform.OS === "android" ? { includeFontPadding: false } : null),
-          }}
-        >
-          {languageLabel}
-        </NativeText>
+      <View className="absolute top-0 right-0 z-10">
         <CopyTextButton
           accessibilityLabel="Copy code"
           text={content}
@@ -1008,7 +991,7 @@ function MarkdownCodeBlock(props: {
         bounces={false}
         nestedScrollEnabled={Platform.OS === "android"}
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName="px-3.5 py-3"
+        contentContainerClassName="py-[8px] pr-[36px] pl-[10px]"
       >
         <NativeText
           selectable
@@ -1082,7 +1065,15 @@ function useMarkdownStyles(
     () => ({
       ...resolveMarkdownFontSizes(appearance.baseFontSize),
       m: chatTypography.fontSize,
+      h1: chatTypography.fontSize,
+      h2: chatTypography.fontSize,
+      h3: chatTypography.fontSize,
+      h4: chatTypography.fontSize,
+      h5: chatTypography.fontSize,
+      h6: chatTypography.fontSize,
       bodyLineHeight: chatTypography.assistantLineHeight,
+      codeBlockFontSize: chatTypography.codeFontSize,
+      codeBlockLineHeight: chatTypography.codeLineHeight,
     }),
     [appearance.baseFontSize, chatTypography],
   );
@@ -1091,13 +1082,14 @@ function useMarkdownStyles(
       ...resolveNativeMarkdownTypography(appearance.baseFontSize),
       fontSize: chatTypography.fontSize,
       lineHeight: chatTypography.assistantLineHeight,
+      headingFontSizes: HEADING_LEVELS.map(() => chatTypography.fontSize),
     }),
     [appearance.baseFontSize, chatTypography],
   );
   const themeMode = themeAppearance;
   const theme = useUniwindTheme();
   const markdownBodyColor = theme["--color-md-body"];
-  const reasoningTextColor = flattenThemeColor(
+  const mutedTextColor = flattenThemeColor(
     theme["--color-foreground-muted"],
     theme["--color-screen"],
   );
@@ -1144,7 +1136,7 @@ function useMarkdownStyles(
         surface: "transparent",
         surfaceLight: markdownBlockquoteBg,
         accent: markdownLinkColor,
-        tableBorder: markdownHrColor,
+        tableBorder: markdownCodeBorder,
         tableHeader: markdownBlockquoteBg,
         tableHeaderText: markdownStrongColor,
         tableRowOdd: "transparent",
@@ -1209,7 +1201,7 @@ function useMarkdownStyles(
       heading: {
         fontFamily: boldFontFamily,
         color: markdownStrongColor,
-        marginTop: 18,
+        marginTop: 16,
         marginBottom: 8,
       },
       horizontal_rule: {
@@ -1224,7 +1216,6 @@ function useMarkdownStyles(
       inlineCodeTextColor: string,
       blockBackgroundColor: string,
       blockTextColor: string,
-      blockBorderColor: string,
       inlineCodeBackgroundColor: string | undefined,
       copyTintColor: ColorValue,
       preserveSoftBreaks: boolean,
@@ -1339,11 +1330,9 @@ function useMarkdownStyles(
       code_block: ({ content = "", language }) => (
         <MarkdownCodeBlock
           backgroundColor={blockBackgroundColor}
-          borderColor={blockBorderColor}
           content={content}
           copyTintColor={copyTintColor}
           fontSize={markdownFontSizes.codeBlockFontSize}
-          headerTextColor={blockTextColor}
           highlightCode={highlightCode}
           language={language}
           lineHeight={markdownFontSizes.codeBlockLineHeight}
@@ -1408,7 +1397,6 @@ function useMarkdownStyles(
           markdownUserInlineCodeText,
           markdownUserFenceBg,
           markdownUserFenceText,
-          markdownHrColor,
           undefined,
           userBubbleForegroundMuted,
           true,
@@ -1443,8 +1431,7 @@ function useMarkdownStyles(
           markdownCodeText,
           markdownInlineCodeText,
           markdownCodeBg,
-          markdownCodeText,
-          markdownCodeBorder,
+          mutedTextColor,
           markdownCodeBg,
           iconSubtleColor,
           false,
@@ -1456,7 +1443,7 @@ function useMarkdownStyles(
           mutedColor: markdownBodyColor,
           linkColor: markdownLinkColor,
           inlineCodeColor: markdownInlineCodeText,
-          codeColor: markdownCodeText,
+          codeColor: mutedTextColor,
           codeBackgroundColor: markdownNativeCodeBg,
           codeBlockBackgroundColor: markdownNativeCodeBg,
           fileTextColor: markdownCodeText,
@@ -1475,7 +1462,7 @@ function useMarkdownStyles(
     };
     return {
       ...sets,
-      reasoning: mutedMarkdownStyleSet(sets.assistant, reasoningTextColor, reasoningTypography),
+      reasoning: mutedMarkdownStyleSet(sets.assistant, mutedTextColor, reasoningTypography),
     };
   }, [
     boldFontFamily,
@@ -1494,7 +1481,7 @@ function useMarkdownStyles(
     markdownHrColor,
     markdownInlineCodeText,
     markdownLinkColor,
-    reasoningTextColor,
+    mutedTextColor,
     reasoningTypography,
     markdownStrongColor,
     markdownUserBodyColor,
@@ -1701,11 +1688,11 @@ function renderFeedEntry(
       );
       return (
         <Animated.View
-          className="mb-[12px] items-end"
+          className="mb-[12px] items-end gap-[6px]"
           {...(enterAnimated ? { entering: FadeInUp.duration(220) } : {})}
         >
           {presentation.isAutomation ? (
-            <Text className="mb-1 pr-1 font-t3-medium text-2xs text-foreground-muted opacity-60">
+            <Text className="pr-1 font-t3-medium text-2xs text-foreground-muted opacity-60">
               Sent by automation
             </Text>
           ) : message.createdBy === "agent" ? (
@@ -1715,7 +1702,7 @@ function renderFeedEntry(
             />
           ) : null}
           <View
-            className="min-w-0 gap-2 rounded-2xl bg-user-bubble px-4 py-2.5"
+            className="min-w-0 gap-2 rounded-xl bg-user-bubble px-[12px] py-[8px]"
             style={{
               maxWidth: props.userBubbleMaxWidth,
               ...(hasReviewCommentContext
@@ -1796,7 +1783,7 @@ function renderFeedEntry(
               </MarkdownImageAvailableWidthContext>
             ) : null}
           </View>
-          <View className="mt-1 min-h-9 flex-row items-center justify-end gap-3 pr-0.5">
+          <View className="min-h-9 flex-row items-center justify-end gap-3">
             {intentBadge ? (
               <View
                 accessible
@@ -1821,7 +1808,7 @@ function renderFeedEntry(
                 </Text>
               </View>
             ) : null}
-            <Text className="text-xs tabular-nums text-foreground-muted/60">
+            <Text className="text-[13px] leading-[18px] tabular-nums text-foreground-muted">
               {entry.pendingMessage && !entry.acknowledged ? "Pending" : timestampLabel}
             </Text>
             {props.onEditPendingMessage !== null &&
@@ -1882,8 +1869,8 @@ function renderFeedEntry(
       <Animated.View
         className={cn(
           showAssistantMeta && !(message.runId && props.failedRunIds.has(message.runId))
-            ? "mb-[16px] px-1"
-            : "mb-[12px] px-1",
+            ? "mb-[16px]"
+            : "mb-[12px]",
           hasWideBlock && "w-full",
         )}
         {...(enterAnimated ? { entering: FadeIn.duration(220) } : {})}
@@ -1940,7 +1927,9 @@ function renderFeedEntry(
               buttonSize={28}
               iconSize={16}
             />
-            <Text className="text-xs tabular-nums text-foreground-muted/60">{timestampLabel}</Text>
+            <Text className="text-[13px] leading-[18px] tabular-nums text-foreground-muted/60">
+              {timestampLabel}
+            </Text>
           </View>
         ) : null}
       </Animated.View>
@@ -2245,7 +2234,7 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
   });
   const contentWidth = Math.max(0, viewportWidth - contentHorizontalPadding * 2);
   const userBubbleMaxWidth = contentWidth * 0.85;
-  const markdownContentWidth = Math.max(0, contentWidth - ASSISTANT_ROW_HORIZONTAL_PADDING * 2);
+  const markdownContentWidth = contentWidth;
   const reviewCommentBubbleWidth = Math.min(Math.max(280, contentWidth * 0.85), contentWidth);
   const insets = useSafeAreaInsets();
   const topContentInset = props.contentTopInset ?? insets.top + IOS_NAV_BAR_HEIGHT;

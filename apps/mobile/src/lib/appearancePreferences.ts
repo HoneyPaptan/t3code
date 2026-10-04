@@ -233,12 +233,16 @@ export function resolveScaledTextRole(role: keyof typeof MOBILE_TYPOGRAPHY, base
 
 const CHAT_BODY_FONT_SIZE = 15;
 const CHAT_ASSISTANT_LINE_HEIGHT = 23;
-const CHAT_USER_LINE_HEIGHT = 22;
+const CHAT_USER_LINE_HEIGHT = 23;
+const CHAT_CODE_FONT_SIZE = 14;
+const CHAT_CODE_LINE_HEIGHT = 22;
 
 export interface ChatMarkdownTypography {
   readonly fontSize: number;
   readonly assistantLineHeight: number;
   readonly userLineHeight: number;
+  readonly codeFontSize: number;
+  readonly codeLineHeight: number;
 }
 
 export function resolveChatMarkdownTypography(baseFontSize: number): ChatMarkdownTypography {
@@ -247,6 +251,8 @@ export function resolveChatMarkdownTypography(baseFontSize: number): ChatMarkdow
     fontSize: Math.max(10, Math.round(CHAT_BODY_FONT_SIZE * scale)),
     assistantLineHeight: Math.max(16, Math.round(CHAT_ASSISTANT_LINE_HEIGHT * scale)),
     userLineHeight: Math.max(16, Math.round(CHAT_USER_LINE_HEIGHT * scale)),
+    codeFontSize: Math.max(10, Math.round(CHAT_CODE_FONT_SIZE * scale)),
+    codeLineHeight: Math.max(16, Math.round(CHAT_CODE_LINE_HEIGHT * scale)),
   };
 }
 
