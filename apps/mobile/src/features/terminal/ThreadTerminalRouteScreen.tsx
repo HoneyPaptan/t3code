@@ -553,7 +553,7 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
     [hostOs, selectedEnvironmentConnection?.environmentLabel],
   );
 
-  const terminalTheme = getMobileTerminalTheme(themeId, appearanceScheme);
+  const terminalTheme = getMobileTerminalTheme(themeId, appearanceScheme, themeVariables);
   const pendingModifier =
     pendingModifierState.terminalId === terminalId ? pendingModifierState.value : null;
   const headerSubtitle = selectedThreadProject?.title ?? "";
@@ -1196,12 +1196,8 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
 
       <MaterialScreenContent>
         <View
-          className="flex-1"
+          className="flex-1 bg-screen"
           style={{
-            backgroundColor:
-              Platform.OS === "android"
-                ? themeVariables["--color-card-alt"]
-                : terminalTheme.background,
             paddingBottom:
               Platform.OS === "android" && !keyboardState.isVisible ? insets.bottom : 0,
           }}
@@ -1259,14 +1255,7 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
                   paddingBottom: terminalBottomInset,
                 }}
               >
-                <View
-                  pointerEvents="none"
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    backgroundColor: terminalTheme.background,
-                  }}
-                />
+                <View pointerEvents="none" className="absolute inset-0 bg-screen" />
                 <TerminalSurface
                   autoFocus={canOperateTerminal && terminalAutoFocus}
                   readOnly={!canOperateTerminal}
@@ -1288,7 +1277,7 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
               </View>
 
               {Platform.OS === "android" && !keyboardState.isVisible ? (
-                <View className="min-h-14 flex-row items-center gap-2 bg-card-alt px-2">
+                <View className="min-h-11 flex-row items-center gap-2 border-t border-border-subtle bg-screen px-2">
                   {selectedThread && hasNativeTerminalSurface() ? (
                     <MaterialButton
                       label="Attach output"
@@ -1311,9 +1300,9 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
                     KeyboardController.dismiss();
                     setCaptureRequest((value) => value + 1);
                   }}
-                  className="px-4 py-2"
+                  className="min-h-11 justify-center border-t border-border-subtle bg-screen px-4"
                 >
-                  <Text style={{ color: terminalTheme.foreground }}>Attach visible output</Text>
+                  <Text className="text-sm text-foreground/60">Attach visible output</Text>
                 </Pressable>
               ) : null}
               {isAccessoryVisible ? (
@@ -1321,14 +1310,7 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
                   style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
                   offset={{ closed: 0, opened: 0 }}
                 >
-                  <View
-                    className="border-t"
-                    style={{
-                      backgroundColor: terminalTheme.background,
-                      borderTopColor: terminalTheme.border,
-                      minHeight: TERMINAL_ACCESSORY_HEIGHT,
-                    }}
-                  >
+                  <View className="min-h-13 border-t border-border-subtle bg-screen">
                     <ComposerToolbarRow paddingBottom={4} paddingHorizontal={8} paddingTop={4}>
                       <ComposerToolbarScroller
                         contentPaddingRight={2}
@@ -1373,7 +1355,7 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
                   onPress={handleShowKeyboard}
                   style={({ pressed }) => ({
                     bottom: 16,
-                    borderRadius: 28,
+                    borderRadius: 22,
                     opacity: pressed ? 0.72 : 1,
                     position: "absolute",
                     right: 16,
@@ -1386,10 +1368,10 @@ export function ThreadTerminalRouteScreen(props: ThreadTerminalRouteScreenProps)
                     tintColor="transparent"
                     style={{
                       alignItems: "center",
-                      borderRadius: 24,
-                      height: 48,
+                      borderRadius: 22,
+                      height: 44,
                       justifyContent: "center",
-                      width: 48,
+                      width: 44,
                     }}
                     pointerEvents="none"
                   >
