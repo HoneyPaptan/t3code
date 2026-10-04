@@ -336,7 +336,6 @@ export function ComposerFooterTray(props: {
 export function ComposerSurface(props: {
   readonly children: ReactNode;
   readonly style: ViewStyle;
-  /** Morphs between the compact and expanded composer layouts. */
   readonly animateLayout?: boolean;
 }) {
   const colors = useUniwindTheme();
