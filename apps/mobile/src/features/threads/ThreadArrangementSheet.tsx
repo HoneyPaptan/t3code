@@ -77,7 +77,6 @@ function ArrangementRow(props: {
   );
 }
 
-/** Native pan recognition wins over list scrolling only inside the handle. */
 function DragHandle(props: {
   title: string;
   disabled: boolean;
@@ -138,8 +137,8 @@ function DragHandle(props: {
       >
         <SymbolView
           name="line.3.horizontal"
-          size={22}
-          tintColorClassName="accent-foreground-muted"
+          size={18}
+          tintColorClassName="accent-foreground-muted/50"
         />
       </View>
     </GestureDetector>
@@ -373,13 +372,13 @@ export function ThreadArrangementSheet(props: { onClose: () => void }) {
           style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
         >
           <View className="flex-row items-center justify-between gap-3 px-5 py-3">
-            <Text className="flex-1 text-xl font-t3-semibold">Arrange threads</Text>
+            <Text className="flex-1 text-base font-t3-medium text-foreground">Arrange threads</Text>
             <Pressable
               accessibilityRole="button"
               onPress={props.onClose}
               className="min-h-11 justify-center px-3"
             >
-              <Text className="text-base text-primary-text">Done</Text>
+              <Text className="text-sm font-t3-medium text-primary-text">Done</Text>
             </Pressable>
           </View>
           <Text className="px-5 pb-3 text-sm text-foreground-muted">
@@ -463,7 +462,7 @@ export function ThreadArrangementSheet(props: { onClose: () => void }) {
                   >
                     {thread ? (
                       <>
-                        <Text numberOfLines={2} className="flex-1 text-base">
+                        <Text numberOfLines={2} className="flex-1 text-sm text-foreground">
                           {thread.title}
                         </Text>
                         <DragHandle
@@ -517,7 +516,7 @@ export function ThreadArrangementSheet(props: { onClose: () => void }) {
                             setExpanded((value) => ({ ...value, [section]: !value[section] }));
                         }}
                       >
-                        <Text className="text-sm font-t3-semibold text-foreground-muted">
+                        <Text className="text-xs font-t3-medium text-foreground-muted/50">
                           {item.section[0]!.toUpperCase() + item.section.slice(1)} (
                           {sections[item.section].length})
                         </Text>
@@ -530,17 +529,17 @@ export function ThreadArrangementSheet(props: { onClose: () => void }) {
             {visiblePreview ? (
               <Animated.View
                 pointerEvents="none"
-                className="absolute left-5 right-5 justify-center rounded-xl border border-border bg-screen px-4"
+                className="absolute left-5 right-5 justify-center rounded-xl border border-border-subtle bg-grouped-card px-4 shadow-md shadow-primary-shadow/10"
                 style={{ top: 0, height: ROW_HEIGHT, transform: [{ translateY }] }}
               >
                 <Text
                   numberOfLines={visiblePreview.destination?.section ? 1 : 2}
-                  className="text-base font-t3-medium"
+                  className="text-sm font-t3-medium text-foreground"
                 >
                   {visiblePreview.thread.title}
                 </Text>
                 {visiblePreview.destination?.section ? (
-                  <Text className="text-xs text-foreground-muted">
+                  <Text className="text-xs text-foreground-muted/60">
                     {threadDragAction(
                       visiblePreview.sourceSection,
                       visiblePreview.destination.section,
