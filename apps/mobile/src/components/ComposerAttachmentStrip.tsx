@@ -1,4 +1,6 @@
 import { SymbolView } from "../components/AppSymbol";
+import { cn } from "../lib/cn";
+import { MOBILE_RADIUS } from "../lib/radius";
 import { imageMimeType } from "@t3tools/shared/image";
 import { videoMimeType } from "@t3tools/shared/video";
 import { useEffect, useMemo, useState } from "react";
@@ -38,12 +40,24 @@ export interface ComposerAttachmentStripProps {
   ) => void;
   /** Called when the user taps a document that is not a picture, video or PDF. */
   readonly onPressDocument?: (attachment: DraftComposerFileAttachment) => void;
-  /** Image thumbnail size in points.  Defaults to 72. */
   readonly imageSize?: number;
-  /** Border radius of each image thumbnail.  Defaults to 16. */
   readonly imageBorderRadius?: number;
   /** Whether the remove button should sit in its own gutter instead of overlapping the image. */
   readonly removeButtonPlacement?: "overlay" | "gutter";
+}
+
+const DEFAULT_THUMBNAIL_SIZE = 56;
+const REMOVE_BUTTON_GUTTER = 10;
+
+type AttachmentKind = "image" | "video" | "file";
+
+function resolveAttachmentKind(
+  attachment: DraftComposerAttachment,
+  canPlayVideo: boolean,
+): AttachmentKind {
+  if (attachment.type === "image" || imageMimeType(attachment) !== null) return "image";
+  if (canPlayVideo && videoMimeType(attachment) !== null) return "video";
+  return "file";
 }
 
 type ComposerAttachmentThumbnailProps = {
@@ -62,34 +76,51 @@ type ComposerAttachmentThumbnailProps = {
 
 export function ComposerAttachmentThumbnail(props: ComposerAttachmentThumbnailProps) {
   const upload = useComposerAttachmentUploadState(props.environmentId, props.attachment.id);
+  const pendingUpload = upload && upload.status !== "ready" ? upload : null;
+  const isFileTile =
+    !props.compact &&
+    resolveAttachmentKind(props.attachment, props.onPressVideo !== undefined) === "file";
   return (
-    <View style={{ width: props.size, height: props.size }}>
-      <ComposerAttachmentContent {...props} />
-      {upload && upload.status !== "ready" ? (
+    <View style={isFileTile ? undefined : { width: props.size, height: props.size }}>
+      <ComposerAttachmentContent {...props} showsUploadState={pendingUpload !== null} />
+      <View
+        pointerEvents="none"
+        className={cn(
+          "absolute inset-0 border",
+          pendingUpload?.status === "failed" ? "border-danger-border" : "border-border",
+        )}
+        style={{ borderRadius: props.borderRadius }}
+      />
+      {pendingUpload ? (
         <Pressable
-          accessibilityRole={upload.status === "failed" ? "button" : "text"}
+          accessibilityRole={pendingUpload.status === "failed" ? "button" : "text"}
           accessibilityLabel={
-            upload.status === "failed"
+            pendingUpload.status === "failed"
               ? `Retry uploading ${props.attachment.name}`
-              : `Uploading ${props.attachment.name}, ${Math.floor(upload.progress * 100)}%`
+              : `Uploading ${props.attachment.name}, ${Math.floor(pendingUpload.progress * 100)}%`
           }
-          accessibilityHint={upload.status === "failed" ? upload.reason : undefined}
-          disabled={upload.status !== "failed"}
+          accessibilityHint={pendingUpload.status === "failed" ? pendingUpload.reason : undefined}
+          disabled={pendingUpload.status !== "failed"}
           onPress={() =>
             props.environmentId &&
             retryComposerAttachmentUpload(props.environmentId, props.attachment.id)
           }
-          className="absolute bottom-0.5 left-0.5 flex-row items-center gap-0.5 rounded-sm bg-scrim/70 px-1 py-0.5"
+          className="absolute inset-x-1 bottom-1 flex-row items-center justify-center gap-0.5 rounded-full bg-sheet px-1"
         >
           <SymbolView
-            name={upload.status === "failed" ? "arrow.clockwise" : "arrow.up"}
+            name={pendingUpload.status === "failed" ? "arrow.clockwise" : "arrow.up"}
             size={props.compact ? 8 : 10}
-            tintColorClassName="accent-scrim-foreground"
+            tintColorClassName="accent-foreground"
             type="monochrome"
           />
           {!props.compact ? (
-            <Text className="text-2xs text-scrim-foreground">
-              {upload.status === "failed" ? "Retry" : `${Math.floor(upload.progress * 100)}%`}
+            <Text
+              className="text-center text-[11px] leading-[14px] text-foreground"
+              numberOfLines={1}
+            >
+              {pendingUpload.status === "failed"
+                ? "Retry"
+                : `${Math.floor(pendingUpload.progress * 100)}%`}
             </Text>
           ) : null}
         </Pressable>
@@ -213,7 +244,7 @@ function ComposerImageAttachment(
         <Image
           source={previewUri === null ? undefined : { uri: previewUri }}
           style={style}
-          className="bg-subtle"
+          className="bg-card"
           resizeMode="cover"
         />
       </Pressable>
@@ -221,16 +252,16 @@ function ComposerImageAttachment(
   );
 }
 
-function ComposerAttachmentContent(props: ComposerAttachmentThumbnailProps) {
-  const { attachment } = props;
-  // The document picker types every pick as a plain file, so a picture arrives here as one.
-  // What it *is* decides how it presents, the same way videos are already recognised below.
-  if (attachment.type === "image" || imageMimeType(attachment) !== null) {
-    // A pasted-text marker does not fit the snapshot source a picture carries.
+function ComposerAttachmentContent(
+  props: ComposerAttachmentThumbnailProps & { readonly showsUploadState: boolean },
+) {
+  const { attachment, showsUploadState, ...thumbnailProps } = props;
+  const kind = resolveAttachmentKind(attachment, props.onPressVideo !== undefined);
+  if (attachment.type === "image" || kind === "image") {
     const { source: _droppedSource, ...rest } = attachment;
     return (
       <ComposerImageAttachment
-        {...props}
+        {...thumbnailProps}
         attachment={
           attachment.type === "image"
             ? attachment
@@ -240,19 +271,32 @@ function ComposerAttachmentContent(props: ComposerAttachmentThumbnailProps) {
     );
   }
   const onPressVideo = props.onPressVideo;
-  if (onPressVideo && videoMimeType(attachment) !== null) {
+  if (kind === "video" && onPressVideo) {
     return (
-      <ComposerVideoAttachment {...props} attachment={attachment} onPressVideo={onPressVideo} />
+      <ComposerVideoAttachment
+        {...thumbnailProps}
+        attachment={attachment}
+        onPressVideo={onPressVideo}
+      />
     );
   }
-  return <ComposerFileAttachment {...props} attachment={attachment} />;
+  return (
+    <ComposerFileAttachment
+      {...thumbnailProps}
+      attachment={attachment}
+      showsUploadState={showsUploadState}
+    />
+  );
 }
 
 function ComposerFileAttachment(
-  props: ComposerAttachmentThumbnailProps & { readonly attachment: DraftComposerFileAttachment },
+  props: ComposerAttachmentThumbnailProps & {
+    readonly attachment: DraftComposerFileAttachment;
+    readonly showsUploadState: boolean;
+  },
 ) {
   const { attachment } = props;
-  const style = { width: props.size, height: props.size, borderRadius: props.borderRadius };
+  const compactStyle = { width: props.size, height: props.size, borderRadius: props.borderRadius };
   const canPreview = isPdfFile(attachment) && props.onPressPreview !== undefined;
   const sourceIdentifier = `draft-file:${attachment.id}`;
   const onPressDocument = props.onPressDocument;
@@ -275,14 +319,20 @@ function ComposerFileAttachment(
           }
           className={
             props.compact
-              ? "items-center justify-center bg-subtle"
-              : "items-center justify-center gap-1 bg-subtle px-2"
+              ? "items-center justify-center bg-card"
+              : cn(
+                  "min-h-14 max-w-56 flex-row items-center gap-2 bg-card px-2.5",
+                  props.showsUploadState && "pb-4",
+                )
           }
-          style={style}
+          style={props.compact ? compactStyle : { borderRadius: props.borderRadius }}
         >
-          <PierreEntryIcon path={attachment.name} kind="file" size={props.compact ? 15 : 22} />
+          <PierreEntryIcon path={attachment.name} kind="file" size={props.compact ? 15 : 18} />
           {!props.compact ? (
-            <Text className="w-full text-center text-2xs text-foreground" numberOfLines={1}>
+            <Text
+              className="min-w-0 shrink text-[13px] leading-[18px] text-foreground"
+              numberOfLines={1}
+            >
               {attachment.name}
             </Text>
           ) : null}
@@ -332,10 +382,11 @@ function ComposerVideoAttachment(props: {
  * Attachment thumbnails used by the thread composer and the new-task draft screen.
  */
 export function ComposerAttachmentStrip(props: ComposerAttachmentStripProps) {
-  const size = props.imageSize ?? 72;
-  const radius = props.imageBorderRadius ?? 16;
+  const size = props.imageSize ?? DEFAULT_THUMBNAIL_SIZE;
+  const radius = props.imageBorderRadius ?? MOBILE_RADIUS.lg;
   const removeButtonPlacement = props.removeButtonPlacement ?? "overlay";
-  const removeButtonGutter = removeButtonPlacement === "gutter" ? 10 : 0;
+  const isGutterPlacement = removeButtonPlacement === "gutter";
+  const removeButtonGutter = isGutterPlacement ? REMOVE_BUTTON_GUTTER : 0;
 
   if (props.attachments.length === 0) {
     return null;
@@ -347,8 +398,9 @@ export function ComposerAttachmentStrip(props: ComposerAttachmentStripProps) {
       showsHorizontalScrollIndicator={false}
       keyboardShouldPersistTaps="always"
       className="grow-0"
+      contentContainerClassName={isGutterPlacement ? undefined : "pr-1.5 pt-1.5"}
     >
-      <View className="flex-row gap-2.5">
+      <View className="flex-row gap-2">
         {props.attachments.map((attachment) => (
           <View
             key={attachment.id}
@@ -368,18 +420,17 @@ export function ComposerAttachmentStrip(props: ComposerAttachmentStripProps) {
               onPressDocument={props.onPressDocument}
             />
             <Pressable
-              className="absolute h-[22px] w-[22px] items-center justify-center rounded-md bg-scrim/55"
-              style={{
-                top: removeButtonPlacement === "gutter" ? 0 : 4,
-                right: removeButtonPlacement === "gutter" ? 0 : 4,
-              }}
-              hitSlop={6}
+              className={cn(
+                "absolute size-6 items-center justify-center rounded-full border border-border bg-subtle",
+                isGutterPlacement ? "top-0 right-0" : "-top-1.5 -right-1.5",
+              )}
+              hitSlop={8}
               onPress={() => props.onRemove(attachment.id)}
             >
               <SymbolView
                 name="xmark"
-                size={9}
-                tintColorClassName="accent-scrim-foreground"
+                size={12}
+                tintColorClassName="accent-foreground"
                 type="monochrome"
                 weight="bold"
               />

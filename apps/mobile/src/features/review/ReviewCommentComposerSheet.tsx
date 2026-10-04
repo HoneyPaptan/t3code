@@ -270,8 +270,6 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
                     <View className="px-4 pb-3 pt-2">
                       <ComposerAttachmentStrip
                         attachments={attachments}
-                        imageBorderRadius={16}
-                        imageSize={60}
                         onPressPreview={setPreviewFile}
                         removeButtonPlacement="gutter"
                         onRemove={(imageId) => {
