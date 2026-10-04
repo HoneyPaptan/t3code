@@ -1774,9 +1774,9 @@ export function NewTaskDraftScreen(props: {
       </ComposerSurface>
       <ComposerFooterTray showsDictation={isVoiceInputPresented}>
         <ComposerToolbarRow
-          paddingBottom={0}
+          paddingBottom={4}
           paddingHorizontal={0}
-          paddingTop={0}
+          paddingTop={4}
           style={{ gap: 8 }}
         >
           <ComposerDictationCancelAction
