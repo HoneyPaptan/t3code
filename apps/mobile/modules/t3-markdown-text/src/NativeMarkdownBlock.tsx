@@ -28,6 +28,10 @@ const MONO_FONT_FAMILY = Platform.select({
   default: "monospace",
 });
 
+function codeFontFamily(textStyle: NativeMarkdownTextStyle): string | undefined {
+  return textStyle.codeFontFamily ?? MONO_FONT_FAMILY;
+}
+
 function nodeKey(node: MarkdownNode, index: number): string {
   return `${node.type}:${nativeMarkdownNodePosition(node, index)}`;
 }
@@ -70,6 +74,7 @@ function SelectableNode(props: {
 const HighlightedCodeLine = memo(function HighlightedCodeLine(props: {
   readonly tokens: ReadonlyArray<MarkdownHighlightedToken>;
   readonly color: string;
+  readonly fontFamily: string | undefined;
   readonly newline: boolean;
 }) {
   let offset = 0;
@@ -81,7 +86,7 @@ const HighlightedCodeLine = memo(function HighlightedCodeLine(props: {
         key={offset}
         style={{
           color: token.color ?? props.color,
-          fontFamily: MONO_FONT_FAMILY,
+          fontFamily: props.fontFamily,
           fontStyle: token.fontStyle !== null && (token.fontStyle & 1) === 1 ? "italic" : "normal",
           fontWeight: token.fontStyle !== null && (token.fontStyle & 2) === 2 ? "700" : "400",
         }}
@@ -108,14 +113,15 @@ function HighlightedCodeText(props: {
   // would rerender every token even when its completed line is unchanged.
   const fontSize = codeBlockFontSize(props.textStyle);
   const lineHeight = codeBlockLineHeight(props.textStyle);
+  const fontFamily = codeFontFamily(props.textStyle);
   const style = useMemo(
     () => ({
       color: props.textStyle.codeColor,
-      fontFamily: MONO_FONT_FAMILY,
+      fontFamily,
       fontSize,
       lineHeight,
     }),
-    [props.textStyle.codeColor, fontSize, lineHeight],
+    [props.textStyle.codeColor, fontFamily, fontSize, lineHeight],
   );
   let offset = 0;
   const lines = [];
@@ -126,6 +132,7 @@ function HighlightedCodeText(props: {
           key={offset}
           tokens={tokens}
           color={props.textStyle.codeColor}
+          fontFamily={fontFamily}
           newline={lines.length + 1 < props.highlighted.length}
         />,
       );
@@ -187,7 +194,7 @@ function NativeCodeBlock(props: {
           style={{
             flex: 1,
             color: props.textStyle.mutedColor,
-            fontFamily: MONO_FONT_FAMILY,
+            fontFamily: codeFontFamily(props.textStyle),
             fontSize: codeBlockFontSize(props.textStyle),
           }}
         >

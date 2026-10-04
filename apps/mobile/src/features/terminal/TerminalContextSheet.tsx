@@ -8,10 +8,10 @@ import { formatComposerContextReference } from "@t3tools/shared/composerContextR
 import { useState } from "react";
 import { Alert, Modal, Platform, Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { REVIEW_MONO_FONT_FAMILY } from "../review/reviewDiffRendering";
 import { AppText as Text } from "../../components/AppText";
 import { uuidv4 } from "../../lib/uuid";
 import { insertComposerDraftContext } from "../../state/use-composer-drafts";
+import { useFontFamily } from "../../lib/useFontFamily";
 
 /** Line numbers are relative to this frozen viewport, not the terminal's scrollback. */
 export function TerminalContextSheet(props: {
@@ -23,6 +23,7 @@ export function TerminalContextSheet(props: {
   onClose: () => void;
   onAttach: () => void;
 }) {
+  const monoFontFamily = useFontFamily("mono");
   const insets = useSafeAreaInsets();
   const lines = props.text.replace(/\n+$/, "").split("\n");
   const [range, setRange] = useState({ start: 0, end: lines.length - 1 });
@@ -96,10 +97,7 @@ export function TerminalContextSheet(props: {
               }}
               className={index >= range.start && index <= range.end ? "bg-subtle py-1" : "py-1"}
             >
-              <Text
-                className="text-sm text-foreground"
-                style={{ fontFamily: REVIEW_MONO_FONT_FAMILY }}
-              >
+              <Text className="text-sm text-foreground" style={{ fontFamily: monoFontFamily }}>
                 {index + 1} {line || " "}
               </Text>
             </Pressable>

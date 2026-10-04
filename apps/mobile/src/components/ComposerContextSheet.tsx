@@ -20,7 +20,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { REVIEW_MONO_FONT_FAMILY } from "../features/review/reviewDiffRendering";
 import { ReviewCommentCard, useReviewCommentColors } from "../features/review/ReviewCommentCard";
 import {
   composerAttachmentInlineUri,
@@ -35,8 +34,10 @@ import { SymbolView } from "./AppSymbol";
 import { ContextSheetSize } from "./ContextSheetSize";
 import { useAppearancePreferences } from "../features/settings/appearance/AppearancePreferencesProvider";
 import { getMobileTerminalTheme } from "../features/terminal/terminalTheme";
+import { useFontFamily } from "../lib/useFontFamily";
 
 function ContextField(props: { label: string; value: string | null | undefined; code?: boolean }) {
+  const monoFontFamily = useFontFamily("mono");
   if (!props.value) return null;
   return (
     <View className="gap-1">
@@ -55,7 +56,7 @@ function ContextField(props: { label: string; value: string | null | undefined; 
         <Text
           selectable
           className={props.code ? "text-sm text-foreground" : "text-base text-foreground"}
-          style={props.code ? { fontFamily: REVIEW_MONO_FONT_FAMILY } : undefined}
+          style={props.code ? { fontFamily: monoFontFamily } : undefined}
         >
           {props.value}
         </Text>
@@ -94,6 +95,7 @@ export function ComposerContextSheet(props: {
   readonly records?: ReadonlyArray<ComposerContextRecord>;
   readonly attachments?: ReadonlyArray<DraftComposerAttachment>;
 }) {
+  const monoFontFamily = useFontFamily("mono");
   const reviewColors = useReviewCommentColors();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -276,7 +278,7 @@ export function ComposerContextSheet(props: {
                         selectable
                         className="text-sm text-foreground"
                         style={{
-                          fontFamily: REVIEW_MONO_FONT_FAMILY,
+                          fontFamily: monoFontFamily,
                           fontSize: 13,
                           lineHeight: 20,
                         }}

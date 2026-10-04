@@ -1,6 +1,5 @@
 import type { ThreadRowProviderInstance } from "./thread-provider-instance";
 import {
-  THREAD_LIST_V2_MONO_FONT as MONO_FONT,
   THREAD_LIST_V2_ROW_CONTENT_CLASS_NAME,
   selectedThreadRowColors,
   getThreadListV2NewBranchMenuTitle,
@@ -54,6 +53,7 @@ import { resolveThreadListV2StatusGlyph } from "./thread-list-v2-status-glyph";
 import { QueuedMessageIcon } from "./queued-message-icon";
 import { ThreadSearchMatchExcerpt } from "./thread-search-match";
 import { MOBILE_RADIUS } from "../../lib/radius";
+import { useFontFamily } from "../../lib/useFontFamily";
 
 const STATUS_LABEL_BY_STATUS: Partial<
   Record<ThreadListV2Status, { label: string; className: string }>
@@ -279,6 +279,7 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
   readonly onSelectPendingTask: (pendingTask: PendingNewTask) => void;
   readonly onDeletePendingTask: (pendingTask: PendingNewTask) => void;
 }) {
+  const monoFontFamily = useFontFamily("mono");
   const { pendingTask, onSelectPendingTask, onDeletePendingTask } = props;
   const sidebarPane = props.pane === "sidebar";
   const isDraft = pendingTask.kind === "draft";
@@ -346,7 +347,7 @@ export const ThreadListV2PendingRow = memo(function ThreadListV2PendingRow(props
                   "text-xs text-foreground-muted",
                   sidebarPane && "text-drawer-foreground-muted",
                 )}
-                style={{ fontFamily: MONO_FONT }}
+                style={{ fontFamily: monoFontFamily }}
               >
                 {branch}
               </Text>
@@ -510,6 +511,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
   readonly searchQuery?: string;
   readonly simultaneousSwipeGesture?: ComponentProps<typeof ThreadSwipeable>["simultaneousWith"];
 }) {
+  const monoFontFamily = useFontFamily("mono");
   const { width: windowWidth } = useWindowDimensions();
   const {
     thread,
@@ -975,7 +977,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
                       ? selectedThreadRowColors.mutedForegroundClassName
                       : rowAppearance.mutedForegroundClassName,
                   )}
-                  style={{ fontFamily: MONO_FONT }}
+                  style={{ fontFamily: monoFontFamily }}
                 >
                   {thread.branch}
                 </Text>
@@ -1027,7 +1029,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
             <Text
               accessibilityLabel={pr.accessibilityLabel}
               className={cn("text-xs", pr.textClassName)}
-              style={{ fontFamily: MONO_FONT }}
+              style={{ fontFamily: monoFontFamily }}
             >
               {pr.label}
             </Text>

@@ -19,7 +19,7 @@ import {
   resolveNativeReviewDiffView,
 } from "../diffs/nativeReviewDiffSurface";
 import { createNativeReviewDiffTheme } from "../review/nativeReviewDiffAdapter";
-import { REVIEW_MONO_FONT_FAMILY, renderVisibleWhitespace } from "../review/reviewDiffRendering";
+import { renderVisibleWhitespace } from "../review/reviewDiffRendering";
 import type { ReviewHighlightedToken } from "../review/shikiReviewHighlighter";
 import { cn } from "../../lib/cn";
 import type { ResolvedMobileCodeSurface } from "../../lib/appearancePreferences";
@@ -35,6 +35,7 @@ import { MarkdownTextPrimitive } from "@t3tools/mobile-markdown-text/primitive";
 
 import { boundedSelectableSourceTokens, prepareSourceFileDocument } from "./source-file-document";
 import { sourceHighlightAtom } from "./sourceHighlightingState";
+import { useFontFamily } from "../../lib/useFontFamily";
 
 interface SourceFileSurfaceProps {
   readonly contents: string;
@@ -56,6 +57,7 @@ const HighlightedSourceLine = memo(function HighlightedSourceLine(props: {
   readonly highlighted: boolean;
   readonly wordBreak: boolean;
 }) {
+  const monoFontFamily = useFontFamily("mono");
   return (
     <View
       className={cn("flex-row", props.highlighted && "bg-primary/10")}
@@ -65,7 +67,7 @@ const HighlightedSourceLine = memo(function HighlightedSourceLine(props: {
         className="select-none pr-3 text-right text-foreground-muted/60"
         style={{
           width: props.codeSurface.gutterWidth,
-          fontFamily: REVIEW_MONO_FONT_FAMILY,
+          fontFamily: monoFontFamily,
           fontSize: props.codeSurface.lineNumberFontSize,
           lineHeight: props.codeSurface.rowHeight,
         }}
@@ -78,7 +80,7 @@ const HighlightedSourceLine = memo(function HighlightedSourceLine(props: {
         numberOfLines={props.wordBreak ? undefined : 1}
         className="flex-1 font-normal text-foreground"
         style={{
-          fontFamily: REVIEW_MONO_FONT_FAMILY,
+          fontFamily: monoFontFamily,
           fontSize: props.codeSurface.fontSize,
           lineHeight: props.codeSurface.rowHeight,
           minWidth: props.wordBreak ? undefined : 320,
@@ -109,7 +111,7 @@ const HighlightedSourceLine = memo(function HighlightedSourceLine(props: {
                     }
                     style={{
                       color: token.color ?? undefined,
-                      fontFamily: REVIEW_MONO_FONT_FAMILY,
+                      fontFamily: monoFontFamily,
                       fontWeight,
                       fontStyle,
                     }}
@@ -235,6 +237,7 @@ function NativeSourceFileSurface(
 }
 
 function JavaScriptSourceFileSurface(props: SourceFileSurfaceProps) {
+  const monoFontFamily = useFontFamily("mono");
   const foreground = useUniwindTheme()["--color-foreground"];
   const { codeSurface, codeWordBreak } = useAppearanceCodeSurface();
   const { normalizedContents, lines, status, targetIndex, tokens } = useSourceFileModel(props);
@@ -284,7 +287,7 @@ function JavaScriptSourceFileSurface(props: SourceFileSurfaceProps) {
       selectionColorClassName={Platform.OS === "android" ? "accent-focus/32" : undefined}
       style={{
         color: foreground,
-        fontFamily: REVIEW_MONO_FONT_FAMILY,
+        fontFamily: monoFontFamily,
         fontSize: codeSurface.fontSize,
         lineHeight: codeSurface.rowHeight,
       }}

@@ -1,10 +1,4 @@
-import {
-  DEFAULT_FONT_FAMILY_NAMES,
-  fontFamilyStore,
-  type FontFamilyNames,
-} from "./fontFamilyStore";
-
-export const MONO_FONT_FAMILY = DEFAULT_FONT_FAMILY_NAMES.mono;
+import { fontFamilyStore, type FontFamilyNames } from "./fontFamilyStore";
 
 /**
  * Resolves a font family for APIs that require a style object or native prop.

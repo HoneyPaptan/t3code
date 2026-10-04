@@ -171,6 +171,7 @@ function useMarkdownPreviewStyles(renderImage?: MarkdownImageRenderer): Markdown
         fontFamily: regularFontFamily,
         headingFontFamily: boldFontFamily,
         boldFontFamily,
+        codeFontFamily: monoFontFamily,
       },
     };
   }, [

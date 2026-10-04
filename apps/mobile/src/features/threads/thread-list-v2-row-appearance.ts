@@ -1,9 +1,7 @@
 import type { ViewStyle } from "react-native";
 import type { MobileThemeVariables } from "../../lib/mobileTheme";
-import { MONO_FONT_FAMILY } from "../../lib/useFontFamily";
 import { MOBILE_RADIUS } from "../../lib/radius";
 
-export const THREAD_LIST_V2_MONO_FONT = MONO_FONT_FAMILY;
 export const THREAD_LIST_V2_ROW_CONTENT_CLASS_NAME = "min-h-16 justify-center px-4 py-3";
 
 export const selectedThreadRowColors = {

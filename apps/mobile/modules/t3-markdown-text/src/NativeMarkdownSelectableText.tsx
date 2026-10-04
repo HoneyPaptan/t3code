@@ -143,7 +143,7 @@ function runStyle(run: NativeMarkdownTextRun, textStyle: NativeMarkdownTextStyle
       isFile || isSkill
         ? textStyle.boldFontFamily
         : run.code || isCodeBlock
-          ? MONO_FONT_FAMILY
+          ? (textStyle.codeFontFamily ?? MONO_FONT_FAMILY)
           : isHeading
             ? textStyle.headingFontFamily
             : run.bold

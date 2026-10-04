@@ -5,11 +5,9 @@ import {
   resolveMarkdownFontSizes,
   resolveMobileCodeSurface,
 } from "../../../../lib/appearancePreferences";
-import { MONO_FONT_FAMILY } from "../../../../lib/useFontFamily";
+import { useFontFamily } from "../../../../lib/useFontFamily";
 import { getMobileTerminalTheme } from "../../../terminal/terminalTheme";
 import { useAppearancePreferences } from "../AppearancePreferencesProvider";
-
-const CODE_FONT_FAMILY = MONO_FONT_FAMILY;
 
 /** Hairline between a section's preview surface and its control rows. */
 export function AppearancePreviewSeparator() {
@@ -46,8 +44,9 @@ export function TerminalAppearancePreview(props: { readonly fontSize: number }) 
   const { themeAppearance: scheme, themeId } = useAppearancePreferences();
   const theme = getMobileTerminalTheme(themeId, scheme);
   const lineHeight = Math.round(props.fontSize * 1.6);
+  const monoFontFamily = useFontFamily("mono");
   const lineStyle = {
-    fontFamily: MONO_FONT_FAMILY,
+    fontFamily: monoFontFamily,
     fontSize: props.fontSize,
     lineHeight,
   } as const;
@@ -133,6 +132,7 @@ export function CodeAppearancePreview(props: {
   readonly fontSize: number;
   readonly wordBreak: boolean;
 }) {
+  const monoFontFamily = useFontFamily("mono");
   const surface = resolveMobileCodeSurface(props.fontSize);
 
   const lineNumber = (line: CodePreviewLine, index: number) => (
@@ -140,7 +140,7 @@ export function CodeAppearancePreview(props: {
       className="text-right text-icon-subtle"
       key={line.id}
       style={{
-        fontFamily: CODE_FONT_FAMILY,
+        fontFamily: monoFontFamily,
         fontSize: surface.lineNumberFontSize,
         lineHeight: surface.rowHeight,
         width: 22,
@@ -156,7 +156,7 @@ export function CodeAppearancePreview(props: {
       key={line.id}
       numberOfLines={wrap ? undefined : 1}
       style={{
-        fontFamily: CODE_FONT_FAMILY,
+        fontFamily: monoFontFamily,
         fontSize: surface.fontSize,
         lineHeight: surface.rowHeight,
       }}
@@ -166,7 +166,7 @@ export function CodeAppearancePreview(props: {
           key={token.text}
           className={token.keyword ? "text-md-link" : undefined}
           style={{
-            fontFamily: CODE_FONT_FAMILY,
+            fontFamily: monoFontFamily,
             fontSize: surface.fontSize,
             lineHeight: surface.rowHeight,
           }}
