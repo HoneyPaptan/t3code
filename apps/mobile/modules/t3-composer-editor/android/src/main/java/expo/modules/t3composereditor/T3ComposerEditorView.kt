@@ -443,7 +443,18 @@ class T3ComposerEditorView(context: Context, appContext: AppContext) : ExpoView(
       val expectedSource = editable.substring(token.start, token.end)
       if (expectedSource != token.source) return@forEach
       editable.setSpan(
-        ComposerChipSpan(
+        if (token.type == "mention") ComposerMentionSpan(
+          label = token.label,
+          fontSize = editor.textSize * 0.9f,
+          background = chipTheme.chipBackground,
+          foreground = chipTheme.chipText,
+          maximumWidth = (
+            editor.width.takeIf {
+              it > 0
+            } ?: resources.displayMetrics.widthPixels
+            ).toFloat(),
+          density = resources.displayMetrics.density,
+        ) else ComposerChipSpan(
           T3ContextChip(
             content = T3ContextChip.Content(
               label = token.label,
@@ -520,6 +531,68 @@ private data class ComposerChipTheme(
       skillBorder = Color.rgb(185, 200, 245),
       skillText = Color.rgb(45, 72, 155),
     )
+  }
+}
+
+private class ComposerMentionSpan(
+  label: String,
+  fontSize: Float,
+  private val background: Int,
+  foreground: Int,
+  maximumWidth: Float,
+  density: Float
+) : ReplacementSpan() {
+  private val radius = 4f * density
+  private val padding = 4f * density
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    textSize = fontSize
+    color = foreground
+    typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+  }
+  private val text = TextUtils.ellipsize(
+    label,
+    android.text.TextPaint(paint),
+    (maximumWidth - padding * 2).coerceAtLeast(0f),
+    TextUtils.TruncateAt.MIDDLE
+  ).toString()
+  private val width = kotlin.math.ceil(paint.measureText(text) + padding * 2)
+
+  override fun getSize(
+    paint: Paint,
+    text: CharSequence,
+    start: Int,
+    end: Int,
+    fontMetrics: Paint.FontMetricsInt?
+  ): Int {
+    fontMetrics?.let {
+      val base = paint.fontMetricsInt
+      it.top = base.top
+      it.ascent = base.ascent
+      it.descent = base.descent
+      it.bottom = base.bottom
+    }
+    return width.toInt()
+  }
+
+  override fun draw(
+    canvas: Canvas,
+    text: CharSequence,
+    start: Int,
+    end: Int,
+    x: Float,
+    top: Int,
+    y: Int,
+    bottom: Int,
+    paint: Paint
+  ) {
+    val surround = paint.fontMetrics
+    val lineTop = y + surround.ascent
+    val lineBottom = y + surround.descent
+    val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = background }
+    canvas.drawRoundRect(x, lineTop, x + width, lineBottom, radius, radius, fill)
+    val own = this.paint.fontMetrics
+    val baseline = (lineTop + lineBottom) / 2 - (own.ascent + own.descent) / 2
+    canvas.drawText(this.text, x + padding, baseline, this.paint)
   }
 }
 
