@@ -1406,17 +1406,18 @@ export function ThreadThinkingRow(props: {
     <View
       accessible
       accessibilityLabel={LIVE_THINKING_ROW_PRESENTATION.label}
-      className="-mx-1 flex-row items-center px-1.5 py-0"
+      className="-mx-1 flex-row items-center gap-[6px] px-1.5 py-0"
       style={{
         minHeight: props.rowSizing.estimatedRowHeight,
         marginBottom: threadFeedChromeRowGap("thinking"),
       }}
     >
+      <ThinkingOrb state={LIVE_THINKING_ROW_PRESENTATION.orbState} size={WORK_SLOT_SIZE} />
       <ShimmeringWorkContent
         key={props.rowSizing.textSizeKey}
         icon="brain"
-        textClassName={WORK_LABEL_ROLE_STYLE.group.text}
-        idleTextClassName={WORK_LABEL_ROLE_STYLE.group.color}
+        textClassName={WORK_LABEL_ROLE_STYLE.heading.text}
+        idleTextClassName={WORK_LABEL_ROLE_STYLE.heading.color}
         label={LIVE_THINKING_ROW_PRESENTATION.label}
         showIcon={LIVE_THINKING_ROW_PRESENTATION.showIcon}
       />

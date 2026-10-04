@@ -2171,7 +2171,7 @@ it("uses a compact reasoning preview and a short expanded heading", () => {
     toolLifecycleStatus: "inProgress" as const,
   };
   expect(workEntryRowLabel(entry)).toBe("Check **ordering**. Then run the test.");
-  expect(workEntryRowLabel(entry, true)).toBe("Thinking");
+  expect(workEntryRowLabel(entry, true)).toBe("Thought");
   expect(workEntryRowLabel({ ...entry, toolLifecycleStatus: "completed" }, true)).toBe("Thought");
 });
 
@@ -2218,7 +2218,7 @@ it.each(["First paragraph.\n\nSecond paragraph.", ""])(
       expect(
         rows.some(
           (row) =>
-            row.type === "thinking" || (row.type === "work-toggle" && row.summary === "Thinking"),
+            row.type === "thinking" || (row.type === "work-toggle" && row.summary === "Thought"),
         ),
       ).toBe(true);
     }

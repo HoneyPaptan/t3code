@@ -116,13 +116,13 @@ describe("resolveWorkGroupHeaderPresentation", () => {
   it("titles a live group Working… with the listening orb and keeps the summary", () => {
     const header = resolveWorkGroupHeaderPresentation({
       live: true,
-      summary: "Thinking",
+      summary: "Thought",
       hasFailure: false,
     });
     expect(header.title).toBe("Working…");
     expect(header.orbState).toBe("listening");
-    expect(header.summary).toBe("Thinking");
-    expect(header.accessibilityLabel).toBe("Working… Thinking");
+    expect(header.summary).toBe("Thought");
+    expect(header.accessibilityLabel).toBe("Working… Thought");
   });
 
   it("drops the title and orb once settled", () => {
@@ -153,18 +153,15 @@ describe("resolveWorkGroupHeaderPresentation", () => {
 });
 
 describe("live turn indicators", () => {
-  it("shows at most one orb and never two Thinking rows", () => {
+  it("gives the placeholder row the same Working… orb header as a live group", () => {
     const header = resolveWorkGroupHeaderPresentation({
       live: true,
-      summary: "Thinking",
+      summary: "Thought",
       hasFailure: false,
     });
-    const orbs = [header.orbState, LIVE_THINKING_ROW_PRESENTATION.orbState].filter(
-      (state) => state !== null,
-    );
-    expect(orbs).toEqual(["listening"]);
+    expect(LIVE_THINKING_ROW_PRESENTATION.label).toBe(header.title);
+    expect(LIVE_THINKING_ROW_PRESENTATION.orbState).toBe(header.orbState);
     expect(LIVE_THINKING_ROW_PRESENTATION.showIcon).toBe(false);
-    const rowTitles = [header.title, LIVE_THINKING_ROW_PRESENTATION.label];
-    expect(rowTitles.filter((title) => title === "Thinking")).toHaveLength(1);
+    expect(LIVE_THINKING_ROW_PRESENTATION.label).not.toBe("Thinking");
   });
 });
