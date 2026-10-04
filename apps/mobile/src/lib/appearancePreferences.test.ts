@@ -121,6 +121,10 @@ describe("appearancePreferences", () => {
     expect(variables["--text-sm--line-height"]).toBe(19);
     expect(variables["--text-lg"]).toBe(18);
     expect(variables["--text-3xl"]).toBe(30);
+    expect(variables["--text-chat"]).toBe(15);
+    expect(variables["--text-chat--line-height"]).toBe(23);
+    expect(variables["--text-tool"]).toBe(13);
+    expect(variables["--text-tool--line-height"]).toBe(20);
   });
 
   it("scales every text variable proportionally with the base size", () => {

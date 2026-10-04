@@ -8,15 +8,15 @@ export const WORK_LABEL_ROLE_STYLE: Record<
   WorkRowLabelRole,
   { readonly text: string; readonly color: string }
 > = {
-  name: { text: "font-t3-medium text-xs", color: "text-foreground/70" },
-  argument: { text: "font-mono text-xs", color: "text-foreground-muted/60" },
-  heading: { text: "text-xs", color: "text-foreground-muted/70" },
-  group: { text: "font-t3-medium text-xs", color: "text-foreground/50" },
+  name: { text: "text-chat", color: "text-foreground/80" },
+  argument: { text: "font-mono text-tool", color: "text-foreground-muted" },
+  heading: { text: "text-chat", color: "text-foreground-muted" },
+  group: { text: "text-chat", color: "text-foreground-muted" },
 };
 
 const LABEL_TONE_CLASS = {
-  danger: "font-t3-medium text-xs text-danger-foreground",
-  warning: "font-t3-medium text-xs text-warning-foreground",
+  danger: "text-chat text-danger-foreground",
+  warning: "text-chat text-warning-foreground",
 } as const;
 
 function labelClassName(role: WorkRowLabelRole, tone: "default" | "danger" | "warning"): string {
@@ -60,7 +60,7 @@ export function WorkLogPressable({
   return (
     <Pressable {...props} hitSlop={4} className="rounded-md px-0.5 py-0 active:bg-subtle">
       <View
-        className="flex-row items-center gap-1.5"
+        className="flex-row items-center gap-2"
         style={{ minHeight: rowSizing?.estimatedRowHeight ?? THREAD_WORK_ROW_MIN_HEIGHT }}
       >
         {children}

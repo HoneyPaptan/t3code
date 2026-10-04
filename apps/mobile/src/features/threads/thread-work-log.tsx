@@ -99,13 +99,13 @@ import { useAssetUrl } from "../../state/assets";
 const SHIMMER_WIDTH = 72;
 const SHIMMER_SWEEP_MS = 1_350;
 const SHIMMER_PAUSE_MS = 1_450;
-const SHIMMER_ICON_AND_GAP_WIDTH = 27;
+const SHIMMER_ICON_AND_GAP_WIDTH = 24.5;
 export const THREAD_DISCLOSURE_TRANSITION_MS = 180;
 const WORK_LOG_LAYOUT_TRANSITION = LinearTransition.duration(THREAD_DISCLOSURE_TRANSITION_MS);
 const WORK_LOG_DETAIL_ENTER_TRANSITION = FadeIn.duration(140);
 const WORK_LOG_DETAIL_EXIT_TRANSITION = FadeOut.duration(120);
 const WORK_ICON_SIZE = 16;
-const WORK_ICON_COLOR_CLASS = "accent-foreground-muted/60";
+const WORK_ICON_COLOR_CLASS = "accent-foreground-muted/50";
 const REASONING_ICON_SIZE = 14;
 const REASONING_ICON_COLOR_CLASS = "accent-foreground-muted/50";
 const DISCLOSURE_CHEVRON_SIZE = 14;
@@ -193,7 +193,7 @@ function ShimmerWorkContent(props: {
   readonly toolIcon?: ToolActivityIcon;
 }) {
   return (
-    <View className="flex-row items-center gap-1.5">
+    <View className="flex-row items-center gap-2">
       {props.showIcon ? (
         <View className="size-5 shrink-0 items-center justify-center">
           {props.toolIcon && props.environmentId ? (
@@ -211,7 +211,7 @@ function ShimmerWorkContent(props: {
       <Text
         className={cn(
           "min-w-0 shrink",
-          props.compact ? "text-xs" : "text-sm",
+          props.compact ? "text-xs" : "text-chat",
           props.highlighted
             ? "text-foreground"
             : (props.idleTextClassName ?? "text-foreground-muted"),
@@ -876,8 +876,8 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             <Text
               className={
                 warning
-                  ? "min-w-0 flex-1 font-t3-medium text-xs text-warning-foreground"
-                  : "min-w-0 flex-1 font-t3-medium text-xs text-danger-foreground"
+                  ? "min-w-0 flex-1 text-chat text-warning-foreground"
+                  : "min-w-0 flex-1 text-chat text-danger-foreground"
               }
             >
               {label}
