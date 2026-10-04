@@ -905,7 +905,9 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                   />
                 </Animated.View>
               ) : null}
-              <View className="flex-row items-end gap-2">
+              <View
+                className={isExpanded ? "flex-row items-end gap-2" : "flex-row items-center gap-2"}
+              >
                 <Animated.View className="min-w-0 flex-1" layout={COMPOSER_LAYOUT_TRANSITION}>
                   <ComposerEditor
                     draftKey={composerDraftKey}
@@ -1019,6 +1021,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                         : FOLLOW_UP_ACTION_LABEL[sendPresentation.alternate]
                     }
                     scrollEnabled={isExpanded}
+                    singleLineCentered={!isExpanded}
                     contentInsetVertical={0}
                     style={{
                       minHeight: isExpanded
