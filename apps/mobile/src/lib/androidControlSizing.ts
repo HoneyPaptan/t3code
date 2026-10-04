@@ -1,6 +1,5 @@
 import { DEFAULT_BASE_FONT_SIZE, normalizeBaseFontSize } from "./appearancePreferences";
 
-/** Android controls follow the app's text size; buttons retain a 48dp touch target. */
 export function resolveAndroidControlSizing(baseFontSize: number) {
   const scale = normalizeBaseFontSize(baseFontSize) / DEFAULT_BASE_FONT_SIZE;
   const iconSize = Math.round(24 * scale);
