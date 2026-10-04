@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Platform, Modal, Pressable, TextInput, View } from "react-native";
+import { Platform } from "react-native";
 
-import { cn } from "../lib/cn";
-import { AppText } from "./AppText";
+import { ConfirmDialogCard } from "./ConfirmDialogCard";
 import { MaterialConfirmDialog } from "./MaterialConfirmDialog";
 import type { ConfirmDialogRequest, TextInputDialogRequest } from "./ConfirmDialog.types";
 
@@ -14,12 +13,6 @@ type DialogRequest =
 
 let presentRequest: ((request: DialogRequest) => void) | null = null;
 
-/**
- * Imperative confirm dialog, Alert.alert-shaped. Native iOS alerts already
- * match the app (and support per-button destructive red), so this is for
- * Android, where the native dialog can only theme all confirm buttons at
- * once. Requires ConfirmDialogHost to be mounted at the app root.
- */
 export function showConfirmDialog(request: ConfirmDialogRequest): void {
   presentRequest?.({ kind: "confirm", request });
 }
@@ -28,12 +21,6 @@ export function showTextInputDialog(request: TextInputDialogRequest): void {
   presentRequest?.({ kind: "text-input", request });
 }
 
-/**
- * Android-style alert dialog matching the native one themed by
- * withAndroidModernAlertDialog — left-aligned text, right-aligned text
- * buttons — with what the native theme can't do: a per-dialog destructive
- * button color and a dimmer message than the title.
- */
 export function ConfirmDialogHost() {
   const [presented, setPresented] = useState<DialogRequest | null>(null);
   const [inputValue, setInputValue] = useState("");
@@ -81,72 +68,17 @@ export function ConfirmDialogHost() {
       />
     ) : null;
 
+  if (presented === null) return null;
+
   return (
-    <Modal
-      visible={presented !== null}
-      transparent
-      animationType="fade"
-      statusBarTranslucent
-      navigationBarTranslucent
-      onRequestClose={handleCancel}
-    >
-      {presented === null ? null : (
-        <View className="flex-1 items-center justify-center bg-backdrop px-8">
-          <View className="w-full rounded-xl bg-card px-6 pb-4 pt-5">
-            <AppText className="text-lg font-t3-medium">{presented.request.title}</AppText>
-            {presented.kind === "confirm" && presented.request.message !== undefined ? (
-              <AppText className="mt-2 text-sm text-foreground-secondary">
-                {presented.request.message}
-              </AppText>
-            ) : null}
-            {presented.kind === "text-input" ? (
-              <TextInput
-                accessibilityLabel={presented.request.title}
-                autoFocus
-                className="mt-4 rounded-xl border border-border bg-screen px-3 py-2.5 text-base text-foreground"
-                onChangeText={setInputValue}
-                onSubmitEditing={confirmDisabled ? undefined : () => handleConfirm()}
-                returnKeyType="done"
-                selectTextOnFocus
-                value={inputValue}
-              />
-            ) : null}
-            <View className="mt-5 flex-row justify-end gap-1">
-              <View className="overflow-hidden rounded-lg">
-                <Pressable
-                  accessibilityRole="button"
-                  className="min-h-10 items-center justify-center px-4 active:bg-subtle"
-                  onPress={handleCancel}
-                >
-                  <AppText className="text-base font-t3-medium">
-                    {presented.request.cancelText ?? "Cancel"}
-                  </AppText>
-                </Pressable>
-              </View>
-              <View className="overflow-hidden rounded-lg">
-                <Pressable
-                  accessibilityRole="button"
-                  disabled={confirmDisabled}
-                  className="min-h-10 items-center justify-center px-4 active:bg-subtle"
-                  onPress={() => handleConfirm()}
-                >
-                  <AppText
-                    className={cn(
-                      "text-base font-t3-medium",
-                      presented.kind === "confirm" &&
-                        presented.request.destructive &&
-                        "text-danger-foreground",
-                      confirmDisabled && "text-foreground-muted/60",
-                    )}
-                  >
-                    {presented.request.confirmText}
-                  </AppText>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </View>
-      )}
-    </Modal>
+    <ConfirmDialogCard
+      request={presented.request}
+      isTextInput={presented.kind === "text-input"}
+      value={inputValue}
+      onChangeText={setInputValue}
+      confirmDisabled={confirmDisabled}
+      onCancel={handleCancel}
+      onConfirm={() => handleConfirm()}
+    />
   );
 }
