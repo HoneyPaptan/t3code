@@ -30,7 +30,7 @@ import { DevicePreviewButton } from "../devices/device-preview-button";
 import type { FloatingWorkingStatus } from "./floating-working-status";
 import { ShimmeringWorkContent } from "./thread-work-log";
 
-const CONTROL_HEIGHT = 38.5; // h-11 with the mobile 14px rem
+const CONTROL_HEIGHT = 31.5; // h-9 with the mobile 14px rem
 // The collapsed composer capsule starts 6 below its overlay's top edge, so
 // the pill sits at (gap - 6) above the overlay to leave the same gap to the
 // capsule as the feed's end inset leaves between it and the last row.
@@ -160,12 +160,12 @@ export function FloatingWorkingControl(props: {
     props.status !== null ? (
       <View
         pointerEvents={props.status.kind === "connection" ? "box-none" : "none"}
-        className="h-11 items-center justify-center"
+        className="h-9 items-center justify-center"
       >
-        <Animated.View className="h-11" style={capsuleSizerStyle} />
+        <Animated.View className="h-9" style={capsuleSizerStyle} />
         <View
           pointerEvents={statusInteractive ? "box-none" : "none"}
-          className="absolute h-11 items-center justify-center"
+          className="absolute h-9 items-center justify-center"
           style={{ width: labelWidth }}
         >
           <FloatingStatusLabel
@@ -186,10 +186,10 @@ export function FloatingWorkingControl(props: {
       {statusContent}
       {props.devicePreview !== null ? (
         <View
-          className="min-h-11 flex-row items-center"
+          className="min-h-9 flex-row items-center"
           onLayout={(event) => setDeviceWidth(event.nativeEvent.layout.width)}
         >
-          {hasStatus ? <View className="h-4 w-px bg-border" /> : null}
+          {hasStatus ? <View className="h-4 w-px bg-border-subtle" /> : null}
           <DevicePreviewButton
             {...props.devicePreview}
             compact={hasStatus || hasAgents || hasQueue}
@@ -203,11 +203,16 @@ export function FloatingWorkingControl(props: {
           accessibilityHint="Opens this turn's subagents"
           onPress={props.onOpenAgents}
           onLayout={(event) => setAgentsWidth(event.nativeEvent.layout.width)}
-          className="min-h-11 flex-row items-center gap-1.5 px-3 active:opacity-70"
+          className="min-h-9 flex-row items-center gap-1.5 px-3 active:opacity-70"
         >
-          {hasStatus || hasDevicePreview ? <View className="mr-1 h-4 w-px bg-border" /> : null}
-          <SymbolView name="person.2" size={13} tintColorClassName="accent-foreground-muted" />
-          <Text className="font-t3-medium text-xs tabular-nums" numberOfLines={1}>
+          {hasStatus || hasDevicePreview ? (
+            <View className="mr-1 h-4 w-px bg-border-subtle" />
+          ) : null}
+          <SymbolView name="person.2" size={14} tintColorClassName="accent-foreground-muted/60" />
+          <Text
+            className="font-t3-medium text-xs tabular-nums text-foreground/70"
+            numberOfLines={1}
+          >
             {agents.label}
           </Text>
         </Pressable>
@@ -220,13 +225,20 @@ export function FloatingWorkingControl(props: {
           onPress={props.onOpenQueue}
           onLayout={(event) => setQueueWidth(event.nativeEvent.layout.width)}
           style={{ maxWidth: Math.min(overlayWidth, windowWidth) * 0.45 }}
-          className="min-h-11 flex-row items-center gap-2 px-3 active:opacity-70"
+          className="min-h-9 flex-row items-center gap-2 px-3 active:opacity-70"
         >
           {hasStatus || hasDevicePreview || hasAgents ? (
-            <View className="mr-1 h-4 w-px bg-border" />
+            <View className="mr-1 h-4 w-px bg-border-subtle" />
           ) : null}
-          <SymbolView name="list.number" size={13} tintColorClassName="accent-foreground-muted" />
-          <Text className="shrink font-t3-medium text-xs tabular-nums" numberOfLines={1}>
+          <SymbolView
+            name="list.number"
+            size={14}
+            tintColorClassName="accent-foreground-muted/60"
+          />
+          <Text
+            className="shrink font-t3-medium text-xs tabular-nums text-foreground/70"
+            numberOfLines={1}
+          >
             {props.queuedCount} queued
           </Text>
         </Pressable>
@@ -247,14 +259,14 @@ export function FloatingWorkingControl(props: {
         <UniwindGlassContainer
           spacing={GLASS_MERGE_SPACING}
           pointerEvents="box-none"
-          className="flex-row items-center gap-4"
+          className="flex-row items-center gap-3"
         >
           <AnimatedGlassView
             colorScheme={props.colorScheme}
             glassEffectStyle="regular"
             isInteractive={capsuleInteractive}
             pointerEvents={capsuleInteractive ? "box-none" : "none"}
-            className="h-11 items-center justify-center overflow-hidden rounded-lg"
+            className="h-9 items-center justify-center overflow-hidden rounded-full"
             style={capsuleStyle}
           >
             {capsuleContent}
@@ -267,7 +279,7 @@ export function FloatingWorkingControl(props: {
             pointerEvents={props.showScrollToEnd ? "auto" : "none"}
             accessibilityElementsHidden={!props.showScrollToEnd}
             importantForAccessibility={props.showScrollToEnd ? "auto" : "no-hide-descendants"}
-            className="h-11 w-11 items-center justify-center overflow-hidden rounded-lg"
+            className="size-9 items-center justify-center overflow-hidden rounded-full"
             style={arrowTransformStyle}
           >
             <Animated.View style={arrowContentStyle}>
@@ -276,10 +288,10 @@ export function FloatingWorkingControl(props: {
           </AnimatedGlassView>
         </UniwindGlassContainer>
       ) : hasCapsule ? (
-        <View pointerEvents="box-none" className="flex-row items-center gap-4">
+        <View pointerEvents="box-none" className="flex-row items-center gap-3">
           <Animated.View
             pointerEvents={capsuleInteractive ? "box-none" : "none"}
-            className="h-11 items-center justify-center overflow-hidden rounded-lg border border-border bg-glass-fallback shadow-md shadow-primary-shadow/10"
+            className="h-9 items-center justify-center overflow-hidden rounded-full border border-border-subtle bg-grouped-card"
             style={capsuleStyle}
           >
             {capsuleContent}
@@ -294,7 +306,7 @@ export function FloatingWorkingControl(props: {
             <ControlPill
               accessibilityLabel="Scroll to end"
               activateOnPressIn
-              className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-primary-shadow/10"
+              className="size-9 rounded-full border border-border-subtle bg-grouped-card"
               disabled={!props.showScrollToEnd}
               icon={{ ios: "chevron.down", android: "keyboard_arrow_down" }}
               onPress={props.onScrollToEnd}
@@ -306,7 +318,7 @@ export function FloatingWorkingControl(props: {
           colorScheme={props.colorScheme}
           glassEffectStyle="regular"
           isInteractive
-          className="h-11 w-11 items-center justify-center overflow-hidden rounded-lg"
+          className="size-9 items-center justify-center overflow-hidden rounded-full"
         >
           <ScrollToEndButton onPress={props.onScrollToEnd} />
         </UniwindGlassView>
@@ -314,7 +326,7 @@ export function FloatingWorkingControl(props: {
         <ControlPill
           accessibilityLabel="Scroll to end"
           activateOnPressIn
-          className="h-11 w-11 border border-border bg-glass-fallback shadow-md shadow-primary-shadow/10"
+          className="size-9 rounded-full border border-border-subtle bg-grouped-card"
           icon={{ ios: "chevron.down", android: "keyboard_arrow_down" }}
           onPress={props.onScrollToEnd}
         />
@@ -328,11 +340,11 @@ function CompactingLabel(props: { readonly onLayout: (event: LayoutChangeEvent) 
     <StatusLabelRow accessibilityLabel="Compacting" className="gap-1.5" onLayout={props.onLayout}>
       <SymbolView
         name="arrow.down.right.and.arrow.up.left"
-        size={13}
-        tintColorClassName="foreground"
+        size={14}
+        tintColorClassName="accent-foreground-muted/60"
         type="monochrome"
       />
-      <Text className="font-t3-medium text-xs text-foreground">Compacting…</Text>
+      <Text className="font-t3-medium text-xs text-foreground/70">Compacting…</Text>
     </StatusLabelRow>
   );
 }
@@ -351,8 +363,8 @@ function FloatingStatusLabel(props: {
         className="gap-2"
         onLayout={props.onLayout}
       >
-        <ActivityIndicator size="small" colorClassName="accent-icon-muted" />
-        <Text className="shrink font-t3-medium text-xs text-foreground" numberOfLines={1}>
+        <ActivityIndicator size="small" colorClassName="accent-foreground-muted/60" />
+        <Text className="shrink font-t3-medium text-xs text-foreground/70" numberOfLines={1}>
           {props.status.label}
         </Text>
       </StatusLabelRow>
@@ -372,12 +384,12 @@ function FloatingStatusLabel(props: {
         onPress={props.status.onPress}
       >
         {props.status.tone === "reconnecting" ? (
-          <ActivityIndicator size="small" colorClassName="accent-icon-muted" />
+          <ActivityIndicator size="small" colorClassName="accent-foreground-muted/60" />
         ) : (
           <View className="h-2 w-2 rounded-full bg-danger-foreground" />
         )}
         <Text
-          className="max-w-[260px] shrink font-t3-medium text-xs text-foreground"
+          className="max-w-[260px] shrink font-t3-medium text-xs text-foreground/70"
           numberOfLines={1}
         >
           {props.status.label}
@@ -397,11 +409,11 @@ function FloatingStatusLabel(props: {
             that will wake the agent gets the bolt. */}
         <SymbolView
           name={props.status.waiting ? { ios: "bolt", android: "bolt" } : "terminal"}
-          size={13}
-          tintColorClassName="foreground"
+          size={14}
+          tintColorClassName="accent-foreground-muted/60"
           type="monochrome"
         />
-        <Text className="shrink font-t3-medium text-xs text-foreground" numberOfLines={1}>
+        <Text className="shrink font-t3-medium text-xs text-foreground/70" numberOfLines={1}>
           {props.status.label}
         </Text>
       </StatusLabelRow>
@@ -417,8 +429,8 @@ function FloatingStatusLabel(props: {
       >
         <SymbolView
           name="arrow.triangle.branch"
-          size={13}
-          tintColorClassName="foreground"
+          size={14}
+          tintColorClassName="accent-foreground-muted/60"
           type="monochrome"
         />
         <ShimmeringWorkContent
@@ -446,7 +458,7 @@ function StatusLabelRow(props: {
   readonly onLayout: (event: LayoutChangeEvent) => void;
   readonly onPress?: () => void;
 }) {
-  const rowClassName = `min-h-11 flex-row items-center px-4 ${props.className ?? ""}`;
+  const rowClassName = `min-h-9 flex-row items-center px-3 ${props.className ?? ""}`;
   return (
     <Animated.View
       className="absolute max-w-full"
@@ -491,7 +503,7 @@ export function WorkingTimer(props: { readonly startedAt: string }) {
   }, []);
   return (
     <SystemText
-      className="shrink text-xs text-foreground"
+      className="shrink text-xs text-foreground/70"
       numberOfLines={1}
       style={{ fontVariant: ["tabular-nums"], fontWeight: "500" }}
     >
@@ -524,7 +536,7 @@ function ScrollToEndButton(props: { readonly disabled?: boolean; readonly onPres
     <ControlPill
       accessibilityLabel="Scroll to end"
       activateOnPressIn
-      className="h-11 w-11 bg-transparent"
+      className="size-9 rounded-full bg-transparent"
       disabled={props.disabled}
       icon={{ ios: "chevron.down", android: "keyboard_arrow_down" }}
       onPress={props.onPress}
