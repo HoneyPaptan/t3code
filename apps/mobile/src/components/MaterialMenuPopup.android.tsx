@@ -1,162 +1,127 @@
-import {
-  Box,
-  Column,
-  DropdownMenu,
-  DropdownMenuItem,
-  Host,
-  RNHostView,
-  Text,
-} from "@expo/ui/jetpack-compose";
-import { defaultMinSize, padding, size, width } from "@expo/ui/jetpack-compose/modifiers";
-import { View } from "react-native";
-import { resolveScaledTextRole } from "../lib/appearancePreferences";
+import type { MenuAction } from "@react-native-menu/menu";
+import { useMemo, type ReactNode } from "react";
+import { Pressable, View } from "react-native";
 
-import { useAndroidControlSizing } from "./useAndroidControlSizing";
 import { useAppearancePreferences } from "../features/settings/appearance/AppearancePreferencesProvider";
-import type { MaterialMenuPopupProps } from "./MaterialMenuPopup";
+import { cn } from "../lib/cn";
+import { AppText } from "./AppText";
 import { isAppSymbolName, SymbolView, type AppSymbolName } from "./AppSymbol";
+import type { MaterialMenuPopupProps } from "./MaterialMenuPopup";
+import { resolveMenuRows } from "./menuRows";
+import { useAndroidControlSizing } from "./useAndroidControlSizing";
 
-function MenuIcon(props: {
-  readonly name: AppSymbolName;
-  readonly destructive?: boolean;
-  readonly disabled?: boolean;
-}) {
-  const { iconSize } = useAndroidControlSizing();
+function MenuIcon(props: { readonly name: AppSymbolName; readonly destructive?: boolean }) {
+  const { mediumIconSize } = useAndroidControlSizing();
   return (
-    <RNHostView matchContents modifiers={[size(iconSize, iconSize)]}>
-      <View
-        style={{ width: iconSize, height: iconSize }}
-        importantForAccessibility="no-hide-descendants"
-      >
-        <SymbolView
-          name={props.name}
-          size={iconSize}
-          type="monochrome"
-          tintColorClassName={
-            props.disabled
-              ? "accent-icon-subtle"
-              : props.destructive
-                ? "accent-danger-foreground"
-                : "accent-foreground"
-          }
-        />
-      </View>
-    </RNHostView>
+    <SymbolView
+      name={props.name}
+      size={mediumIconSize}
+      type="monochrome"
+      tintColorClassName={
+        props.destructive ? "accent-danger-foreground" : "accent-foreground-muted"
+      }
+    />
   );
 }
 
-/** Native popup positioned at the original trigger, outside virtualized rows. */
-export function MaterialMenuPopup(props: MaterialMenuPopupProps) {
-  const { appearance, themeAppearance, themeVariables: colors } = useAppearancePreferences();
-  const { scale, menuItemHeight } = useAndroidControlSizing();
-  const body = resolveScaledTextRole("body", appearance.baseFontSize);
-  const caption = resolveScaledTextRole("caption", appearance.baseFontSize);
-  const foreground = colors["--color-foreground"];
-  const muted = colors["--color-foreground-muted"];
-  // A fixed native item height clips wrapped labels; a minimum lets each row grow.
-  const itemModifiers = [width(props.menuWidth), defaultMinSize({ minHeight: menuItemHeight })];
-  const items = (
-    <>
-      {props.parent ? (
-        <DropdownMenuItem onClick={props.onBack} modifiers={itemModifiers}>
-          <DropdownMenuItem.LeadingIcon>
-            <MenuIcon name="arrow.left" />
-          </DropdownMenuItem.LeadingIcon>
-          <DropdownMenuItem.Text>
-            <Text color={foreground} style={{ typography: "bodyLarge", ...body }}>
-              {props.parent.title}
-            </Text>
-          </DropdownMenuItem.Text>
-        </DropdownMenuItem>
-      ) : props.title ? (
-        <Text
-          color={muted}
-          style={{ typography: "bodySmall", ...caption }}
-          modifiers={[padding(16 * scale, 8 * scale, 16 * scale, 8 * scale)]}
-        >
-          {props.title}
-        </Text>
-      ) : null}
-      {props.actions.map((action, index) => (
-        <DropdownMenuItem
-          key={action.id ?? `${index}-${action.title}`}
-          enabled={!action.attributes?.disabled}
-          modifiers={itemModifiers}
-          onClick={() => props.onPress(action)}
-        >
-          {action.image && isAppSymbolName(action.image) ? (
-            <DropdownMenuItem.LeadingIcon>
-              <MenuIcon
-                name={action.image}
-                destructive={action.attributes?.destructive}
-                disabled={action.attributes?.disabled}
-              />
-            </DropdownMenuItem.LeadingIcon>
-          ) : null}
-          <DropdownMenuItem.Text>
-            <Column>
-              <Text
-                style={{ typography: "bodyLarge", ...body }}
-                color={
-                  action.attributes?.disabled
-                    ? muted
-                    : action.attributes?.destructive
-                      ? colors["--color-danger-foreground"]
-                      : foreground
-                }
-              >
-                {action.title}
-              </Text>
-              {action.subtitle ? (
-                <Text color={muted} style={{ typography: "bodySmall", ...caption }}>
-                  {action.subtitle}
-                </Text>
-              ) : null}
-            </Column>
-          </DropdownMenuItem.Text>
-          {(action.subactions?.length ?? 0) > 0 ? (
-            <DropdownMenuItem.TrailingIcon>
-              <MenuIcon name="chevron.right" disabled={action.attributes?.disabled} />
-            </DropdownMenuItem.TrailingIcon>
-          ) : action.state === "on" ? (
-            <DropdownMenuItem.TrailingIcon>
-              <MenuIcon name="checkmark" disabled={action.attributes?.disabled} />
-            </DropdownMenuItem.TrailingIcon>
-          ) : null}
-        </DropdownMenuItem>
-      ))}
-    </>
-  );
-  if (props.inline) {
-    return (
-      <Host
-        colorScheme={themeAppearance}
-        ignoreSafeAreaKeyboardInsets
-        matchContents
-        style={{ width: props.menuWidth }}
-      >
-        <Column>{items}</Column>
-      </Host>
-    );
-  }
+function MenuTrailingIcon(props: { readonly name: AppSymbolName; readonly muted: boolean }) {
+  const { smallIconSize } = useAndroidControlSizing();
   return (
-    <Host
-      colorScheme={themeAppearance}
-      ignoreSafeAreaKeyboardInsets
-      style={{
-        position: "absolute",
-        left: props.anchor.x,
-        top: props.anchor.y,
-        width: props.anchor.width,
-        height: props.anchor.height,
-      }}
+    <SymbolView
+      name={props.name}
+      size={smallIconSize}
+      type="monochrome"
+      tintColorClassName={props.muted ? "accent-foreground-muted/50" : "accent-foreground"}
+    />
+  );
+}
+
+function MenuItem(props: {
+  readonly label: string;
+  readonly subtitle?: string;
+  readonly leading?: ReactNode;
+  readonly trailing?: ReactNode;
+  readonly destructive?: boolean;
+  readonly disabled?: boolean;
+  readonly onPress: () => void;
+}) {
+  const { themeVariables } = useAppearancePreferences();
+  return (
+    <Pressable
+      accessibilityRole="menuitem"
+      accessibilityState={{ disabled: props.disabled }}
+      android_ripple={{ color: themeVariables["--color-subtle-strong"] }}
+      className={cn(
+        "min-h-11 flex-row items-center gap-3 px-3 py-1.5",
+        props.disabled && "opacity-45",
+      )}
+      disabled={props.disabled}
+      onPress={props.onPress}
     >
-      <DropdownMenu expanded onDismissRequest={props.onClose} color={colors["--color-card-alt"]}>
-        <DropdownMenu.Trigger>
-          <Box modifiers={[size(props.anchor.width, props.anchor.height)]} />
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Items>{items}</DropdownMenu.Items>
-      </DropdownMenu>
-    </Host>
+      {props.leading}
+      <View className="min-w-0 flex-1">
+        <AppText
+          className={cn("text-sm text-foreground", props.destructive && "text-danger-foreground")}
+          numberOfLines={2}
+        >
+          {props.label}
+        </AppText>
+        {props.subtitle ? (
+          <AppText className="text-xs text-foreground-muted/60" numberOfLines={2}>
+            {props.subtitle}
+          </AppText>
+        ) : null}
+      </View>
+      {props.trailing}
+    </Pressable>
+  );
+}
+
+function MenuSeparator() {
+  return <View className="mx-3 my-1 h-px bg-border-subtle" />;
+}
+
+function actionTrailing(action: MenuAction) {
+  if ((action.subactions?.length ?? 0) > 0) {
+    return <MenuTrailingIcon name="chevron.right" muted />;
+  }
+  return action.state === "on" ? <MenuTrailingIcon name="checkmark" muted={false} /> : null;
+}
+
+export function MaterialMenuPopup(props: MaterialMenuPopupProps) {
+  const rows = useMemo(() => resolveMenuRows(props.actions), [props.actions]);
+  return (
+    <View accessibilityRole="menu" className="py-1">
+      {props.parent ? (
+        <>
+          <MenuItem
+            label={props.parent.title}
+            leading={<MenuIcon name="arrow.left" />}
+            onPress={props.onBack}
+          />
+          <MenuSeparator />
+        </>
+      ) : props.title ? (
+        <AppText className="px-3 pb-1 pt-2 text-xs text-foreground-muted/50">{props.title}</AppText>
+      ) : null}
+      {rows.map(({ action, separatorBefore }, index) => (
+        <View key={action.id ?? `${index}-${action.title}`}>
+          {separatorBefore ? <MenuSeparator /> : null}
+          <MenuItem
+            label={action.title}
+            subtitle={action.subtitle}
+            leading={
+              action.image && isAppSymbolName(action.image) ? (
+                <MenuIcon name={action.image} destructive={action.attributes?.destructive} />
+              ) : null
+            }
+            trailing={actionTrailing(action)}
+            destructive={action.attributes?.destructive}
+            disabled={action.attributes?.disabled}
+            onPress={() => props.onPress(action)}
+          />
+        </View>
+      ))}
+    </View>
   );
 }

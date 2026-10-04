@@ -33,11 +33,12 @@ describe("header menus", () => {
     expect(actions[0]?.subactions?.[0]?.id).toBe("font-increase");
   });
 
-  it("flattens inline groups while keeping their action IDs", () => {
+  it("keeps untitled inline groups as inline groups while keeping their action IDs", () => {
     const actions = androidHeaderMenuActions([
       { id: "modes", inline: true, items: [{ id: "code", title: "Code", onPress: () => {} }] },
     ]);
-    expect(actions.map(({ id }) => id)).toEqual(["code"]);
+    expect(actions[0]).toMatchObject({ displayInline: true });
+    expect(actions[0]?.subactions?.map(({ id }) => id)).toEqual(["code"]);
   });
 
   it("keeps stable action IDs, selection, and disabled state inside submenus", () => {
