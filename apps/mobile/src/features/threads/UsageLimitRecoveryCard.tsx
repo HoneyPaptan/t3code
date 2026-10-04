@@ -67,7 +67,7 @@ export function UsageLimitRecoveryCard({
     }
   }
   return (
-    <View className="mx-3 mb-2 gap-2 rounded-xl border border-warning-foreground/25 bg-screen p-3">
+    <View className="mx-4 mb-2 gap-2 rounded-lg border border-border-subtle bg-grouped-card p-3">
       <Text className="text-sm text-warning-foreground">
         {resetAt
           ? `Usage limit resets ${DateTime.toDateUtc(DateTime.makeUnsafe(resetAt)).toLocaleString()}.`
@@ -79,9 +79,9 @@ export function UsageLimitRecoveryCard({
             accessibilityRole="button"
             disabled={pending}
             onPress={() => void toggle("resume")}
-            className="self-start rounded-lg bg-subtle px-3 py-2 active:opacity-70"
+            className="min-h-9 justify-center self-start rounded-lg border border-border-subtle px-3 active:opacity-70"
           >
-            <Text className="text-sm text-foreground">
+            <Text className="font-t3-medium text-xs text-foreground/70">
               {scheduled ? "Cancel auto-resume" : "Resume at reset"}
             </Text>
           </Pressable>
@@ -89,9 +89,9 @@ export function UsageLimitRecoveryCard({
             accessibilityRole="button"
             disabled={pending || (!snoozed && Date.parse(resetAt!) <= Date.now())}
             onPress={() => void toggle("snooze")}
-            className="self-start rounded-lg bg-subtle px-3 py-2 active:opacity-70"
+            className="min-h-9 justify-center self-start rounded-lg border border-border-subtle px-3 active:opacity-70"
           >
-            <Text className="text-sm text-foreground">
+            <Text className="font-t3-medium text-xs text-foreground/70">
               {snoozed ? "Wake now" : "Snooze until reset"}
             </Text>
           </Pressable>
