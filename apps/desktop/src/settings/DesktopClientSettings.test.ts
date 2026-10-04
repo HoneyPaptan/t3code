@@ -51,6 +51,8 @@ const clientSettings: ClientSettings = {
   fontSizeTerminal: 12,
   fontSmoothing: true,
   glassOpacity: 80,
+  backgroundPictureStrength: 30,
+  backgroundPictureBlur: 0,
   onboardingCompletedAt: null,
   panelAnimationDurationMs: 0,
   planModeEnabled: false,
