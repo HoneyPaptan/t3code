@@ -51,8 +51,9 @@ export function ComposerInlineControl(props: {
       accessibilityState={
         props.static ? undefined : { disabled: props.disabled, selected: props.selected }
       }
-      className="min-h-11 flex-row items-center gap-1.5 rounded-md px-1.5 active:bg-subtle"
+      className="min-h-9 flex-row items-center gap-1.5 rounded-md px-2 active:bg-subtle"
       disabled={props.disabled || props.static}
+      hitSlop={{ top: 4, bottom: 4 }}
       onPress={props.onPress}
       style={{ maxWidth: props.maxWidth ?? 190, opacity: props.disabled ? 0.45 : 1 }}
     >
@@ -75,22 +76,22 @@ export function ComposerInlineControl(props: {
       ) : null}
       <Text
         className={cn(
-          "shrink text-[13.5px] font-t3-medium",
-          props.emphasized || props.selected ? "text-foreground" : "text-foreground-muted",
+          "shrink text-xs font-t3-medium",
+          props.emphasized || props.selected ? "text-foreground" : "text-foreground-muted/60",
         )}
         numberOfLines={1}
       >
         {props.label}
       </Text>
       {props.showChevron === false ? null : (
-        <SymbolView
-          name={props.chevronDirection === "right" ? "chevron.right" : "chevron.down"}
-          size={Math.round(10 * scale)}
-          tintColorClassName={
-            props.emphasized || props.selected ? "accent-icon" : "accent-icon-muted"
-          }
-          type="monochrome"
-        />
+        <View className="opacity-50">
+          <SymbolView
+            name={props.chevronDirection === "right" ? "chevron.right" : "chevron.down"}
+            size={Math.round(14 * scale)}
+            tintColorClassName="accent-icon-muted"
+            type="monochrome"
+          />
+        </View>
       )}
     </Pressable>
   );
@@ -232,19 +233,18 @@ export function ComposerActionButton(props: {
   readonly icon: ComponentProps<typeof SymbolView>["name"];
   readonly onPress: () => void;
   readonly variant?: "primary" | "danger";
-  // Forwarded so a ControlPillMenu can drive this button as its long-press
-  // anchor: Android injects onLongPress, iOS injects onTouchStart and onPress.
   readonly onLongPress?: PressableProps["onLongPress"];
   readonly onTouchStart?: PressableProps["onTouchStart"];
 }) {
-  const { scale, smallIconSize } = useAndroidControlSizing();
-  const circleSize = Math.round(30 * scale);
+  const { scale } = useAndroidControlSizing();
+  const circleSize = Math.round(40 * scale);
+  const iconSize = Math.round(20 * scale);
   return (
     <Pressable
       accessibilityLabel={props.accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
-      className="size-[44px] shrink-0 items-center justify-center active:opacity-70"
+      className="min-h-11 min-w-11 shrink-0 items-center justify-center active:opacity-70"
       disabled={props.disabled}
       onPress={props.onPress}
       onLongPress={props.onLongPress}
@@ -259,7 +259,7 @@ export function ComposerActionButton(props: {
       >
         <SymbolView
           name={props.icon}
-          size={smallIconSize}
+          size={iconSize}
           weight="semibold"
           tintColorClassName={
             props.variant === "danger" ? "accent-danger-foreground" : "accent-send-foreground"
