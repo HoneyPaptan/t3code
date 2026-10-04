@@ -1017,15 +1017,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             <View>{props.renderImage({ href: viewedImagePath, alt: null, title: null })}</View>
           ) : null}
           {reasoning ? (
-            <ScrollView
-              nestedScrollEnabled
-              directionalLockEnabled
-              showsVerticalScrollIndicator
-              className="max-h-60"
-              contentContainerStyle={{ paddingRight: 8 }}
-            >
-              {props.renderReasoning(reasoning.text)}
-            </ScrollView>
+            <View>{props.renderReasoning(reasoning.text)}</View>
           ) : fullDetail ? (
             <>
               <Text className="text-[13px] leading-[18px] text-foreground-muted/70">
