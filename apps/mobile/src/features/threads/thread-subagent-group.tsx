@@ -9,7 +9,7 @@ import type {
   OrchestrationV2TurnItem,
 } from "@t3tools/contracts";
 import { useEffect, useState } from "react";
-import { AppState, Pressable, View, type ColorValue } from "react-native";
+import { AppState, Pressable, View } from "react-native";
 
 import { AppText as Text } from "../../components/AppText";
 import { SymbolView } from "../../components/AppSymbol";
@@ -54,7 +54,7 @@ function SubagentAvatar(props: {
   return (
     <View
       accessible={false}
-      className="h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-card"
+      className="h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-grouped-card"
     >
       <ProviderIcon provider={props.item.driver} iconUrl={props.iconUrl} size={15} />
     </View>
@@ -66,7 +66,6 @@ export function ThreadSubagentGroup(props: {
   readonly environmentId: EnvironmentId;
   readonly anchorKey: string;
   readonly expandedRows: Readonly<Record<string, boolean>>;
-  readonly iconSubtleColor: ColorValue;
   readonly onToggleRow: (rowId: string, anchorKey: string) => void;
 }) {
   const config = useAtomValue(serverEnvironment.configValueAtom(props.environmentId));
@@ -114,19 +113,19 @@ export function ThreadSubagentGroup(props: {
               </View>
             ))}
             {agents.length > 3 ? (
-              <View className="-ml-2 h-7 w-7 items-center justify-center rounded-lg border border-border bg-card">
-                <Text className="text-2xs text-foreground-muted">+{agents.length - 3}</Text>
+              <View className="-ml-2 h-7 w-7 items-center justify-center rounded-lg bg-grouped-card">
+                <Text className="text-2xs text-foreground-muted/60">+{agents.length - 3}</Text>
               </View>
             ) : null}
           </View>
           <View className="min-w-0 flex-1 gap-0.5">
-            <Text numberOfLines={1} className="font-t3-medium text-sm text-foreground">
+            <Text numberOfLines={1} className="font-t3-medium text-xs text-foreground/70">
               {label}
             </Text>
             <Text
               numberOfLines={1}
               className={cn(
-                "text-2xs text-foreground-muted",
+                "text-2xs text-foreground-muted/60",
                 agents.some((agent) => isActiveSubagentStatus(agent.status))
                   ? "text-update-foreground"
                   : agents.some((agent) => agent.status === "failed") && "text-danger-foreground",
@@ -138,13 +137,13 @@ export function ThreadSubagentGroup(props: {
           <SubagentElapsed agents={agents} />
           <SymbolView
             name={expanded ? "chevron.up" : "chevron.down"}
-            size={11}
-            tintColor={props.iconSubtleColor}
+            size={14}
+            tintColorClassName="accent-foreground-muted/50"
           />
         </Pressable>
       ) : null}
       {!grouped || expanded ? (
-        <View className="mb-1 gap-px rounded-xl border border-border bg-card/30 p-1">
+        <View className="mb-1 gap-px rounded-xl bg-grouped-card p-1">
           {agents.map((agent) => {
             const threadId = agent.childThreadId;
             return (

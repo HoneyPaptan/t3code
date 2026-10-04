@@ -451,7 +451,6 @@ function FloatingStatusLabel(props: {
           textClassName="font-t3-medium"
           compact
           icon="arrow.triangle.branch"
-          iconSubtleColor="transparent"
           label={props.status.label}
           showIcon={false}
         />

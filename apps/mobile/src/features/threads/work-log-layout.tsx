@@ -1,8 +1,29 @@
 import { AppText as Text } from "../../components/AppText";
-import { cn } from "../../lib/cn";
 import type { ComponentProps, ReactNode } from "react";
 import { Pressable, View } from "react-native";
 import { THREAD_WORK_ROW_MIN_HEIGHT, type deriveThreadWorkLogSizing } from "../../lib/layout";
+import type { WorkRowLabelRole } from "./work-row-presentation";
+
+export const WORK_LABEL_ROLE_STYLE: Record<
+  WorkRowLabelRole,
+  { readonly text: string; readonly color: string }
+> = {
+  name: { text: "font-t3-medium text-xs", color: "text-foreground/70" },
+  argument: { text: "font-mono text-xs", color: "text-foreground-muted/60" },
+  heading: { text: "text-xs", color: "text-foreground-muted/70" },
+  group: { text: "text-xs", color: "text-foreground-muted/50" },
+};
+
+const LABEL_TONE_CLASS = {
+  danger: "font-t3-medium text-xs text-danger-foreground",
+  warning: "font-t3-medium text-xs text-warning-foreground",
+} as const;
+
+function labelClassName(role: WorkRowLabelRole, tone: "default" | "danger" | "warning"): string {
+  if (tone !== "default") return LABEL_TONE_CLASS[tone];
+  const style = WORK_LABEL_ROLE_STYLE[role];
+  return `${style.text} ${style.color}`;
+}
 
 export function WorkLogBlock({
   children,
@@ -25,10 +46,9 @@ export function WorkLogRows({ children }: { children: ReactNode }) {
 }
 
 export function WorkLogIconSlot({ children }: { children: ReactNode }) {
-  return <View className="relative h-6 w-6 shrink-0 items-center justify-center">{children}</View>;
+  return <View className="relative size-5 shrink-0 items-center justify-center">{children}</View>;
 }
 
-/** Consumers supply actions/content; sizing comes from the feed's accessibility-aware metrics. */
 export function WorkLogPressable({
   children,
   rowSizing,
@@ -49,12 +69,13 @@ export function WorkLogPressable({
   );
 }
 
-/** Headers stay one line; only the separate detail content can wrap. */
 export function WorkLogLabel({
   children,
+  role = "name",
   tone = "default",
 }: {
   children: ReactNode;
+  role?: WorkRowLabelRole;
   tone?: "default" | "danger" | "warning";
 }) {
   return (
@@ -62,11 +83,7 @@ export function WorkLogLabel({
       selectable={false}
       numberOfLines={1}
       ellipsizeMode="tail"
-      className={cn(
-        "min-w-0 flex-1 text-sm text-foreground-muted",
-        tone === "danger" && "font-t3-medium text-danger-foreground",
-        tone === "warning" && "font-t3-medium text-warning-foreground",
-      )}
+      className={`min-w-0 flex-1 ${labelClassName(role, tone)}`}
     >
       {children}
     </Text>

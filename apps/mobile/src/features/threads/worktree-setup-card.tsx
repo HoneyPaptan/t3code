@@ -162,12 +162,7 @@ function HeaderLabel({
   failed?: boolean;
 }) {
   return active ? (
-    <ShimmeringWorkContent
-      icon="clock"
-      iconSubtleColor="transparent"
-      label={label}
-      showIcon={false}
-    />
+    <ShimmeringWorkContent icon="clock" label={label} showIcon={false} />
   ) : (
     <Text
       numberOfLines={1}
@@ -322,12 +317,7 @@ function StageRow({
         )}
       </View>
       {stage.status === "running" && animate ? (
-        <ShimmeringWorkContent
-          icon="clock"
-          iconSubtleColor="transparent"
-          label={label}
-          showIcon={false}
-        />
+        <ShimmeringWorkContent icon="clock" label={label} showIcon={false} />
       ) : (
         <Text
           numberOfLines={1}
