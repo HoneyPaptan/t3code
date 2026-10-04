@@ -104,7 +104,7 @@ import { useAssetUrl } from "../../state/assets";
 const SHIMMER_WIDTH = 72;
 const SHIMMER_SWEEP_MS = 1_350;
 const SHIMMER_PAUSE_MS = 1_450;
-const SHIMMER_ICON_AND_GAP_WIDTH = 24.5;
+const SHIMMER_ICON_AND_GAP_WIDTH = 28;
 export const THREAD_DISCLOSURE_TRANSITION_MS = 180;
 const WORK_LOG_LAYOUT_TRANSITION = LinearTransition.duration(THREAD_DISCLOSURE_TRANSITION_MS);
 const WORK_LOG_DETAIL_ENTER_TRANSITION = FadeIn.duration(140);
@@ -199,9 +199,9 @@ function ShimmerWorkContent(props: {
   readonly toolIcon?: ToolActivityIcon;
 }) {
   return (
-    <View className="flex-row items-center gap-2">
+    <View className="flex-row items-center gap-[8px]">
       {props.showIcon ? (
-        <View className="size-5 shrink-0 items-center justify-center">
+        <View className="size-[20px] shrink-0 items-center justify-center">
           {props.toolIcon && props.environmentId ? (
             <ToolActivityIconView
               environmentId={props.environmentId}
@@ -515,7 +515,7 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
     props.activities.every((row) => row.projectedItem.item.type === "reasoning")
   ) {
     return (
-      <ScrollView nestedScrollEnabled className="ml-7 mt-1 max-h-96 pl-0.5">
+      <ScrollView nestedScrollEnabled className="ml-[28px] mt-1 max-h-96">
         {props.activities.map((row) => (
           <View key={row.id}>{props.renderReasoning(row.workEntry.detail ?? "")}</View>
         ))}
@@ -909,7 +909,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             </Text>
           </View>
           {!warning ? (
-            <Text selectable className="ml-7 text-sm text-foreground/70">
+            <Text selectable className="ml-[28px] text-tool text-danger-foreground">
               {failureItem.failure.message}
             </Text>
           ) : null}
@@ -1073,7 +1073,13 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             </WorkLogIconSlot>
             <WorkLogLabel
               role={labelRole}
-              tone={isUsageLimit ? "warning" : iconIsDestructive ? "danger" : "default"}
+              tone={
+                isUsageLimit
+                  ? "warning"
+                  : iconIsDestructive || row.status === "failure"
+                    ? "danger"
+                    : "default"
+              }
             >
               {isSystemNotice ? row.summary : displayText}
               {answerPreview ? (
@@ -1129,7 +1135,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
           exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
           layout={WORK_LOG_LAYOUT_TRANSITION}
-          className={reasoning ? "ml-7 mt-1 pl-0.5" : "mt-1.5 gap-1.5"}
+          className={reasoning ? "ml-[28px] mt-1" : "mt-[6px] gap-[6px]"}
         >
           {row.workEntry.questionAnswer ? (
             <QuestionAnswerHistory
@@ -1170,7 +1176,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                 directionalLockEnabled
                 showsVerticalScrollIndicator
                 className="max-h-40 overflow-hidden rounded-md bg-grouped-card"
-                contentContainerClassName="px-2.5 py-2"
+                contentContainerClassName="px-[10px] py-[8px]"
               >
                 {call ? (
                   [
@@ -1326,7 +1332,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
         className="rounded-md bg-grouped-card px-2.5 py-2 active:bg-subtle"
       >
         <View className="flex-row items-center gap-2">
-          <View className="size-5 shrink-0 items-center justify-center">
+          <View className="size-[20px] shrink-0 items-center justify-center">
             <SymbolView
               name={{ ios: "sparkles", android: "auto_awesome" }}
               size={WORK_ICON_SIZE}
