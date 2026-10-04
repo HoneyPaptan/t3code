@@ -1,7 +1,12 @@
 import { AppText as Text } from "../../components/AppText";
 import type { ComponentProps, ReactNode } from "react";
 import { Pressable, View } from "react-native";
-import { THREAD_WORK_ROW_MIN_HEIGHT, type deriveThreadWorkLogSizing } from "../../lib/layout";
+import { cn } from "../../lib/cn";
+import {
+  THREAD_FEED_GROUP_CHILD_GAP,
+  THREAD_WORK_ROW_MIN_HEIGHT,
+  type deriveThreadWorkLogSizing,
+} from "../../lib/layout";
 import { workLogBlockBottomGap } from "./thread-feed-item-size";
 import type { WorkRowLabelRole } from "./work-row-presentation";
 
@@ -47,8 +52,10 @@ export function WorkLogBlock({
   );
 }
 
+const workLogRowsGapStyle = { gap: THREAD_FEED_GROUP_CHILD_GAP };
+
 export function WorkLogRows({ children }: { children: ReactNode }) {
-  return <View className="gap-[6px]">{children}</View>;
+  return <View style={workLogRowsGapStyle}>{children}</View>;
 }
 
 export function WorkLogIconSlot({ children }: { children: ReactNode }) {
@@ -79,10 +86,12 @@ export function WorkLogPressable({
 
 export function WorkLogLabel({
   children,
+  className,
   role = "name",
   tone = "default",
 }: {
   children: ReactNode;
+  className?: string | undefined;
   role?: WorkRowLabelRole;
   tone?: "default" | "danger" | "warning";
 }) {
@@ -91,7 +100,7 @@ export function WorkLogLabel({
       selectable={false}
       numberOfLines={1}
       ellipsizeMode="tail"
-      className={`min-w-0 flex-1 ${labelClassName(role, tone)}`}
+      className={cn("min-w-0 shrink", labelClassName(role, tone), className)}
     >
       {children}
     </Text>

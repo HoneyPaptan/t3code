@@ -24,7 +24,7 @@ export const THREAD_WORK_ROW_MIN_HEIGHT = 36;
 export const THREAD_FEED_EDGE_PADDING = 16;
 export const THREAD_FEED_TURN_GAP = 16;
 export const THREAD_FEED_BLOCK_GAP = 12;
-export const THREAD_FEED_GROUP_CHILD_GAP = 6;
+export const THREAD_FEED_GROUP_CHILD_GAP = 12;
 
 export function deriveThreadWorkLogSizing(input: {
   readonly baseFontSize: number;
