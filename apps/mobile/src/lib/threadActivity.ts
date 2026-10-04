@@ -61,6 +61,8 @@ import type { HtmlRenderReference } from "@t3tools/shared/htmlRender";
 import { compactDynamicToolOutput, htmlRenderFromToolItem } from "@t3tools/shared/toolOutput";
 import * as DateTime from "effect/DateTime";
 
+import { workCountsSummary } from "./workCountsSummary";
+
 export type PendingApproval = ThreadPendingApproval;
 export type PendingUserInput = ThreadPendingUserInput;
 
@@ -200,6 +202,7 @@ type ThreadFeedEntryContent =
       readonly createdAt: string;
       readonly runId: RunId;
       readonly label: string;
+      readonly summary: string;
       readonly expanded: boolean;
     }
   | {
@@ -991,6 +994,7 @@ interface ThreadFeedRunFold {
   readonly createdAt: string;
   readonly hiddenEntryIds: ReadonlySet<string>;
   readonly label: string;
+  readonly summary: string;
 }
 
 export function failedFeedRunIds(
@@ -1141,10 +1145,14 @@ function deriveThreadFeedRunFolds(
     const duration = elapsedMs === null ? null : formatDuration(elapsedMs);
     const interrupted =
       latestRunMatches && (latestRun.status === "interrupted" || latestRun.status === "cancelled");
+    const hiddenActivities = group.entries.flatMap((entry) =>
+      hiddenEntryIds.has(entry.id) && entry.type === "activity-group" ? entry.activities : [],
+    );
     foldsByAnchorId.set(firstHiddenEntry.id, {
       runId,
       createdAt: firstHiddenEntry.createdAt,
       hiddenEntryIds,
+      summary: workCountsSummary(hiddenActivities),
       label: interrupted
         ? duration
           ? `You stopped after ${duration}`
@@ -1239,6 +1247,7 @@ export function deriveThreadFeedPresentation(
         row.runId !== fold.runId ||
         row.createdAt !== fold.createdAt ||
         row.label !== fold.label ||
+        row.summary !== fold.summary ||
         row.expanded !== expanded
       ) {
         row = {
@@ -1247,6 +1256,7 @@ export function deriveThreadFeedPresentation(
           createdAt: fold.createdAt,
           runId: fold.runId,
           label: fold.label,
+          summary: fold.summary,
           expanded,
         };
         runFoldRowsCache.set(entry, row);

@@ -184,6 +184,7 @@ import {
   ThreadThinkingRow,
   ThreadWorkLog,
 } from "./thread-work-log";
+import { WorkLogPressable } from "./work-log-layout";
 import { appendPendingThreadMessages, type PendingThreadFeedEntry } from "./pending-thread-feed";
 import type { QueuedThreadMessage } from "../../state/thread-outbox-model";
 import { resolveThreadFeedFixedItemSize, threadFeedChromeRowGap } from "./thread-feed-item-size";
@@ -1598,26 +1599,28 @@ function renderFeedEntry(
 
   if (entry.type === "run-fold") {
     return (
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ expanded: entry.expanded }}
-        onPress={() => props.onToggleTurnFold(entry.runId)}
-        hitSlop={4}
-        className="flex-row items-center gap-2 px-2"
-        style={{
-          minHeight: props.workRowSizing.estimatedRowHeight,
-          marginBottom: threadFeedChromeRowGap("run-fold"),
-        }}
-      >
-        <Text
-          key={props.workRowSizing.textSizeKey}
-          className="min-w-0 shrink text-chat tabular-nums text-foreground-muted"
-          numberOfLines={1}
+      <View style={{ marginBottom: threadFeedChromeRowGap("run-fold") }}>
+        <WorkLogPressable
+          accessibilityRole="button"
+          accessibilityState={{ expanded: entry.expanded }}
+          onPress={() => props.onToggleTurnFold(entry.runId)}
+          rowSizing={props.workRowSizing}
         >
-          {entry.label}
-        </Text>
-        <ThreadDisclosureChevron expanded={entry.expanded} collapsedDirection="right" />
-      </Pressable>
+          <Text
+            key={props.workRowSizing.textSizeKey}
+            className="shrink-0 text-chat tabular-nums text-foreground-muted"
+            numberOfLines={1}
+          >
+            {entry.label}
+          </Text>
+          {entry.summary ? (
+            <Text className="min-w-0 shrink text-chat text-foreground-muted/60" numberOfLines={1}>
+              {entry.summary}
+            </Text>
+          ) : null}
+          <ThreadDisclosureChevron expanded={entry.expanded} collapsedDirection="right" />
+        </WorkLogPressable>
+      </View>
     );
   }
 
