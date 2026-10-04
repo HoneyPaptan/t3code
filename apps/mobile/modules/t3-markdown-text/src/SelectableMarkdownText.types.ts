@@ -20,6 +20,7 @@ export interface NativeMarkdownTextStyle {
   readonly fontFamily: string;
   readonly headingFontFamily: string;
   readonly boldFontFamily: string;
+  readonly codeFontFamily?: string;
   readonly headingFontSizes?: ReadonlyArray<number>;
 }
 

@@ -14,9 +14,9 @@ import {
   NATIVE_REVIEW_DIFF_CONTENT_WIDTH,
 } from "./nativeReviewDiffAdapter";
 import { buildReviewParsedDiff } from "./reviewModel";
-import { REVIEW_MONO_FONT_FAMILY } from "./reviewDiffRendering";
 import type { ReviewInlineComment } from "./reviewCommentSelection";
 import { useMarkdownCodeHighlight } from "../threads/markdownCodeHighlightState";
+import { useFontFamily } from "../../lib/useFontFamily";
 
 export interface ReviewCommentColors {
   readonly background: ColorValue;
@@ -47,6 +47,7 @@ export const ReviewCommentCard = memo(function ReviewCommentCard(props: {
   readonly comment: ReviewInlineComment;
   readonly colors: ReviewCommentColors;
 }) {
+  const monoFontFamily = useFontFamily("mono");
   const { codeSurface, nativeReviewDiffStyle } = useAppearanceCodeSurface();
   const { themeAppearance: appearanceScheme } = useAppearancePreferences();
   const appTheme = useUniwindTheme();
@@ -210,7 +211,7 @@ export const ReviewCommentCard = memo(function ReviewCommentCard(props: {
             className="font-mono"
             style={{
               color: props.colors.text,
-              fontFamily: REVIEW_MONO_FONT_FAMILY,
+              fontFamily: monoFontFamily,
               fontSize: codeSurface.fontSize,
               lineHeight: codeSurface.rowHeight,
             }}

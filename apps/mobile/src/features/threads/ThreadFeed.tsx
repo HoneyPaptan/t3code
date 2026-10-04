@@ -100,7 +100,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInUp, type SharedValue } from "react-native-reanimated";
 import { useUniwindTheme } from "../../lib/useUniwindTheme";
 import { IOS_NAV_BAR_HEIGHT } from "../../lib/layoutMetrics";
-import { MONO_FONT_FAMILY, useFontFamily } from "../../lib/useFontFamily";
+import { useFontFamily } from "../../lib/useFontFamily";
 import { scopedThreadKey } from "../../lib/scopedEntities";
 import { copyTextWithHaptic } from "../../lib/copyTextWithHaptic";
 import { tryOpenExternalUrl } from "../../lib/openExternalUrl";
@@ -706,7 +706,6 @@ function ThreadMarkdownVideo(props: { readonly source: MediaVideoPreviewSource }
   );
 }
 
-const MARKDOWN_MONO_FONT = MONO_FONT_FAMILY;
 const HEADING_LEVELS = [1, 2, 3, 4, 5, 6] as const;
 
 interface MarkdownStyleSets {
@@ -1147,6 +1146,7 @@ function useMarkdownStyles(
   const userBubbleForegroundMuted = theme["--color-user-bubble-foreground-muted"];
   const regularFontFamily = useFontFamily("regular");
   const boldFontFamily = useFontFamily("bold");
+  const monoFontFamily = useFontFamily("mono");
 
   return useMemo(() => {
     const baseTheme: PartialMarkdownTheme = {
@@ -1185,7 +1185,7 @@ function useMarkdownStyles(
       fontFamilies: {
         regular: regularFontFamily,
         heading: boldFontFamily,
-        mono: MARKDOWN_MONO_FONT,
+        mono: monoFontFamily,
       },
       headingWeight: "700",
       borderRadius: {
@@ -1443,6 +1443,7 @@ function useMarkdownStyles(
           fontFamily: regularFontFamily,
           headingFontFamily: boldFontFamily,
           boldFontFamily,
+          codeFontFamily: monoFontFamily,
         },
       },
       assistant: {
@@ -1478,6 +1479,7 @@ function useMarkdownStyles(
           fontFamily: regularFontFamily,
           headingFontFamily: boldFontFamily,
           boldFontFamily,
+          codeFontFamily: monoFontFamily,
         },
       },
     };
@@ -1511,6 +1513,7 @@ function useMarkdownStyles(
     markdownUserFenceBg,
     markdownUserFenceText,
     markdownUserInlineCodeText,
+    monoFontFamily,
     nativeMarkdownTypography,
     onLinkPress,
     renderImage,
