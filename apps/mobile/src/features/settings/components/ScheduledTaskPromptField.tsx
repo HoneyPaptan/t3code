@@ -57,7 +57,7 @@ export function ScheduledTaskPromptField(props: {
       </View>
       {showsDictation ? (
         <ComposerDictationToolbar showsDictation>
-          <View className="h-11 flex-row items-center">
+          <View className="min-h-9 flex-row items-center">
             <ComposerDictationCancelAction presentation={presentation} onCancel={voice.cancel} />
             <ComposerDictationStatus
               audioLevels={voice.audioLevels}
