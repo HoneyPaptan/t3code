@@ -389,19 +389,24 @@ function isFreshRow(createdAt: string): boolean {
 }
 
 const WORK_ROW_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT;
-const WORK_ROW_GAP = 1;
-const WORK_LOG_BOTTOM_MARGIN = 3.5;
+const WORK_ROW_GAP = 5.25;
+const WORK_GROUP_ROW_GAP = 10.5;
+const WORK_LOG_BOTTOM_MARGIN = 5.25;
 const WORK_STATUS_GLYPH_SIZE = 14;
 const WORK_GROUP_MAX_HEIGHT = 256;
 const WORK_GROUP_EDGE_FADE_HEIGHT = 12;
 
-export const WORK_GROUP_TOGGLE_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT;
+function workLogRowGap(activities: ReadonlyArray<ThreadFeedActivity>): number {
+  return activities[0]?.groupedToolDetail ? WORK_GROUP_ROW_GAP : WORK_ROW_GAP;
+}
 
 function workLogRowsHeight(
   activities: ReadonlyArray<ThreadFeedActivity>,
   rowHeight = WORK_ROW_HEIGHT,
 ): number {
-  return activities.length * rowHeight + Math.max(0, activities.length - 1) * WORK_ROW_GAP;
+  return (
+    activities.length * rowHeight + Math.max(0, activities.length - 1) * workLogRowGap(activities)
+  );
 }
 
 export function collapsedWorkLogHeight(
@@ -547,7 +552,7 @@ function ThreadWorkGroupList(props: {
     1,
     measuredContent.height +
       Math.max(0, props.activities.length - measuredContent.rowCount) *
-        (props.rowSizing.estimatedRowHeight + WORK_ROW_GAP),
+        (props.rowSizing.estimatedRowHeight + WORK_GROUP_ROW_GAP),
   );
   const height = Math.min(contentHeight, WORK_GROUP_MAX_HEIGHT);
   const scrollOffset = useSharedValue(initialPosition?.scrollOffset ?? 0);
@@ -650,12 +655,13 @@ function ThreadWorkGroupList(props: {
     (row: ThreadFeedActivity, index: number) =>
       props.expandedRows[row.id] || props.rowSizing.fixedRowHeight === undefined
         ? undefined
-        : props.rowSizing.fixedRowHeight + (index < props.activities.length - 1 ? WORK_ROW_GAP : 0),
+        : props.rowSizing.fixedRowHeight +
+          (index < props.activities.length - 1 ? WORK_GROUP_ROW_GAP : 0),
     [props.activities.length, props.expandedRows, props.rowSizing.fixedRowHeight],
   );
   const renderItem = useCallback(
     ({ item, index }: { item: ThreadFeedActivity; index: number }) => (
-      <View className={index < props.activities.length - 1 ? "pb-px" : undefined}>
+      <View style={index < props.activities.length - 1 ? groupRowGapStyle : undefined}>
         {props.renderRow(item)}
       </View>
     ),
@@ -668,7 +674,7 @@ function ThreadWorkGroupList(props: {
         ref={subscribeToContentSize}
         data={props.activities}
         keyExtractor={workLogRowKey}
-        estimatedItemSize={props.rowSizing.estimatedRowHeight + WORK_ROW_GAP}
+        estimatedItemSize={props.rowSizing.estimatedRowHeight + WORK_GROUP_ROW_GAP}
         getFixedItemSize={getFixedItemSize}
         initialScrollIndex={initialScrollIndex}
         // Bootstrap overscan is only 50px. An offset inside expanded detail can
@@ -752,6 +758,8 @@ function EdgeFade(props: { readonly color: string; readonly direction: "up" | "d
     </Svg>
   );
 }
+
+const groupRowGapStyle = { paddingBottom: WORK_GROUP_ROW_GAP };
 
 function workLogRowKey(row: ThreadFeedActivity): string {
   return row.id;
@@ -1069,7 +1077,7 @@ export function ThreadWorkGroupToggle(props: {
       : toolGroupSummarySymbolName(props.summaryKind));
 
   return (
-    <WorkLogBlock layout="group-header">
+    <WorkLogBlock layout="group-header" opensRows={props.expanded}>
       <WorkLogPressable
         accessibilityRole="button"
         accessibilityState={{ expanded: props.expanded }}

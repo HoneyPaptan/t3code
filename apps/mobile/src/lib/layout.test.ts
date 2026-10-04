@@ -17,16 +17,16 @@ describe("thread work-log text sizing", () => {
     "keeps exact compact rows at base size %i without OS enlargement",
     (baseFontSize) => {
       expect(deriveThreadWorkLogSizing({ baseFontSize, fontScale: 1 })).toMatchObject({
-        estimatedRowHeight: 31.5,
-        fixedRowHeight: 31.5,
+        estimatedRowHeight: 36,
+        fixedRowHeight: 36,
       });
     },
   );
 
   it.each([
-    { baseFontSize: 16, fontScale: 1.25, estimatedRowHeight: 31.5 },
-    { baseFontSize: 16, fontScale: 2, estimatedRowHeight: 38 },
-    { baseFontSize: 22, fontScale: 2, estimatedRowHeight: 52 },
+    { baseFontSize: 16, fontScale: 1.25, estimatedRowHeight: 36 },
+    { baseFontSize: 16, fontScale: 2, estimatedRowHeight: 46 },
+    { baseFontSize: 22, fontScale: 2, estimatedRowHeight: 64 },
   ])(
     "measures accessibility text instead of locking it to the estimate: %j",
     ({ estimatedRowHeight, ...settings }) => {

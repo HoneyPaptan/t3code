@@ -25,24 +25,31 @@ function labelClassName(role: WorkRowLabelRole, tone: "default" | "danger" | "wa
   return `${style.text} ${style.color}`;
 }
 
+function workLogBlockClassName(
+  layout: "standalone" | "group-header",
+  continues: boolean,
+  opensRows: boolean,
+): string {
+  if (layout === "group-header") return opensRows ? "-mx-1 mb-3 px-1" : "-mx-1 px-1";
+  return continues ? "-mx-1 px-1" : "-mx-1 mb-1.5 px-1";
+}
+
 export function WorkLogBlock({
   children,
   layout = "standalone",
   continues = false,
+  opensRows = false,
 }: {
   children: ReactNode;
   layout?: "standalone" | "group-header";
   continues?: boolean | undefined;
+  opensRows?: boolean | undefined;
 }) {
-  return (
-    <View className={continues || layout === "group-header" ? "-mx-1 px-1" : "-mx-1 mb-1 px-1"}>
-      {children}
-    </View>
-  );
+  return <View className={workLogBlockClassName(layout, continues, opensRows)}>{children}</View>;
 }
 
 export function WorkLogRows({ children }: { children: ReactNode }) {
-  return <View className="gap-px">{children}</View>;
+  return <View className="gap-1.5">{children}</View>;
 }
 
 export function WorkLogIconSlot({ children }: { children: ReactNode }) {

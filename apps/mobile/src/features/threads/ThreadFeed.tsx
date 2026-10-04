@@ -178,7 +178,6 @@ import {
   ThreadWorkGroupToggle,
   ThreadThinkingRow,
   ThreadWorkLog,
-  WORK_GROUP_TOGGLE_HEIGHT,
 } from "./thread-work-log";
 import { appendPendingThreadMessages, type PendingThreadFeedEntry } from "./pending-thread-feed";
 import type { QueuedThreadMessage } from "../../state/thread-outbox-model";
@@ -1594,7 +1593,7 @@ function renderFeedEntry(
         accessibilityState={{ expanded: entry.expanded }}
         onPress={() => props.onToggleTurnFold(entry.runId)}
         hitSlop={4}
-        className="mb-1 flex-row items-center gap-2 px-2"
+        className={cn("flex-row items-center gap-2 px-2", entry.expanded ? "mb-3" : "mb-1")}
         style={{ minHeight: props.workRowSizing.estimatedRowHeight }}
       >
         <Text
@@ -2904,10 +2903,10 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
       }
       switch (entry.type) {
         case "run-fold":
-          return resolveThreadFeedFixedItemSize(entry.type);
         case "work-toggle":
+          return resolveThreadFeedFixedItemSize(entry.type, entry.expanded);
         case "thinking":
-          return WORK_GROUP_TOGGLE_HEIGHT;
+          return resolveThreadFeedFixedItemSize(entry.type);
         case "activity-group":
           if (entry.activities[0]?.projectedItem.item.type === "subagent") {
             return undefined;
