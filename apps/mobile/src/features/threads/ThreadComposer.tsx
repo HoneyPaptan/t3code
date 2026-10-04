@@ -1052,7 +1052,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                 />
               </Animated.View>
               {!isExpanded && stripAttachments.length > 0 ? (
-                <View className="flex-row gap-1 self-center pl-1">
+                <View className="flex-row gap-1">
                   {stripAttachments.slice(0, 3).map((attachment) => (
                     <ComposerAttachmentThumbnail
                       environmentId={props.environmentId}
@@ -1074,6 +1074,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                   ) : null}
                 </View>
               ) : null}
+              {isExpanded ? null : composerTrailingActions}
             </View>
           </View>
           <View
@@ -1119,6 +1120,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                         currentModelSelection,
                       )}
                       runtimeMode={currentRuntimeMode}
+                      size={isExpanded ? "sm" : "xs"}
                     />
                   )}
                   {isVoiceInputPresented ? (
@@ -1134,7 +1136,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                 </ComposerToolbarRow>
               </ComposerDictationToolbar>
             </View>
-            {composerTrailingActions}
+            {isExpanded ? composerTrailingActions : null}
           </View>
         </ComposerSurface>
       </Animated.View>
