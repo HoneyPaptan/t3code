@@ -239,8 +239,9 @@ export function ComposerActionButton(props: {
       accessibilityLabel={props.accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
-      className="min-h-11 min-w-11 shrink-0 items-center justify-center active:opacity-70"
+      className="min-h-10 min-w-10 shrink-0 items-center justify-center active:opacity-70"
       disabled={props.disabled}
+      hitSlop={2}
       onPress={props.onPress}
       onLongPress={props.onLongPress}
       onTouchStart={props.onTouchStart}
