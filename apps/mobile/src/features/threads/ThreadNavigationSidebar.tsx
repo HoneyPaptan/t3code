@@ -994,6 +994,7 @@ function ThreadNavigationSidebarPane(
       {Platform.OS === "android" ? (
         <MaterialThreadListToolbar
           sidebar
+          openThreadKey={props.selectedThreadKey}
           onLayout={handleStickyHeaderLayout}
           searchQuery={props.searchQuery}
           onSearchQueryChange={props.onSearchQueryChange}

@@ -18,22 +18,19 @@ export function MaterialNewThreadButton(props: {
       accessibilityRole="button"
       onPress={props.onPress}
       className={cn(
-        "items-center justify-center bg-primary shadow-lg active:opacity-70",
-        props.extended
-          ? "h-[56px] flex-row gap-[8px] rounded-lg px-[16px]"
-          : "size-[80px] rounded-lg",
+        "min-h-11 min-w-11 flex-row items-center justify-center gap-2 rounded-xl bg-primary px-4 active:opacity-70",
         props.className,
       )}
       style={props.style}
     >
       <SymbolView
         name="square.and.pencil"
-        size={props.extended ? 24 : 28}
+        size={18}
         tintColorClassName="accent-primary-foreground"
         type="monochrome"
       />
       {props.extended && props.expanded !== false ? (
-        <AppText className="text-base font-t3-medium text-primary-foreground">New thread</AppText>
+        <AppText className="text-sm font-t3-medium text-primary-foreground">New thread</AppText>
       ) : null}
     </Pressable>
   );

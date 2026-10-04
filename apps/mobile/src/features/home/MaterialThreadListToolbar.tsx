@@ -18,8 +18,9 @@ import { MaterialSearchField } from "../../components/MaterialSearchField";
 import { useHardwareKeyboardCommand } from "../keyboard/hardwareKeyboardCommands";
 import { WorkspaceConnectionTitle } from "./WorkspaceConnectionTitle";
 import { useWorkspaceState } from "../../state/workspace";
-import { useAndroidControlSizing } from "../../components/useAndroidControlSizing";
 import { useMaterialToolbarLayout } from "../../components/useMaterialToolbarLayout";
+import { resolveHomeFabAccessoriesBottom } from "./homeFabStack";
+import { useTerminalQuickAction } from "./useTerminalQuickAction";
 
 /** One toolbar height for the compact list and expanded sidebar, including search. */
 export function MaterialThreadListToolbar(props: {
@@ -31,11 +32,12 @@ export function MaterialThreadListToolbar(props: {
   readonly onOpenSettings: () => void;
   readonly onOpenEnvironments: () => void;
   readonly sidebar?: boolean;
+  readonly openThreadKey?: string | null;
   readonly onLayout?: (event: LayoutChangeEvent) => void;
   readonly onRequestVisibility?: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const { fabSize } = useAndroidControlSizing();
+  const terminalAction = useTerminalQuickAction(props.openThreadKey ?? null);
   const { height: toolbarHeight, ...headerPadding } = useMaterialToolbarLayout();
   const { state } = useWorkspaceState();
   const { onRequestVisibility, onSearchQueryChange } = props;
@@ -67,7 +69,7 @@ export function MaterialThreadListToolbar(props: {
 
   const filterIcon = props.filterCustomized
     ? "line.3.horizontal.decrease.circle.fill"
-    : "line.3.horizontal.decrease.circle";
+    : "line.3.horizontal.decrease";
   const searchField = (
     <MaterialSearchField
       inputRef={searchRef}
@@ -100,7 +102,6 @@ export function MaterialThreadListToolbar(props: {
             </>
           ) : (
             <>
-              {/* Match the visible inset of the trailing 48dp icon button. */}
               <View className="min-w-0 flex-1 pl-4">
                 <WorkspaceConnectionTitle
                   grow
@@ -122,17 +123,17 @@ export function MaterialThreadListToolbar(props: {
           )}
         </View>
       </View>
-      {/* Keep the filter above the New thread FAB at every text size. */}
       {state.hasConnections ? (
         <View
-          className="absolute right-5 z-[5]"
-          style={{
-            bottom:
-              (props.sidebar ? Math.max(insets.bottom, 12) + 6 : Math.max(insets.bottom, 16) + 16) +
-              fabSize +
-              8,
-          }}
+          className="absolute right-5 z-[5] items-end gap-3"
+          style={{ bottom: resolveHomeFabAccessoriesBottom(insets.bottom, props.sidebar === true) }}
         >
+          <MaterialFloatingActionButton
+            label="Open terminal"
+            icon="terminal"
+            disabled={!terminalAction.available}
+            onPress={terminalAction.open}
+          />
           <AndroidAnchoredMenu actions={props.filterActions} onPressAction={props.onFilterAction}>
             {(open) => (
               <MaterialFloatingActionButton

@@ -15,7 +15,6 @@ export function resolveAndroidControlSizing(baseFontSize: number) {
     fabSize,
     largeFabSize: Math.round(96 * scale),
     menuWidth: Math.round(250 * scale),
-    // Two floating actions, their gap, and the space below the lower action.
-    fabClearance: fabSize * 2 + 36,
+    fabClearance: fabSize * 3 + 52,
   };
 }
