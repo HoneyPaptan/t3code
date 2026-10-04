@@ -138,11 +138,11 @@ export function ComposerDictationToolbar(props: {
   readonly visible?: boolean;
 }) {
   return (
-    <View className="relative h-[44px] overflow-hidden">
+    <View className="relative min-h-11 overflow-hidden">
       {props.visible !== false ? (
         <Animated.View
           key={props.showsDictation ? "dictation" : "draft"}
-          className="absolute inset-0"
+          className="absolute inset-0 justify-center"
           entering={props.showsDictation ? DICTATION_TOOLBAR_ENTERING : DRAFT_TOOLBAR_ENTERING}
           exiting={props.showsDictation ? DICTATION_TOOLBAR_EXITING : DRAFT_TOOLBAR_EXITING}
           style={{ backfaceVisibility: "hidden" }}
@@ -238,15 +238,16 @@ function VoiceActionButton(props: {
       accessibilityLabel={props.accessibilityLabel}
       accessibilityRole="button"
       accessibilityState={{ busy: props.loading, disabled: props.disabled }}
-      className="size-[44px] shrink-0 items-center justify-center active:opacity-70"
+      className="size-9 shrink-0 items-center justify-center active:opacity-70"
       disabled={props.disabled}
+      hitSlop={4}
       onPress={props.onPress}
       style={{ opacity: props.disabled && !props.loading ? 0.4 : 1 }}
     >
       <View
         className={cn(
           "items-center justify-center",
-          variant === "primary" ? "size-[30px] rounded-full bg-subtle" : "size-[44px]",
+          variant === "primary" ? "size-[30px] rounded-full bg-subtle" : "size-9",
         )}
       >
         {variant === "primary" ? (
@@ -297,7 +298,7 @@ export function ComposerDictationStatus(props: {
   const isError = props.presentation.statusKind === "error";
   const elapsedLabel = `${Math.floor(props.elapsedSeconds / 60)}:${String(props.elapsedSeconds % 60).padStart(2, "0")}`;
   return (
-    <View className="relative h-11 min-w-0 flex-1 justify-center">
+    <View className="relative min-h-9 min-w-0 flex-1 justify-center">
       {isError ? (
         <View className="min-w-0 flex-row items-center gap-1.5 px-2">
           <Text className="min-w-0 flex-1 text-sm text-danger-foreground" numberOfLines={2}>
@@ -323,7 +324,7 @@ export function ComposerDictationStatus(props: {
           accessible
           accessibilityLabel={props.presentation.statusLabel}
           accessibilityLiveRegion={props.phase === "recording" ? "none" : "polite"}
-          className="h-11"
+          className="h-9"
         >
           <Animated.View
             className="absolute inset-0 min-w-0 flex-row items-center gap-2 px-1"
