@@ -66,7 +66,6 @@ import { useProject, useThreadShells } from "../../state/entities";
 import { scopeProjectRef } from "@t3tools/client-runtime/environment";
 
 import { AppText as Text } from "../../components/AppText";
-import { ComposerAttachmentButton } from "../../components/ComposerAttachmentButton";
 import {
   ComposerAttachmentStrip,
   ComposerAttachmentThumbnail,
@@ -75,12 +74,7 @@ import { VideoPreviewModal, type VideoPreviewSource } from "../../components/Vid
 import { GlassSurface } from "../../components/GlassSurface";
 import { ComposerEditor, type ComposerEditorHandle } from "../../components/ComposerEditor";
 import { fileRoutePathSegments } from "../files/filePath";
-import {
-  ComposerActionButton,
-  ComposerInlineControl,
-  ComposerToolbarRow,
-} from "../../components/ComposerToolbar";
-import { ProviderIcon } from "../../components/ProviderIcon";
+import { ComposerActionButton, ComposerToolbarRow } from "../../components/ComposerToolbar";
 import {
   composerStripAttachments,
   type DraftComposerAttachment,
@@ -93,7 +87,7 @@ import {
 } from "../../lib/modelOptions";
 import { useScaledTextRole } from "../settings/appearance/useScaledTextRole";
 import type { RemoteClientConnectionState } from "../../lib/connection";
-import { resolveProviderOptionDescriptors } from "../../lib/providerOptions";
+import { reasoningEffortLabel, resolveProviderOptionDescriptors } from "../../lib/providerOptions";
 import { ControlPillMenu } from "../../components/ControlPill";
 import type { ActiveTurnComposerAction } from "@t3tools/client-runtime/state/composer-dispatch";
 import type { FollowUpBehavior } from "../../lib/followUpBehavior";
@@ -102,6 +96,7 @@ import {
   type ComposerSendPresentation,
 } from "./composerSendPresentation";
 import { ComposerCommandPopover } from "./ComposerCommandPopover";
+import { ComposerFooterControls } from "./ComposerFooterControls";
 import { shouldShowComposerCommandPopover } from "./composerPathMenu";
 import { ComposerQueuedEditAttachments } from "./ComposerQueuedEdit";
 import { useComposerCommandMenu } from "./use-composer-command-menu";
@@ -318,6 +313,23 @@ function SendActionButton(props: {
     >
       {button}
     </ControlPillMenu>
+  );
+}
+
+export function ComposerFooterTray(props: {
+  readonly children: ReactNode;
+  readonly showsDictation: boolean;
+}) {
+  return (
+    <Animated.View
+      collapsable={false}
+      layout={COMPOSER_LAYOUT_TRANSITION}
+      className="mx-3.5 overflow-hidden rounded-b-xl border border-t-0 border-border-subtle bg-grouped-card px-1"
+    >
+      <ComposerDictationToolbar showsDictation={props.showsDictation}>
+        {props.children}
+      </ComposerDictationToolbar>
+    </Animated.View>
   );
 }
 
@@ -1046,66 +1058,56 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
             </View>
           </View>
         </ComposerSurface>
-        <Animated.View collapsable={false} layout={COMPOSER_LAYOUT_TRANSITION} className="pt-2">
-          <ComposerDictationToolbar showsDictation={isVoiceInputPresented}>
-            <ComposerToolbarRow
-              paddingBottom={0}
-              paddingHorizontal={0}
-              paddingTop={0}
-              style={{ gap: 8 }}
-            >
-              <ComposerDictationCancelAction
+        <ComposerFooterTray showsDictation={isVoiceInputPresented}>
+          <ComposerToolbarRow
+            paddingBottom={0}
+            paddingHorizontal={0}
+            paddingTop={0}
+            style={{ gap: 8 }}
+          >
+            <ComposerDictationCancelAction
+              presentation={voicePresentation}
+              onCancel={voiceInput.cancel}
+            />
+            {isVoiceInputPresented ? (
+              <ComposerDictationStatus
+                audioLevels={voiceInput.audioLevels}
+                elapsedSeconds={voiceInput.elapsedSeconds}
+                phase={voiceInput.state.phase}
                 presentation={voicePresentation}
+                onDismissError={voiceInput.cancel}
+              />
+            ) : (
+              <ComposerFooterControls
+                attachment={{
+                  supportsFiles: Boolean(
+                    props.serverConfig?.environment.capabilities.fileAttachments,
+                  ),
+                  onPickMedia: props.onPickDraftMedia,
+                  onPickFiles: props.onPickDraftFiles,
+                }}
+                modelFallbackLabel={currentModelSelection.model}
+                modelOption={currentModelOption}
+                onOpenSettings={openSettings}
+                reasoningLabel={reasoningEffortLabel(
+                  providerOptionDescriptors,
+                  currentModelSelection,
+                )}
+                runtimeMode={currentRuntimeMode}
+              />
+            )}
+            {isVoiceInputPresented ? (
+              <ComposerDictationPrimaryAction
+                state={voiceInput.state}
+                presentation={voicePresentation}
+                isAvailable={voiceInput.isAvailable}
+                onStart={voiceInput.start}
+                onConfirm={voiceInput.stop}
                 onCancel={voiceInput.cancel}
               />
-              {isVoiceInputPresented ? (
-                <ComposerDictationStatus
-                  audioLevels={voiceInput.audioLevels}
-                  elapsedSeconds={voiceInput.elapsedSeconds}
-                  phase={voiceInput.state.phase}
-                  presentation={voicePresentation}
-                  onDismissError={voiceInput.cancel}
-                />
-              ) : (
-                <View className="min-w-0 flex-1 flex-row items-center gap-2">
-                  <ComposerAttachmentButton
-                    supportsFiles={Boolean(
-                      props.serverConfig?.environment.capabilities.fileAttachments,
-                    )}
-                    onPickMedia={props.onPickDraftMedia}
-                    onPickFiles={props.onPickDraftFiles}
-                  />
-                  <View className="min-w-0 shrink">
-                    <ComposerInlineControl
-                      accessibilityLabel="Model and reasoning settings"
-                      emphasized
-                      renderIcon={(size) => (
-                        <ProviderIcon
-                          iconUrl={currentModelOption?.providerIconUrl}
-                          provider={currentModelOption?.providerDriver}
-                          size={size}
-                        />
-                      )}
-                      label={currentModelOption?.label ?? currentModelSelection.model}
-                      maxWidth="100%"
-                      onPress={openSettings}
-                    />
-                  </View>
-                </View>
-              )}
-              {isVoiceInputPresented ? (
-                <ComposerDictationPrimaryAction
-                  state={voiceInput.state}
-                  presentation={voicePresentation}
-                  isAvailable={voiceInput.isAvailable}
-                  onStart={voiceInput.start}
-                  onConfirm={voiceInput.stop}
-                  onCancel={voiceInput.cancel}
-                />
-              ) : null}
-            </ComposerToolbarRow>
-          </ComposerDictationToolbar>
-        </Animated.View>
+            ) : null}
+          </ComposerToolbarRow>
+        </ComposerFooterTray>
 
         {props.connectionState === "connected" && !props.canOperateThread ? (
           <Text className="pt-2 text-xs text-foreground-muted">
