@@ -558,6 +558,35 @@ describe("ClientSettings glass opacity", () => {
   });
 });
 
+describe("ClientSettings background picture", () => {
+  it("defaults to a soft, unblurred picture", () => {
+    const settings = decodeClientSettings({});
+    expect(settings.backgroundPictureStrength).toBe(30);
+    expect(settings.backgroundPictureBlur).toBe(0);
+  });
+
+  it.each([9, 91, 30.5])("rejects an invalid picture strength: %s", (value) => {
+    expect(() => decodeClientSettings({ backgroundPictureStrength: value })).toThrow();
+    expect(() => decodeClientSettingsPatch({ backgroundPictureStrength: value })).toThrow();
+  });
+
+  it.each([-1, 41, 2.5])("rejects an invalid picture blur: %s", (value) => {
+    expect(() => decodeClientSettings({ backgroundPictureBlur: value })).toThrow();
+    expect(() => decodeClientSettingsPatch({ backgroundPictureBlur: value })).toThrow();
+  });
+
+  it("accepts values at both ends of each range", () => {
+    expect(decodeClientSettings({ backgroundPictureStrength: 10 }).backgroundPictureStrength).toBe(
+      10,
+    );
+    expect(decodeClientSettings({ backgroundPictureStrength: 90 }).backgroundPictureStrength).toBe(
+      90,
+    );
+    expect(decodeClientSettingsPatch({ backgroundPictureBlur: 0 }).backgroundPictureBlur).toBe(0);
+    expect(decodeClientSettingsPatch({ backgroundPictureBlur: 40 }).backgroundPictureBlur).toBe(40);
+  });
+});
+
 describe("ClientSettings appearance contrast", () => {
   it("defaults to the theme's original contrast", () => {
     expect(decodeClientSettings({}).appearanceContrast).toBe(100);

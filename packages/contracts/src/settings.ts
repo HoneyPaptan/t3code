@@ -97,6 +97,28 @@ export const GlassOpacity = Schema.Int.check(
 export type GlassOpacity = typeof GlassOpacity.Type;
 const DEFAULT_GLASS_OPACITY: GlassOpacity = 80;
 
+export const MIN_BACKGROUND_PICTURE_STRENGTH = 10;
+export const MAX_BACKGROUND_PICTURE_STRENGTH = 90;
+export const BackgroundPictureStrength = Schema.Int.check(
+  Schema.isBetween({
+    minimum: MIN_BACKGROUND_PICTURE_STRENGTH,
+    maximum: MAX_BACKGROUND_PICTURE_STRENGTH,
+  }),
+);
+export type BackgroundPictureStrength = typeof BackgroundPictureStrength.Type;
+export const DEFAULT_BACKGROUND_PICTURE_STRENGTH: BackgroundPictureStrength = 30;
+
+export const MIN_BACKGROUND_PICTURE_BLUR = 0;
+export const MAX_BACKGROUND_PICTURE_BLUR = 40;
+export const BackgroundPictureBlur = Schema.Int.check(
+  Schema.isBetween({
+    minimum: MIN_BACKGROUND_PICTURE_BLUR,
+    maximum: MAX_BACKGROUND_PICTURE_BLUR,
+  }),
+);
+export type BackgroundPictureBlur = typeof BackgroundPictureBlur.Type;
+export const DEFAULT_BACKGROUND_PICTURE_BLUR: BackgroundPictureBlur = 0;
+
 export const MIN_APPEARANCE_CONTRAST = 50;
 export const MAX_APPEARANCE_CONTRAST = 200;
 export const AppearanceContrast = Schema.Int.check(
@@ -376,6 +398,12 @@ export const ClientSettingsSchema = Schema.Struct({
   ),
   glassOpacity: GlassOpacity.pipe(
     Schema.withDecodingDefault(Effect.succeed(DEFAULT_GLASS_OPACITY)),
+  ),
+  backgroundPictureStrength: BackgroundPictureStrength.pipe(
+    Schema.withDecodingDefault(Effect.succeed(DEFAULT_BACKGROUND_PICTURE_STRENGTH)),
+  ),
+  backgroundPictureBlur: BackgroundPictureBlur.pipe(
+    Schema.withDecodingDefault(Effect.succeed(DEFAULT_BACKGROUND_PICTURE_BLUR)),
   ),
   fontSizeInterface: InterfaceFontSize.pipe(
     Schema.withDecodingDefault(Effect.succeed(DEFAULT_INTERFACE_FONT_SIZE)),
@@ -1731,6 +1759,8 @@ export const ClientSettingsPatch = Schema.Struct({
   diffLayout: Schema.optionalKey(DiffLayout),
   environmentIdentificationMode: Schema.optionalKey(EnvironmentIdentificationMode),
   glassOpacity: Schema.optionalKey(GlassOpacity),
+  backgroundPictureStrength: Schema.optionalKey(BackgroundPictureStrength),
+  backgroundPictureBlur: Schema.optionalKey(BackgroundPictureBlur),
   onboardingCompletedAt: Schema.optionalKey(Schema.NullOr(Schema.String)),
   fontSizeInterface: Schema.optionalKey(InterfaceFontSize),
   fontSizePrompt: Schema.optionalKey(PromptFontSize),
