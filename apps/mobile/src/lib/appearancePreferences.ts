@@ -181,6 +181,8 @@ const TEXT_SCALE_VARIABLE_ROLES = {
   "--text-xs": MOBILE_TYPOGRAPHY.label,
   "--text-sm": MOBILE_TYPOGRAPHY.footnote,
   "--text-base": MOBILE_TYPOGRAPHY.body,
+  "--text-chat": MOBILE_TYPOGRAPHY.chat,
+  "--text-tool": MOBILE_TYPOGRAPHY.tool,
   "--text-lg": MOBILE_TYPOGRAPHY.headline,
   "--text-xl": MOBILE_TYPOGRAPHY.title,
   "--text-2xl": MOBILE_TYPOGRAPHY.largeTitle,

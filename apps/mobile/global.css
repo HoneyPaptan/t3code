@@ -26,6 +26,10 @@
   --text-sm--line-height: 19px;
   --text-base: 16px;
   --text-base--line-height: 23px;
+  --text-chat: 15px;
+  --text-chat--line-height: 23px;
+  --text-tool: 13px;
+  --text-tool--line-height: 20px;
   --text-lg: 18px;
   --text-lg--line-height: 23px;
   --text-xl: 21px;

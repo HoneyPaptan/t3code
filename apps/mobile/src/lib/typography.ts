@@ -4,6 +4,8 @@ export const MOBILE_TYPOGRAPHY = {
   label: { fontSize: 13, lineHeight: 17 },
   footnote: { fontSize: 14, lineHeight: 19 },
   body: { fontSize: 16, lineHeight: 23 },
+  chat: { fontSize: 15, lineHeight: 23 },
+  tool: { fontSize: 13, lineHeight: 20 },
   headline: { fontSize: 18, lineHeight: 23 },
   title: { fontSize: 21, lineHeight: 28 },
   largeTitle: { fontSize: 26, lineHeight: 32 },
