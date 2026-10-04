@@ -1,3 +1,75 @@
+diff --git a/android/src/main/java/expo/modules/widgets/ExpoWidgetsPeekWidget.kt b/android/src/main/java/expo/modules/widgets/ExpoWidgetsPeekWidget.kt
+index 4c27e67e3039555b66a180fac5e59113ab627887..c738a06d057579cdf507fccdcb3057bce721a6d7 100644
+--- a/android/src/main/java/expo/modules/widgets/ExpoWidgetsPeekWidget.kt
++++ b/android/src/main/java/expo/modules/widgets/ExpoWidgetsPeekWidget.kt
+@@ -4,6 +4,7 @@
+ import android.annotation.SuppressLint
+ import android.content.Context
+ import android.os.Bundle
++import android.os.Looper
+ import androidx.compose.ui.unit.DpSize
+ import androidx.glance.Emittable
+ import androidx.glance.appwidget.AppWidgetId
+@@ -22,6 +23,10 @@
+     size: DpSize
+   ): Emittable {
+     val appContext = context.applicationContext
++    if (!WidgetsJSRuntime.isReady() && Looper.myLooper() == Looper.getMainLooper()) {
++      WidgetsJSRuntime.warmAsync(appContext) { WidgetsUpdater.reload(appContext, widgetName) }
++      return createTextNode("Loading").toPeekRoot(appContext, widgetName, size)
++    }
+     val layout = WidgetsLayoutRegistry.layout(appContext, widgetName)
+       ?: return createErrorRoot("No layout found for $widgetName")
+     val props = WidgetsLayoutRegistry.props(appContext, widgetName)
+diff --git a/android/src/main/java/expo/modules/widgets/WidgetsJSRuntime.kt b/android/src/main/java/expo/modules/widgets/WidgetsJSRuntime.kt
+index 1e3ac96783ecd6920efa27c0ca45777e39c03e3f..35a815e225b65b6277152055f65e90be9f67292f 100644
+--- a/android/src/main/java/expo/modules/widgets/WidgetsJSRuntime.kt
++++ b/android/src/main/java/expo/modules/widgets/WidgetsJSRuntime.kt
+@@ -4,9 +4,29 @@
+ import com.facebook.react.bridge.Arguments
+ import com.facebook.react.bridge.ReadableMap
+ import expo.modules.widgets.jni.WidgetsHermesRuntime
++import java.util.concurrent.atomic.AtomicBoolean
+ 
+ internal object WidgetsJSRuntime {
++  @Volatile
+   private var runtime: WidgetsHermesRuntime? = null
++  private val warming = AtomicBoolean(false)
++
++  fun isReady(): Boolean = runtime != null
++
++  fun warmAsync(context: Context, onReady: () -> Unit) {
++    if (isReady() || !warming.compareAndSet(false, true)) return
++    val appContext = context.applicationContext
++    Thread({
++      runCatching { ensureRuntime(appContext) }
++      warming.set(false)
++      if (isReady()) onReady()
++    }, "expo.widgets.warm").start()
++  }
++
++  @Synchronized
++  private fun ensureRuntime(context: Context) {
++    getRuntime(context)
++  }
+ 
+   @Synchronized
+   fun render(
+diff --git a/android/src/main/java/expo/modules/widgets/WidgetsUtils.kt b/android/src/main/java/expo/modules/widgets/WidgetsUtils.kt
+index 1ffad5e5a9b07c06e28269c53023d295f80a1396..0bbab19e33e7fc73f50595676306d7b906634005 100644
+--- a/android/src/main/java/expo/modules/widgets/WidgetsUtils.kt
++++ b/android/src/main/java/expo/modules/widgets/WidgetsUtils.kt
+@@ -44,6 +44,10 @@
+ }
+ 
+ internal fun createErrorNode(message: String): ReadableMap {
++  return createTextNode(message)
++}
++
++internal fun createTextNode(message: String): ReadableMap {
+   return Arguments.makeNativeMap(
+     mapOf(
+       "type" to "TextView",
 diff --git a/build/Widgets.types.d.ts b/build/Widgets.types.d.ts
 index c9f4dfe1f10a3a65ab72bd7e639f6f6d148e5f95..dc0792e1cd7b6762394de5e3fefa0863a253f70c 100644
 --- a/build/Widgets.types.d.ts
