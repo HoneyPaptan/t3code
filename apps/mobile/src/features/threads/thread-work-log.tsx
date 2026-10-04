@@ -546,11 +546,13 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
     props.activities.every((row) => row.projectedItem.item.type === "reasoning")
   ) {
     return (
-      <ScrollView nestedScrollEnabled className="mt-1 max-h-96">
-        {props.activities.map((row) => (
-          <View key={row.id}>{props.renderReasoning(row.workEntry.detail ?? "")}</View>
-        ))}
-      </ScrollView>
+      <WorkLogBlock continues={props.continuesWorkLog}>
+        <ScrollView nestedScrollEnabled className="max-h-96">
+          {props.activities.map((row) => (
+            <View key={row.id}>{props.renderReasoning(row.workEntry.detail ?? "")}</View>
+          ))}
+        </ScrollView>
+      </WorkLogBlock>
     );
   }
 

@@ -831,11 +831,8 @@ function toFeedActivity(
   };
 }
 
-function singleToolCallLabel(activity: ThreadFeedActivity, expanded: boolean): string {
-  if (activity.workEntry.itemType === "reasoning")
-    return expanded
-      ? "Thought"
-      : compactWorkEntryText(activity.workEntry.detail ?? "") || "Thought";
+function singleToolCallLabel(activity: ThreadFeedActivity): string {
+  if (activity.workEntry.itemType === "reasoning") return "Thought";
   const presentation = resolveWorkEntryToolPresentation(activity.workEntry, "completed");
   if (presentation) return presentation.displayName;
   const command = activity.workEntry.command?.trim();
@@ -1484,7 +1481,7 @@ function appendToolGroupRows(
     : singleActivity !== null &&
         singleActivity.toolLike &&
         toolGroupAction(singleActivity.workEntry) !== "edit"
-      ? singleToolCallLabel(singleActivity, expanded)
+      ? singleToolCallLabel(singleActivity)
       : singleActivity !== null && !singleActivity.toolLike
         ? singleActivity.workEntry.label
         : groupSummary.summary;
