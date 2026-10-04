@@ -121,30 +121,47 @@ import {
   useThreadSettingsSheetPresentation,
   type NavigationWithFinishTransitioning,
 } from "./use-thread-settings-sheet-presentation";
+import { cn } from "../../lib/cn";
 import { MOBILE_RADIUS } from "../../lib/radius";
 
-const COMPOSER_EDITOR_MIN_HEIGHT = 56;
+const COMPOSER_EDITOR_MIN_HEIGHT = 40;
 const COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT = 72;
 const COMPOSER_EDITOR_MAX_HEIGHT = 160;
-const COMPOSER_PILL_PADDING = 12;
-const COMPOSER_PILL_EXPANDED_PADDING = 18;
+const COMPOSER_PILL_PADDING_TOP = 4;
+const COMPOSER_PILL_PADDING_BOTTOM = 4;
+const COMPOSER_PILL_EXPANDED_PADDING_TOP = 12;
+const COMPOSER_PILL_EXPANDED_PADDING_BOTTOM = 6;
+const COMPOSER_PILL_COLLAPSED_RADIUS =
+  (COMPOSER_EDITOR_MIN_HEIGHT + COMPOSER_PILL_PADDING_TOP + COMPOSER_PILL_PADDING_BOTTOM) / 2;
+const COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL = 6;
 const COMPOSER_CONTROLS_ROW_HEIGHT = 44;
 const COMPOSER_DOCK_PADDING = 12;
 const COMPOSER_CONTROLS_GAP = 8;
 
 export const COMPOSER_COLLAPSED_CHROME =
   COMPOSER_EDITOR_MIN_HEIGHT +
-  COMPOSER_PILL_PADDING +
+  COMPOSER_PILL_PADDING_TOP +
+  COMPOSER_PILL_PADDING_BOTTOM +
   COMPOSER_CONTROLS_GAP +
   COMPOSER_CONTROLS_ROW_HEIGHT +
   COMPOSER_DOCK_PADDING;
 
 export const COMPOSER_EXPANDED_CHROME =
   COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT +
-  COMPOSER_PILL_EXPANDED_PADDING +
+  COMPOSER_PILL_EXPANDED_PADDING_TOP +
+  COMPOSER_PILL_EXPANDED_PADDING_BOTTOM +
   COMPOSER_CONTROLS_GAP +
   COMPOSER_CONTROLS_ROW_HEIGHT +
   COMPOSER_DOCK_PADDING;
+
+function composerSurfaceRadius(isExpanded: boolean): number {
+  return isExpanded ? MOBILE_RADIUS["2xl"] : COMPOSER_PILL_COLLAPSED_RADIUS;
+}
+
+function composerEditorVerticalPadding(isExpanded: boolean, lineHeight: number): number {
+  if (isExpanded) return COMPOSER_EDITOR_EXPANDED_PADDING_VERTICAL;
+  return Math.max(0, Math.floor((COMPOSER_EDITOR_MIN_HEIGHT - lineHeight) / 2));
+}
 
 export interface ThreadComposerProps {
   readonly canOperateThread: boolean;
@@ -834,10 +851,12 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
 
         <ComposerSurface
           style={{
-            borderRadius: MOBILE_RADIUS["2xl"],
+            borderRadius: composerSurfaceRadius(isExpanded),
             overflow: "hidden" as const,
-            paddingTop: isExpanded ? 12 : 6,
-            paddingBottom: 6,
+            paddingTop: isExpanded ? COMPOSER_PILL_EXPANDED_PADDING_TOP : COMPOSER_PILL_PADDING_TOP,
+            paddingBottom: isExpanded
+              ? COMPOSER_PILL_EXPANDED_PADDING_BOTTOM
+              : COMPOSER_PILL_PADDING_BOTTOM,
           }}
         >
           {isExpanded && queuedEdit !== null && queuedEdit.existingAttachments.length > 0 ? (
@@ -880,7 +899,12 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
               />
             </Animated.View>
           ) : null}
-          <View className="flex-row items-end gap-1 pl-[14px] pr-1.5">
+          <View
+            className={cn(
+              "flex-row gap-1 pl-[14px] pr-1.5",
+              isExpanded ? "items-end" : "items-center",
+            )}
+          >
             <Animated.View className="min-w-0 flex-1" layout={COMPOSER_LAYOUT_TRANSITION}>
               <ComposerEditor
                 draftKey={composerDraftKey}
@@ -998,7 +1022,7 @@ export const ThreadComposer = memo(function ThreadComposer(props: ThreadComposer
                     ? COMPOSER_EDITOR_EXPANDED_MIN_HEIGHT
                     : COMPOSER_EDITOR_MIN_HEIGHT,
                   maxHeight: isExpanded ? COMPOSER_EDITOR_MAX_HEIGHT : COMPOSER_EDITOR_MIN_HEIGHT,
-                  paddingVertical: 6,
+                  paddingVertical: composerEditorVerticalPadding(isExpanded, bodyText.lineHeight),
                 }}
                 textStyle={{
                   ...bodyText,
