@@ -93,6 +93,7 @@ const LEGACY_MENU_ACTIONS: MenuAction[] = [
 ];
 
 const SIDEBAR_V2_ROW_RADIUS = MOBILE_RADIUS.md;
+const THREAD_LIST_V2_STATUS_SLOT_SIZE = 20;
 
 function ThreadListV2Section(props: {
   readonly label: string;
@@ -1066,7 +1067,11 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
             />
           </View>
         ) : null}
-        <ThreadStatusGlyph glyph={statusGlyph} iconTintClassName={glyphTintClassName} />
+        <ThreadStatusGlyph
+          glyph={statusGlyph}
+          iconTintClassName={glyphTintClassName}
+          slotSize={THREAD_LIST_V2_STATUS_SLOT_SIZE}
+        />
       </View>
     </>
   );
@@ -1155,7 +1160,11 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
               ? props.snoozeWakeLabelText
               : timeLabel}
           </Text>
-          <ThreadStatusGlyph glyph={statusGlyph} iconTintClassName={glyphTintClassName} />
+          <ThreadStatusGlyph
+            glyph={statusGlyph}
+            iconTintClassName={glyphTintClassName}
+            slotSize={THREAD_LIST_V2_STATUS_SLOT_SIZE}
+          />
         </View>
       </RowPressable>
     );
