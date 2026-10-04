@@ -2,7 +2,11 @@ import { describe, expect, it } from "vite-plus/test";
 
 import type { ModelCapabilities } from "@t3tools/contracts";
 
-import { applyProviderOptionSelection, resolveProviderOptionDescriptors } from "./providerOptions";
+import {
+  applyProviderOptionSelection,
+  reasoningEffortLabel,
+  resolveProviderOptionDescriptors,
+} from "./providerOptions";
 
 const CODEX_CAPABILITIES: ModelCapabilities = {
   optionDescriptors: [
@@ -60,5 +64,23 @@ describe("mobile provider options", () => {
     expect(applyProviderOptionSelection(descriptors, { id: "fastMode", value: true })).toEqual([
       { id: "fastMode", value: true },
     ]);
+  });
+
+  it("names the reasoning effort from the stored selection, else the default", () => {
+    const stored = resolveProviderOptionDescriptors({
+      capabilities: CODEX_CAPABILITIES,
+      selections: [{ id: "reasoningEffort", value: "high" }],
+    });
+    const untouched = resolveProviderOptionDescriptors({
+      capabilities: CODEX_CAPABILITIES,
+      selections: undefined,
+    });
+
+    expect(reasoningEffortLabel(stored, null)).toBe("High");
+    expect(reasoningEffortLabel(untouched, null)).toBe("Medium");
+  });
+
+  it("has no reasoning label when the model exposes no effort option", () => {
+    expect(reasoningEffortLabel([], null)).toBeNull();
   });
 });
