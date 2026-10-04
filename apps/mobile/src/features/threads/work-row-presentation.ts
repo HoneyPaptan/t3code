@@ -10,11 +10,45 @@ export function resolveWorkRowLabelRole(input: {
   return input.command?.trim() ? "argument" : "name";
 }
 
-export function shouldShowWorkRowFailureGlyph(input: {
-  readonly status: "success" | "failure" | "neutral" | null;
-  readonly iconIsDestructive: boolean;
-}): boolean {
-  return input.status === "failure" && !input.iconIsDestructive;
+export const WORK_ROW_FAILURE_LABEL = "failed";
+export const SETTLED_THOUGHT_LABEL = "Thought";
+
+export function workRowFailureLabel(
+  status: "success" | "failure" | "neutral" | null,
+): string | null {
+  return status === "failure" ? WORK_ROW_FAILURE_LABEL : null;
+}
+
+export interface WorkRowHead {
+  readonly name: string;
+  readonly nameRole: WorkRowLabelRole;
+  readonly summary: string | null;
+}
+
+function sameRowText(left: string, right: string): boolean {
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
+export function resolveWorkRowHead(input: {
+  readonly label: string;
+  readonly toolName: string | null | undefined;
+  readonly hasToolPresentation: boolean;
+  readonly isReasoning: boolean;
+  readonly live: boolean;
+  readonly command: string | null | undefined;
+}): WorkRowHead {
+  if (input.isReasoning && !input.live) {
+    return { name: SETTLED_THOUGHT_LABEL, nameRole: "group", summary: null };
+  }
+  const toolName = input.toolName?.trim();
+  if (!input.isReasoning && toolName && !sameRowText(toolName, input.label)) {
+    return { name: toolName, nameRole: "name", summary: input.label.trim() || null };
+  }
+  return {
+    name: input.label,
+    nameRole: resolveWorkRowLabelRole(input),
+    summary: null,
+  };
 }
 
 export const LIVE_WORK_GROUP_TITLE = "Working…";

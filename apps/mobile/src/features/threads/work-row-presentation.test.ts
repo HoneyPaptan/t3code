@@ -4,8 +4,10 @@ import {
   LIVE_THINKING_ROW_PRESENTATION,
   LIVE_WORK_GROUP_TITLE,
   resolveWorkGroupHeaderPresentation,
+  resolveWorkRowHead,
   resolveWorkRowLabelRole,
-  shouldShowWorkRowFailureGlyph,
+  SETTLED_THOUGHT_LABEL,
+  workRowFailureLabel,
 } from "./work-row-presentation";
 
 describe("resolveWorkRowLabelRole", () => {
@@ -42,18 +44,71 @@ describe("resolveWorkRowLabelRole", () => {
   });
 });
 
-describe("shouldShowWorkRowFailureGlyph", () => {
-  it("shows the glyph only for failed rows whose icon is not already destructive", () => {
-    expect(shouldShowWorkRowFailureGlyph({ status: "failure", iconIsDestructive: false })).toBe(
-      true,
-    );
-    expect(shouldShowWorkRowFailureGlyph({ status: "failure", iconIsDestructive: true })).toBe(
-      false,
-    );
-    expect(shouldShowWorkRowFailureGlyph({ status: "success", iconIsDestructive: false })).toBe(
-      false,
-    );
-    expect(shouldShowWorkRowFailureGlyph({ status: null, iconIsDestructive: false })).toBe(false);
+describe("workRowFailureLabel", () => {
+  it("labels only failed rows with the failed word", () => {
+    expect(workRowFailureLabel("failure")).toBe("failed");
+    expect(workRowFailureLabel("success")).toBeNull();
+    expect(workRowFailureLabel("neutral")).toBeNull();
+    expect(workRowFailureLabel(null)).toBeNull();
+  });
+});
+
+describe("resolveWorkRowHead", () => {
+  const base = {
+    hasToolPresentation: false,
+    isReasoning: false,
+    live: false,
+    command: undefined,
+  } as const;
+
+  it("splits a tool row into its tool name and a mono summary", () => {
+    expect(
+      resolveWorkRowHead({
+        ...base,
+        label: "pnpm test",
+        toolName: "Command",
+        command: "pnpm test",
+      }),
+    ).toEqual({ name: "Command", nameRole: "name", summary: "pnpm test" });
+  });
+
+  it("drops the summary when it repeats the tool name", () => {
+    expect(
+      resolveWorkRowHead({
+        ...base,
+        label: "Link PR",
+        toolName: "link pr",
+        hasToolPresentation: true,
+      }),
+    ).toEqual({ name: "Link PR", nameRole: "name", summary: null });
+  });
+
+  it("keeps a nameless row on its single label", () => {
+    expect(resolveWorkRowHead({ ...base, label: "src/app.ts", toolName: undefined })).toEqual({
+      name: "src/app.ts",
+      nameRole: "name",
+      summary: null,
+    });
+  });
+
+  it("names a settled reasoning row Thought and keeps a live one on its preview", () => {
+    expect(
+      resolveWorkRowHead({
+        ...base,
+        label: "Checking the cache",
+        toolName: undefined,
+        isReasoning: true,
+      }),
+    ).toEqual({ name: SETTLED_THOUGHT_LABEL, nameRole: "group", summary: null });
+    expect(
+      resolveWorkRowHead({
+        ...base,
+        label: "Checking the cache",
+        toolName: undefined,
+        isReasoning: true,
+        live: true,
+      }),
+    ).toEqual({ name: "Checking the cache", nameRole: "group", summary: null });
   });
 });
 

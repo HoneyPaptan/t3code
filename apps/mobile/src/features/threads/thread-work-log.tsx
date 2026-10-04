@@ -11,8 +11,8 @@ import {
 import {
   LIVE_THINKING_ROW_PRESENTATION,
   resolveWorkGroupHeaderPresentation,
-  resolveWorkRowLabelRole,
-  shouldShowWorkRowFailureGlyph,
+  resolveWorkRowHead,
+  workRowFailureLabel,
 } from "./work-row-presentation";
 import { QuestionAnswerHistory } from "./QuestionAnswerHistory";
 import { threadFeedChromeRowGap } from "./thread-feed-item-size";
@@ -421,7 +421,6 @@ const WORK_ROW_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT;
 const WORK_ROW_GAP = THREAD_FEED_GROUP_CHILD_GAP;
 const WORK_GROUP_ROW_GAP = THREAD_FEED_GROUP_CHILD_GAP;
 const WORK_LOG_BOTTOM_MARGIN = THREAD_FEED_BLOCK_GAP;
-const WORK_STATUS_GLYPH_SIZE = 14;
 const WORK_GROUP_MAX_HEIGHT = 256;
 const WORK_GROUP_EDGE_FADE_HEIGHT = 12;
 
@@ -524,7 +523,7 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
     props.activities.every((row) => row.projectedItem.item.type === "reasoning")
   ) {
     return (
-      <ScrollView nestedScrollEnabled className="ml-[28px] mt-1 max-h-96">
+      <ScrollView nestedScrollEnabled className="mt-1 max-h-96">
         {props.activities.map((row) => (
           <View key={row.id}>{props.renderReasoning(row.workEntry.detail ?? "")}</View>
         ))}
@@ -706,10 +705,7 @@ function ThreadWorkGroupList(props: {
   );
 
   return (
-    <View
-      className="border-l border-border-subtle pl-[12px]"
-      style={{ height, overflow: "hidden" }}
-    >
+    <View style={{ height, overflow: "hidden" }}>
       <AnimatedLegendList
         ref={subscribeToContentSize}
         data={props.activities}
@@ -908,17 +904,29 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
     row.projectedItem.item.status !== "completed";
   const iconIsDestructive =
     !isSystemNotice && !isUsageLimit && (row.icon === "alert" || row.icon === "warning");
-  const showFailureGlyph = shouldShowWorkRowFailureGlyph({
-    status: row.status,
-    iconIsDestructive,
-  });
-  const labelRole = resolveWorkRowLabelRole({
+  const failureLabel = workRowFailureLabel(row.status);
+  const head = resolveWorkRowHead({
+    label: isSystemNotice ? row.summary : displayText,
+    toolName: toolPresentation?.displayName ?? row.workEntry.toolTitle,
     hasToolPresentation: Boolean(toolPresentation),
     isReasoning: reasoning !== null,
+    live: row.live === true,
     command: row.workEntry.command,
   });
-  const toolIcon = row.workEntry.toolIcon ?? row.workEntry.toolSource?.icon;
-  const icon = reasoning ? "brain" : (toolPresentation?.icon ?? workRowSymbolName(row.icon));
+  const nameTone = isUsageLimit
+    ? "warning"
+    : iconIsDestructive || row.status === "failure"
+      ? "danger"
+      : "default";
+  const answerPreviewText = answerPreview ? (
+    <Text
+      className={
+        !expanded && row.workEntry.questionAnswer && hasQuestionAnswer(row.workEntry.questionAnswer)
+          ? "text-foreground"
+          : "text-foreground-muted/60"
+      }
+    >{`  ${answerPreview}`}</Text>
+  ) : null;
 
   return (
     <Animated.View
@@ -958,88 +966,38 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
       >
         {row.live && !expanded ? (
           <ShimmeringWorkContent
-            environmentId={props.environmentId}
-            icon={icon}
-            textClassName={WORK_LABEL_ROLE_STYLE[labelRole].text}
-            idleTextClassName={WORK_LABEL_ROLE_STYLE[labelRole].color}
-            label={displayText}
-            showIcon
-            themeAppearance={props.themeAppearance}
-            toolIcon={toolIcon}
+            className={head.summary ? "max-w-[60%] flex-none" : "flex-initial"}
+            icon="brain"
+            textClassName={WORK_LABEL_ROLE_STYLE[head.nameRole].text}
+            idleTextClassName={WORK_LABEL_ROLE_STYLE[head.nameRole].color}
+            label={head.name}
+            showIcon={false}
           />
         ) : (
-          <>
-            <WorkLogIconSlot>
-              {toolIcon ? (
-                <ToolActivityIconView
-                  environmentId={props.environmentId}
-                  icon={toolIcon}
-                  fallback={icon}
-                  themeAppearance={props.themeAppearance}
-                />
-              ) : (
-                <WorkLogIcon
-                  icon={icon}
-                  colorClassName={
-                    isUsageLimit
-                      ? "accent-warning-foreground"
-                      : iconIsDestructive
-                        ? "accent-danger-foreground"
-                        : undefined
-                  }
-                />
-              )}
-            </WorkLogIconSlot>
-            <WorkLogLabel
-              role={labelRole}
-              tone={
-                isUsageLimit
-                  ? "warning"
-                  : iconIsDestructive || row.status === "failure"
-                    ? "danger"
-                    : "default"
-              }
-            >
-              {isSystemNotice ? row.summary : displayText}
-              {answerPreview ? (
-                <Text
-                  className={
-                    !expanded &&
-                    row.workEntry.questionAnswer &&
-                    hasQuestionAnswer(row.workEntry.questionAnswer)
-                      ? "text-foreground"
-                      : "text-foreground-muted/60"
-                  }
-                >{`  ${answerPreview}`}</Text>
-              ) : null}
-            </WorkLogLabel>
-          </>
+          <WorkLogLabel
+            className={head.summary ? "max-w-[60%] shrink-0" : undefined}
+            role={head.nameRole}
+            tone={nameTone}
+          >
+            {head.name}
+            {head.summary ? null : answerPreviewText}
+          </WorkLogLabel>
         )}
-
-        <View className="shrink-0 flex-row items-center gap-px">
-          {props.copied ? (
-            <Text className="pr-1 font-t3-medium text-3xs text-success">Copied</Text>
-          ) : null}
-          {showFailureGlyph ? (
-            <View
-              className="size-4 items-center justify-center"
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-            >
-              <SymbolView
-                name="xmark"
-                size={WORK_STATUS_GLYPH_SIZE}
-                tintColorClassName="accent-danger-foreground"
-                type="monochrome"
-              />
-            </View>
-          ) : null}
-          <View className="size-4 items-center justify-center">
-            {canExpand ? (
-              <ThreadDisclosureChevron expanded={expanded} collapsedDirection="down" />
-            ) : null}
-          </View>
-        </View>
+        {head.summary ? (
+          <WorkLogLabel role="argument">
+            {head.summary}
+            {answerPreviewText}
+          </WorkLogLabel>
+        ) : null}
+        {failureLabel ? (
+          <Text className="shrink-0 text-chat text-danger-foreground">{failureLabel}</Text>
+        ) : null}
+        {canExpand ? (
+          <ThreadDisclosureChevron expanded={expanded} collapsedDirection="right" />
+        ) : null}
+        {props.copied ? (
+          <Text className="ml-auto shrink-0 pr-1 font-t3-medium text-3xs text-success">Copied</Text>
+        ) : null}
       </WorkLogPressable>
 
       {expanded && (reasoning || fullDetail || viewedImagePath || row.workEntry.questionAnswer) ? (
@@ -1047,7 +1005,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
           exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
           layout={WORK_LOG_LAYOUT_TRANSITION}
-          className={reasoning ? "ml-[28px] mt-1" : "mt-[6px] gap-[6px]"}
+          className={reasoning ? "mt-1" : "mt-1.5 gap-1.5"}
         >
           {row.workEntry.questionAnswer ? (
             <QuestionAnswerHistory
@@ -1070,7 +1028,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             </ScrollView>
           ) : fullDetail ? (
             <>
-              <Text className="text-xs text-foreground-muted/70">
+              <Text className="text-[13px] leading-[18px] text-foreground-muted/70">
                 {row.status === "failure" ? "Error" : "Output"}
               </Text>
               <ScrollView
@@ -1078,7 +1036,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                 directionalLockEnabled
                 showsVerticalScrollIndicator
                 className="max-h-40 overflow-hidden rounded-md bg-grouped-card"
-                contentContainerClassName="px-[10px] py-[8px]"
+                contentContainerClassName="px-2.5 py-2"
               >
                 <Text
                   selectable
@@ -1149,26 +1107,16 @@ export function ThreadWorkGroupToggle(props: {
               label={header.title}
               showIcon={false}
             />
-            <Text className="min-w-0 flex-1 text-chat text-foreground-muted/60" numberOfLines={1}>
+            <Text className="min-w-0 shrink text-chat text-foreground-muted/60" numberOfLines={1}>
               {header.summary}
             </Text>
           </>
         ) : (
-          <>
-            <WorkLogIconSlot>
-              <ToolActivityIconView
-                environmentId={props.environmentId}
-                icon={props.toolIcon}
-                fallback={icon}
-                themeAppearance={props.themeAppearance}
-              />
-            </WorkLogIconSlot>
-            <WorkLogLabel key={props.rowSizing.textSizeKey} role="heading">
-              {props.summary}
-            </WorkLogLabel>
-          </>
+          <WorkLogLabel key={props.rowSizing.textSizeKey} role="heading">
+            {props.summary}
+          </WorkLogLabel>
         )}
-        <ThreadDisclosureChevron expanded={props.expanded} collapsedDirection="down" />
+        <ThreadDisclosureChevron expanded={props.expanded} collapsedDirection="right" />
       </WorkLogPressable>
     </WorkLogBlock>
   );

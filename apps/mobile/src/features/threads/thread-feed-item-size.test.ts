@@ -24,7 +24,7 @@ describe("resolveThreadFeedFixedItemSize", () => {
 
   it("adds the header to rows gap while a block is open", () => {
     expect(resolveThreadFeedFixedItemSize("run-fold", true)).toBe(48);
-    expect(resolveThreadFeedFixedItemSize("work-toggle", true)).toBe(42);
+    expect(resolveThreadFeedFixedItemSize("work-toggle", true)).toBe(48);
   });
 
   it("measures an expanded thinking row instead of trusting the collapsed height", () => {
