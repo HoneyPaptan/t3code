@@ -1,12 +1,14 @@
 import { SubagentStatusDot } from "./SubagentStatusDot";
 import { ThreadSubagentGroup } from "./thread-subagent-group";
 import {
+  WORK_LABEL_ROLE_STYLE,
   WorkLogLabel,
   WorkLogBlock,
   WorkLogRows,
   WorkLogIconSlot,
   WorkLogPressable,
 } from "./work-log-layout";
+import { resolveWorkRowLabelRole, shouldShowWorkRowFailureGlyph } from "./work-row-presentation";
 import { QuestionAnswerHistory } from "./QuestionAnswerHistory";
 import {
   getQuestionAnswerPreview,
@@ -31,15 +33,7 @@ import {
   type ComponentProps,
   type ReactNode,
 } from "react";
-import {
-  AccessibilityInfo,
-  AppState,
-  type ColorValue,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { AccessibilityInfo, AppState, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import type { EnvironmentId, ToolActivityIcon } from "@t3tools/contracts";
 import { toolActivityFaviconUrl } from "@t3tools/shared/favicon";
@@ -85,24 +79,27 @@ import { useAssetUrl } from "../../state/assets";
 const SHIMMER_WIDTH = 72;
 const SHIMMER_SWEEP_MS = 1_350;
 const SHIMMER_PAUSE_MS = 1_450;
-const SHIMMER_ICON_AND_GAP_WIDTH = 30;
+const SHIMMER_ICON_AND_GAP_WIDTH = 27;
 export const THREAD_DISCLOSURE_TRANSITION_MS = 180;
 const WORK_LOG_LAYOUT_TRANSITION = LinearTransition.duration(THREAD_DISCLOSURE_TRANSITION_MS);
 const WORK_LOG_DETAIL_ENTER_TRANSITION = FadeIn.duration(140);
 const WORK_LOG_DETAIL_EXIT_TRANSITION = FadeOut.duration(120);
+const WORK_ICON_SIZE = 16;
+const WORK_ICON_COLOR_CLASS = "accent-foreground-muted/60";
+const DISCLOSURE_CHEVRON_SIZE = 14;
+const DISCLOSURE_CHEVRON_COLOR_CLASS = "accent-foreground-muted/50";
 type WorkContentIcon = AppSymbolName | "browser" | "device" | "t3-code" | "pull-request";
 
 function WorkLogIcon(props: {
   readonly icon: WorkContentIcon;
-  readonly color: ColorValue;
   readonly colorClassName?: string;
   readonly highlighted?: boolean;
 }) {
-  const colorClassName = props.highlighted ? "accent-foreground" : props.colorClassName;
+  const colorClassName = props.highlighted
+    ? "accent-foreground"
+    : (props.colorClassName ?? WORK_ICON_COLOR_CLASS);
   if (props.icon === "t3-code") {
-    return (
-      <T3Wordmark height={10} {...(colorClassName ? { colorClassName } : { color: props.color })} />
-    );
+    return <T3Wordmark height={10} colorClassName={colorClassName} />;
   }
   return (
     <SymbolView
@@ -115,9 +112,9 @@ function WorkLogIcon(props: {
               ? { ios: "iphone", android: "smartphone" }
               : props.icon
       }
-      size={14}
+      size={WORK_ICON_SIZE}
       weight="medium"
-      {...(colorClassName ? { tintColorClassName: colorClassName } : { tintColor: props.color })}
+      tintColorClassName={colorClassName}
       type="monochrome"
     />
   );
@@ -126,8 +123,6 @@ function WorkLogIcon(props: {
 export function ThreadDisclosureChevron(props: {
   readonly expanded: boolean;
   readonly collapsedDirection: "right" | "down";
-  readonly size: number;
-  readonly tintColor: ColorValue;
 }) {
   const expandedAngle = props.collapsedDirection === "right" ? 90 : 180;
   const rotation = useSharedValue(props.expanded ? expandedAngle : 0);
@@ -149,12 +144,12 @@ export function ThreadDisclosureChevron(props: {
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="none"
-      style={[{ width: props.size, height: props.size }, rotationStyle]}
+      style={[{ width: DISCLOSURE_CHEVRON_SIZE, height: DISCLOSURE_CHEVRON_SIZE }, rotationStyle]}
     >
       <SymbolView
         name={props.collapsedDirection === "right" ? "chevron.right" : "chevron.down"}
-        size={props.size}
-        tintColor={props.tintColor}
+        size={DISCLOSURE_CHEVRON_SIZE}
+        tintColorClassName={DISCLOSURE_CHEVRON_COLOR_CLASS}
         type="monochrome"
       />
     </Animated.View>
@@ -166,8 +161,8 @@ function ShimmerWorkContent(props: {
   readonly compact?: boolean;
   readonly environmentId?: EnvironmentId;
   readonly highlighted: boolean;
+  readonly idleTextClassName?: string;
   readonly icon: WorkContentIcon;
-  readonly iconSubtleColor: ColorValue;
   readonly label: string;
   readonly onTextLayout?: ComponentProps<typeof Text>["onTextLayout"];
   readonly showIcon: boolean;
@@ -177,21 +172,16 @@ function ShimmerWorkContent(props: {
   return (
     <View className="flex-row items-center gap-1.5">
       {props.showIcon ? (
-        <View className="h-6 w-6 shrink-0 items-center justify-center">
+        <View className="size-5 shrink-0 items-center justify-center">
           {props.toolIcon && props.environmentId ? (
             <ToolActivityIconView
               environmentId={props.environmentId}
               icon={props.toolIcon}
               fallback={props.icon}
-              fallbackColor={props.iconSubtleColor}
               themeAppearance={props.themeAppearance ?? "light"}
             />
           ) : (
-            <WorkLogIcon
-              icon={props.icon}
-              color={props.iconSubtleColor}
-              highlighted={props.highlighted}
-            />
+            <WorkLogIcon icon={props.icon} highlighted={props.highlighted} />
           )}
         </View>
       ) : null}
@@ -199,7 +189,9 @@ function ShimmerWorkContent(props: {
         className={cn(
           "min-w-0 shrink",
           props.compact ? "text-xs" : "text-sm",
-          props.highlighted ? "text-foreground" : "text-foreground-muted",
+          props.highlighted
+            ? "text-foreground"
+            : (props.idleTextClassName ?? "text-foreground-muted"),
           props.textClassName,
         )}
         numberOfLines={1}
@@ -214,11 +206,10 @@ function ShimmerWorkContent(props: {
 export function ShimmeringWorkContent(props: {
   readonly className?: string;
   readonly textClassName?: string;
-  /** Secondary line: no icon slot, caption size. */
+  readonly idleTextClassName?: string;
   readonly compact?: boolean;
   readonly environmentId?: EnvironmentId;
   readonly icon: WorkContentIcon;
-  readonly iconSubtleColor: ColorValue;
   readonly label: string;
   readonly showIcon: boolean;
   readonly themeAppearance?: "light" | "dark";
@@ -295,7 +286,7 @@ export function ShimmeringWorkContent(props: {
         environmentId={props.environmentId}
         highlighted={false}
         icon={props.icon}
-        iconSubtleColor={props.iconSubtleColor}
+        idleTextClassName={props.idleTextClassName}
         label={props.label}
         showIcon={props.showIcon}
         themeAppearance={props.themeAppearance}
@@ -337,7 +328,6 @@ export function ShimmeringWorkContent(props: {
                 environmentId={props.environmentId}
                 highlighted
                 icon={props.icon}
-                iconSubtleColor={props.iconSubtleColor}
                 label={props.label}
                 showIcon={props.showIcon}
                 themeAppearance={props.themeAppearance}
@@ -388,19 +378,16 @@ function workRowSymbolName(icon: ThreadFeedActivity["icon"]): AppSymbolName {
   }
 }
 
-// Entering fades only for rows created moments ago: rows remount whenever the
-// list scrolls them back into view, and old rows must not replay an entrance.
 const FRESH_ROW_WINDOW_MS = 3_000;
 function isFreshRow(createdAt: string): boolean {
   const timestamp = Date.parse(createdAt);
   return Number.isFinite(timestamp) && Date.now() - timestamp < FRESH_ROW_WINDOW_MS;
 }
 
-// The minimum matches min-h-8 below. Exact sizing is disabled when native
-// accessibility scaling can make the single-line text taller than that minimum.
 const WORK_ROW_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT;
-const WORK_ROW_GAP = 1; // gap-px
-const WORK_LOG_BOTTOM_MARGIN = 3.5; // mb-1 with the mobile 14px rem
+const WORK_ROW_GAP = 1;
+const WORK_LOG_BOTTOM_MARGIN = 3.5;
+const WORK_STATUS_GLYPH_SIZE = 14;
 const WORK_GROUP_MAX_HEIGHT = 256;
 const WORK_GROUP_EDGE_FADE_HEIGHT = 12;
 
@@ -440,8 +427,6 @@ interface ThreadWorkLogProps {
   readonly expandedRows: Readonly<Record<string, boolean>>;
   readonly rowSizing: ReturnType<typeof deriveThreadWorkLogSizing>;
   readonly scrollPositions: Map<string, ThreadWorkGroupScrollPosition>;
-  readonly iconSubtleColor: ColorValue;
-  /** Feed background, painted as the scroll-edge fade over a long group. */
   readonly edgeFadeColor: string;
   readonly themeAppearance: "light" | "dark";
   readonly onCopyRow: (rowId: string, value: string) => void;
@@ -460,7 +445,6 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
         copied={props.copiedRowId === row.id}
         expanded={props.expandedRows[row.id] ?? false}
         environmentId={props.environmentId}
-        iconSubtleColor={props.iconSubtleColor}
         onCopyRow={props.onCopyRow}
         onToggleRow={props.onToggleRow}
         renderImage={props.renderImage}
@@ -473,7 +457,6 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
       props.copiedRowId,
       props.expandedRows,
       props.environmentId,
-      props.iconSubtleColor,
       props.onCopyRow,
       props.onToggleRow,
       props.renderImage,
@@ -495,7 +478,10 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
     props.activities.every((row) => row.projectedItem.item.type === "reasoning")
   ) {
     return (
-      <ScrollView nestedScrollEnabled className="ml-7 max-h-96 py-1">
+      <ScrollView
+        nestedScrollEnabled
+        className="ml-7 max-h-96 border-l border-border-subtle py-1 pl-3"
+      >
         {props.activities.map((row) => (
           <View key={row.id}>{props.renderReasoning(row.workEntry.detail ?? "")}</View>
         ))}
@@ -815,15 +801,14 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             <WorkLogIconSlot>
               <WorkLogIcon
                 icon="exclamationmark.circle"
-                color={props.iconSubtleColor}
                 colorClassName={warning ? "accent-warning-foreground" : "accent-danger-foreground"}
               />
             </WorkLogIconSlot>
             <Text
               className={
                 warning
-                  ? "min-w-0 flex-1 font-t3-medium text-sm text-warning-foreground"
-                  : "min-w-0 flex-1 font-t3-medium text-sm text-danger-foreground"
+                  ? "min-w-0 flex-1 font-t3-medium text-xs text-warning-foreground"
+                  : "min-w-0 flex-1 font-t3-medium text-xs text-danger-foreground"
               }
             >
               {label}
@@ -833,7 +818,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             ) : null}
             <Text
               accessibilityLabel={timestamp.toLocaleString()}
-              className="shrink-0 text-xs text-foreground-subtle"
+              className="shrink-0 text-xs text-foreground-muted/60"
             >
               {timestamp.toLocaleString(undefined, {
                 month: "short",
@@ -844,7 +829,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             </Text>
           </View>
           {!warning ? (
-            <Text selectable className="ml-7 text-sm text-foreground">
+            <Text selectable className="ml-7 text-sm text-foreground/70">
               {failureItem.failure.message}
             </Text>
           ) : null}
@@ -852,7 +837,6 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
       </WorkLogPressable>
     );
   }
-  // A subagent's notification opens its thread, like the subagent's own row.
   const notifiedSubagentThreadId =
     row.projectedItem.item.type === "notification"
       ? notificationChildThreadId(row.projectedItem.item.source)
@@ -875,7 +859,15 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
     row.projectedItem.item.status !== "completed";
   const iconIsDestructive =
     !isSystemNotice && !isUsageLimit && (row.icon === "alert" || row.icon === "warning");
-  const failed = row.status === "failure";
+  const showFailureGlyph = shouldShowWorkRowFailureGlyph({
+    status: row.status,
+    iconIsDestructive,
+  });
+  const labelRole = resolveWorkRowLabelRole({
+    hasToolPresentation: Boolean(toolPresentation),
+    isReasoning: reasoning !== null,
+    command: row.workEntry.command,
+  });
   const toolIcon = row.workEntry.toolIcon ?? row.workEntry.toolSource?.icon;
   const icon = reasoning ? "brain" : (toolPresentation?.icon ?? workRowSymbolName(row.icon));
 
@@ -889,7 +881,9 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
         accessibilityRole={
           notifiedSubagentThreadId !== undefined ? "link" : canExpand ? "button" : undefined
         }
-        accessibilityLabel={failed ? `${accessiblePreview}, tool call failed` : accessiblePreview}
+        accessibilityLabel={
+          row.status === "failure" ? `${accessiblePreview}, tool call failed` : accessiblePreview
+        }
         accessibilityHint={
           notifiedSubagentThreadId !== undefined
             ? "Opens this agent's thread. Long press to copy."
@@ -917,7 +911,8 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           <ShimmeringWorkContent
             environmentId={props.environmentId}
             icon={icon}
-            iconSubtleColor={props.iconSubtleColor}
+            textClassName={WORK_LABEL_ROLE_STYLE[labelRole].text}
+            idleTextClassName={WORK_LABEL_ROLE_STYLE[labelRole].color}
             label={displayText}
             showIcon
             themeAppearance={props.themeAppearance}
@@ -931,26 +926,23 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                   environmentId={props.environmentId}
                   icon={toolIcon}
                   fallback={icon}
-                  fallbackColor={props.iconSubtleColor}
                   themeAppearance={props.themeAppearance}
                 />
               ) : (
                 <WorkLogIcon
                   icon={icon}
-                  color={props.iconSubtleColor}
                   colorClassName={
                     isUsageLimit
                       ? "accent-warning-foreground"
                       : iconIsDestructive
                         ? "accent-danger-foreground"
-                        : failed
-                          ? "accent-danger-foreground/40"
-                          : undefined
+                        : undefined
                   }
                 />
               )}
             </WorkLogIconSlot>
             <WorkLogLabel
+              role={labelRole}
               tone={isUsageLimit ? "warning" : iconIsDestructive ? "danger" : "default"}
             >
               {isSystemNotice ? row.summary : displayText}
@@ -961,7 +953,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                     row.workEntry.questionAnswer &&
                     hasQuestionAnswer(row.workEntry.questionAnswer)
                       ? "text-foreground"
-                      : "text-foreground-subtle"
+                      : "text-foreground-muted/60"
                   }
                 >{`  ${answerPreview}`}</Text>
               ) : null}
@@ -973,28 +965,23 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           {props.copied ? (
             <Text className="pr-1 font-t3-medium text-3xs text-success">Copied</Text>
           ) : null}
-          {failed && toolIcon !== undefined ? (
+          {showFailureGlyph ? (
             <View
-              className="h-4 w-4 items-center justify-center"
+              className="size-4 items-center justify-center"
               accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
             >
               <SymbolView
                 name="xmark"
-                size={11}
-                tintColorClassName="accent-danger-foreground/40"
+                size={WORK_STATUS_GLYPH_SIZE}
+                tintColorClassName="accent-danger-foreground"
                 type="monochrome"
               />
             </View>
           ) : null}
-          <View className="h-4 w-4 items-center justify-center">
+          <View className="size-4 items-center justify-center">
             {canExpand ? (
-              <ThreadDisclosureChevron
-                expanded={expanded}
-                collapsedDirection="down"
-                size={11}
-                tintColor={props.iconSubtleColor}
-              />
+              <ThreadDisclosureChevron expanded={expanded} collapsedDirection="down" />
             ) : null}
           </View>
         </View>
@@ -1005,7 +992,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
           exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
           layout={WORK_LOG_LAYOUT_TRANSITION}
-          className={reasoning ? "ml-7 py-1" : "ml-7 border-l border-border pb-1 pl-3 pt-0.5"}
+          className={reasoning ? "ml-7 border-l border-border-subtle py-1 pl-3" : "ml-7 py-1"}
         >
           {row.workEntry.questionAnswer ? (
             <QuestionAnswerHistory
@@ -1028,9 +1015,14 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             {reasoning ? (
               props.renderReasoning(reasoning.text)
             ) : (
-              <Text selectable className="font-mono text-xs leading-normal text-foreground-muted">
-                {fullDetail}
-              </Text>
+              <View className="rounded-lg bg-grouped-card px-3 py-2">
+                <Text
+                  selectable
+                  className="font-mono text-[12px] leading-normal text-foreground-muted"
+                >
+                  {fullDetail}
+                </Text>
+              </View>
             )}
           </ScrollView>
         </Animated.View>
@@ -1044,7 +1036,6 @@ export function ThreadWorkGroupToggle(props: {
   readonly rowSizing: ReturnType<typeof deriveThreadWorkLogSizing>;
   readonly expanded: boolean;
   readonly hiddenCount: number;
-  readonly iconSubtleColor: import("react-native").ColorValue;
   readonly summary: string;
   readonly summaryKind: ToolGroupSummaryKind;
   readonly summaryToolIcon?: "browser" | "device" | "t3-code" | "pull-request" | "brain";
@@ -1082,7 +1073,8 @@ export function ThreadWorkGroupToggle(props: {
             key={props.rowSizing.textSizeKey}
             environmentId={props.environmentId}
             icon={icon}
-            iconSubtleColor={props.iconSubtleColor}
+            textClassName={WORK_LABEL_ROLE_STYLE.heading.text}
+            idleTextClassName={WORK_LABEL_ROLE_STYLE.heading.color}
             label={props.summary}
             showIcon
             themeAppearance={props.themeAppearance}
@@ -1095,34 +1087,23 @@ export function ThreadWorkGroupToggle(props: {
                 environmentId={props.environmentId}
                 icon={props.toolIcon}
                 fallback={icon}
-                fallbackColor={props.iconSubtleColor}
                 themeAppearance={props.themeAppearance}
               />
             </WorkLogIconSlot>
-            <WorkLogLabel key={props.rowSizing.textSizeKey}>{props.summary}</WorkLogLabel>
+            <WorkLogLabel key={props.rowSizing.textSizeKey} role="heading">
+              {props.summary}
+            </WorkLogLabel>
           </>
         )}
-        <ThreadDisclosureChevron
-          expanded={props.expanded}
-          collapsedDirection="down"
-          size={11}
-          tintColor={props.iconSubtleColor}
-        />
+        <ThreadDisclosureChevron expanded={props.expanded} collapsedDirection="down" />
       </WorkLogPressable>
     </WorkLogBlock>
   );
 }
 
-/**
- * A batch of spawned subagents. The status line updates in place as members
- * report progress; expanding lists each member. Text nodes carry keys tied to
- * the row identity only, so a progress tick re-renders the labels without
- * remounting the card (see the batch key in appendActivityGroupRows).
- */
 export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
   readonly summary: AgentSpawnSummary;
   readonly expanded: boolean;
-  readonly iconSubtleColor: ColorValue;
   readonly rowSizing: ReturnType<typeof deriveThreadWorkLogSizing>;
   readonly onToggle: () => void;
   readonly onCopy: () => void;
@@ -1149,22 +1130,22 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
           props.onToggle();
         }}
         onLongPress={props.onCopy}
-        className="rounded-lg border border-border-subtle bg-card px-2.5 py-2 active:bg-subtle"
+        className="rounded-lg bg-grouped-card px-2.5 py-2 active:bg-subtle"
       >
         <View className="flex-row items-center gap-2">
-          <View className="h-6 w-6 shrink-0 items-center justify-center">
+          <View className="size-5 shrink-0 items-center justify-center">
             <SymbolView
               name={{ ios: "sparkles", android: "auto_awesome" }}
-              size={14}
+              size={WORK_ICON_SIZE}
               weight="medium"
-              tintColor={props.iconSubtleColor}
+              tintColorClassName={WORK_ICON_COLOR_CLASS}
               type="monochrome"
             />
           </View>
           <View className="min-w-0 flex-1 gap-0.5">
             <Text
               key={props.rowSizing.textSizeKey}
-              className="font-t3-medium text-sm text-foreground"
+              className="font-t3-medium text-xs text-foreground/70"
               numberOfLines={1}
             >
               {summary.title}
@@ -1176,24 +1157,18 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
                   key={props.rowSizing.textSizeKey}
                   compact
                   icon="brain"
-                  iconSubtleColor={props.iconSubtleColor}
                   label={summary.status}
                   showIcon={false}
                 />
               ) : (
-                <Text className="min-w-0 flex-1 text-xs text-foreground-muted" numberOfLines={1}>
+                <Text className="min-w-0 flex-1 text-xs text-foreground-muted/60" numberOfLines={1}>
                   {summary.status}
                 </Text>
               )}
             </View>
           </View>
           {canExpand ? (
-            <ThreadDisclosureChevron
-              expanded={expanded}
-              collapsedDirection="down"
-              size={11}
-              tintColor={props.iconSubtleColor}
-            />
+            <ThreadDisclosureChevron expanded={expanded} collapsedDirection="down" />
           ) : null}
         </View>
         {expanded && canExpand ? (
@@ -1201,21 +1176,23 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
             entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
             exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
             layout={WORK_LOG_LAYOUT_TRANSITION}
-            className="ml-8 mt-1.5 gap-1.5 border-l border-border pl-3"
+            className="ml-8 mt-1.5 gap-1.5 border-l border-border-subtle pl-3"
           >
             {summary.members.map((member) => (
               <View key={member.title} className="gap-px">
                 <View className="flex-row items-center gap-1.5">
                   <SubagentStatusDot tone={member.tone} />
-                  <Text className="min-w-0 flex-1 text-xs text-foreground" numberOfLines={1}>
+                  <Text className="min-w-0 flex-1 text-xs text-foreground/70" numberOfLines={1}>
                     {member.title}
                   </Text>
-                  <Text className="shrink-0 text-2xs text-foreground-muted">{member.status}</Text>
+                  <Text className="shrink-0 text-2xs text-foreground-muted/60">
+                    {member.status}
+                  </Text>
                 </View>
                 {member.detail ? (
                   <Text
                     selectable
-                    className="pl-3 font-mono text-xs leading-normal text-foreground-muted"
+                    className="pl-3 font-mono text-xs leading-normal text-foreground-muted/60"
                     numberOfLines={expanded ? 6 : 1}
                   >
                     {member.detail}
@@ -1232,19 +1209,19 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
 
 export function ThreadThinkingRow(props: {
   readonly rowSizing: ReturnType<typeof deriveThreadWorkLogSizing>;
-  readonly iconSubtleColor: ColorValue;
 }) {
   return (
     <View
       accessible
       accessibilityLabel="Thinking"
-      className="-mx-1 min-h-8 flex-row items-center px-1.5 py-0"
+      className="-mx-1 min-h-9 flex-row items-center px-1.5 py-0"
       style={{ minHeight: props.rowSizing.estimatedRowHeight }}
     >
       <ShimmeringWorkContent
         key={props.rowSizing.textSizeKey}
         icon="brain"
-        iconSubtleColor={props.iconSubtleColor}
+        textClassName={WORK_LABEL_ROLE_STYLE.group.text}
+        idleTextClassName={WORK_LABEL_ROLE_STYLE.group.color}
         label="Thinking"
         showIcon
       />
@@ -1256,11 +1233,10 @@ function ToolActivityIconView(props: {
   readonly environmentId: EnvironmentId;
   readonly icon?: ToolActivityIcon;
   readonly fallback: WorkContentIcon;
-  readonly fallbackColor: ColorValue;
   readonly themeAppearance: "light" | "dark";
 }) {
   if (!props.icon) {
-    return <WorkLogIcon icon={props.fallback} color={props.fallbackColor} />;
+    return <WorkLogIcon icon={props.fallback} />;
   }
   if (props.icon._tag === "website") {
     const source = toolActivityFaviconUrl(props.icon, props.themeAppearance, 32);
@@ -1269,11 +1245,10 @@ function ToolActivityIconView(props: {
         key={source}
         source={source}
         fallback={props.fallback}
-        color={props.fallbackColor}
         themeAppearance={props.themeAppearance}
       />
     ) : (
-      <WorkLogIcon icon={props.fallback} color={props.fallbackColor} />
+      <WorkLogIcon icon={props.fallback} />
     );
   }
   if (props.icon._tag === "themed-logo") {
@@ -1286,7 +1261,6 @@ function ToolActivityIconView(props: {
         key={source}
         source={source}
         fallback={props.fallback}
-        color={props.fallbackColor}
         themeAppearance={props.themeAppearance}
       />
     );
@@ -1296,7 +1270,6 @@ function ToolActivityIconView(props: {
       environmentId={props.environmentId}
       app={props.icon.app}
       fallback={props.fallback}
-      color={props.fallbackColor}
       themeAppearance={props.themeAppearance}
     />
   );
@@ -1306,7 +1279,6 @@ function NativeAppToolActivityIcon(props: {
   readonly environmentId: EnvironmentId;
   readonly app: Extract<ToolActivityIcon, { readonly _tag: "native-app" }>["app"];
   readonly fallback: WorkContentIcon;
-  readonly color: ColorValue;
   readonly themeAppearance: "light" | "dark";
 }) {
   const source = useAssetUrl(props.environmentId, {
@@ -1318,25 +1290,23 @@ function NativeAppToolActivityIcon(props: {
       key={source}
       source={source}
       fallback={props.fallback}
-      color={props.color}
       themeAppearance={props.themeAppearance}
     />
   ) : (
-    <WorkLogIcon icon={props.fallback} color={props.color} />
+    <WorkLogIcon icon={props.fallback} />
   );
 }
 
 function ToolActivityImage(props: {
   readonly source: string;
   readonly fallback: WorkContentIcon;
-  readonly color: ColorValue;
   readonly themeAppearance: "light" | "dark";
 }) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   return (
-    <View className="h-4 w-4 items-center justify-center overflow-hidden rounded-sm bg-screen">
-      {!loaded || failed ? <WorkLogIcon icon={props.fallback} color={props.color} /> : null}
+    <View className="size-4 items-center justify-center overflow-hidden rounded-sm bg-screen">
+      {!loaded || failed ? <WorkLogIcon icon={props.fallback} /> : null}
       {!failed ? (
         <View
           style={[
