@@ -20,15 +20,14 @@ const SPLIT_SIDEBAR_DEFAULT_MAX_WIDTH = 380;
 
 export const AUXILIARY_PANE_MIN_CONTENT_WIDTH = 960;
 export const CHAT_CONTENT_MAX_WIDTH = 960;
-export const THREAD_WORK_ROW_MIN_HEIGHT = 31.5;
+export const THREAD_WORK_ROW_MIN_HEIGHT = 36;
 
 export function deriveThreadWorkLogSizing(input: {
   readonly baseFontSize: number;
   readonly fontScale: number;
 }) {
-  const lineHeight = scaledTypographyLineHeight(MOBILE_TYPOGRAPHY.footnote, input.baseFontSize);
+  const lineHeight = scaledTypographyLineHeight(MOBILE_TYPOGRAPHY.chat, input.baseFontSize);
   return {
-    // Different text metrics can share the same minimum row height.
     textSizeKey: `${input.baseFontSize}:${input.fontScale}`,
     estimatedRowHeight: Math.max(
       THREAD_WORK_ROW_MIN_HEIGHT,
