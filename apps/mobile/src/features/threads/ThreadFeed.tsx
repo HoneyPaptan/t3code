@@ -134,6 +134,7 @@ import {
 } from "../review/ReviewCommentCard";
 import { cn } from "../../lib/cn";
 import {
+  THREAD_FEED_EDGE_PADDING,
   deriveCenteredContentHorizontalPadding,
   deriveThreadFeedInitialContentInset,
   deriveThreadWorkLogSizing,
@@ -1593,7 +1594,7 @@ function renderFeedEntry(
         accessibilityState={{ expanded: entry.expanded }}
         onPress={() => props.onToggleTurnFold(entry.runId)}
         hitSlop={4}
-        className={cn("flex-row items-center gap-2 px-2", entry.expanded ? "mb-3" : "mb-1")}
+        className="mb-[12px] flex-row items-center gap-2 px-2"
         style={{ minHeight: props.workRowSizing.estimatedRowHeight }}
       >
         <Text
@@ -1700,7 +1701,7 @@ function renderFeedEntry(
       );
       return (
         <Animated.View
-          className="mb-4 items-end"
+          className="mb-[12px] items-end"
           {...(enterAnimated ? { entering: FadeInUp.duration(220) } : {})}
         >
           {presentation.isAutomation ? (
@@ -1881,8 +1882,8 @@ function renderFeedEntry(
       <Animated.View
         className={cn(
           showAssistantMeta && !(message.runId && props.failedRunIds.has(message.runId))
-            ? "mb-4 px-1"
-            : "mb-1 px-1",
+            ? "mb-[16px] px-1"
+            : "mb-[12px] px-1",
           hasWideBlock && "w-full",
         )}
         {...(enterAnimated ? { entering: FadeIn.duration(220) } : {})}
@@ -2236,7 +2237,7 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
     setExpandedVideo(null);
     setExpandedFile(null);
   }, [props.environmentId, props.threadId, props.contentPresentation.kind]);
-  const horizontalPadding = props.layoutVariant === "split" ? 20 : 16;
+  const horizontalPadding = THREAD_FEED_EDGE_PADDING;
   const contentHorizontalPadding = deriveCenteredContentHorizontalPadding({
     viewportWidth,
     maxContentWidth: props.contentMaxWidth ?? null,
@@ -3169,7 +3170,8 @@ export const ThreadFeed = memo(function ThreadFeed(props: ThreadFeedProps) {
               </>
             }
             contentContainerStyle={{
-              paddingTop: 12,
+              paddingTop: THREAD_FEED_EDGE_PADDING,
+              paddingBottom: THREAD_FEED_EDGE_PADDING,
               paddingHorizontal: contentHorizontalPadding,
             }}
           />

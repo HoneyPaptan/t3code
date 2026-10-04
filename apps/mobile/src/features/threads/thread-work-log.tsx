@@ -41,7 +41,12 @@ import { toolActivityFaviconUrl } from "@t3tools/shared/favicon";
 import { AppText as Text } from "../../components/AppText";
 import { T3Wordmark } from "../../components/T3Wordmark";
 import { cn } from "../../lib/cn";
-import { THREAD_WORK_ROW_MIN_HEIGHT, type deriveThreadWorkLogSizing } from "../../lib/layout";
+import {
+  THREAD_FEED_BLOCK_GAP,
+  THREAD_FEED_GROUP_CHILD_GAP,
+  THREAD_WORK_ROW_MIN_HEIGHT,
+  type deriveThreadWorkLogSizing,
+} from "../../lib/layout";
 import {
   type AgentSpawnSummary,
   type ThreadFeedActivity,
@@ -389,9 +394,9 @@ function isFreshRow(createdAt: string): boolean {
 }
 
 const WORK_ROW_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT;
-const WORK_ROW_GAP = 5.25;
-const WORK_GROUP_ROW_GAP = 10.5;
-const WORK_LOG_BOTTOM_MARGIN = 5.25;
+const WORK_ROW_GAP = THREAD_FEED_GROUP_CHILD_GAP;
+const WORK_GROUP_ROW_GAP = THREAD_FEED_GROUP_CHILD_GAP;
+const WORK_LOG_BOTTOM_MARGIN = THREAD_FEED_BLOCK_GAP;
 const WORK_STATUS_GLYPH_SIZE = 14;
 const WORK_GROUP_MAX_HEIGHT = 256;
 const WORK_GROUP_EDGE_FADE_HEIGHT = 12;
@@ -1134,7 +1139,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
   const memberCount = summary.members.length;
   const canExpand = memberCount > 0;
   return (
-    <Animated.View layout={WORK_LOG_LAYOUT_TRANSITION} className="-mx-1 mb-1 px-1">
+    <Animated.View layout={WORK_LOG_LAYOUT_TRANSITION} className="-mx-1 mb-[12px] px-1">
       <Pressable
         accessibilityRole={canExpand ? "button" : undefined}
         accessibilityState={canExpand ? { expanded } : undefined}
@@ -1235,7 +1240,7 @@ export function ThreadThinkingRow(props: {
     <View
       accessible
       accessibilityLabel="Thinking"
-      className="-mx-1 min-h-9 flex-row items-center px-1.5 py-0"
+      className="-mx-1 mb-[12px] min-h-9 flex-row items-center px-1.5 py-0"
       style={{ minHeight: props.rowSizing.estimatedRowHeight }}
     >
       <ShimmeringWorkContent
