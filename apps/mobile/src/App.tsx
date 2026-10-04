@@ -20,6 +20,7 @@ import {
 import { RootStack } from "./Stack";
 import { appAtomRegistry } from "./state/atom-registry";
 import { OverlayPortalHost } from "./components/OverlayPortal";
+import { BackgroundPictureLayer } from "./components/BackgroundPictureLayer";
 import { shouldHandleAppLink } from "./lib/appLinking";
 import { useMobileNavigationTheme } from "./lib/useMobileNavigationTheme";
 import { SubscriptionUsageCoordinator } from "./widgets/SubscriptionUsageCoordinator";
@@ -82,16 +83,19 @@ function AppContent() {
                 this, React Navigation defaults to its light theme and every native
                 header (glass buttons, title, materials) is forced light even when
                 the system is in dark mode. */}
-            <View style={{ flex: 1 }}>
-              <IncomingShareProvider>
-                <Navigation linking={appLinking} theme={navigationTheme} />
-              </IncomingShareProvider>
-              <ConfirmDialogHost />
-              <ThreadArrangementHost />
-            </View>
-            {/* Anchored-menu overlays render here — in-window, so the
+            <View collapsable={false} style={{ flex: 1 }}>
+              <View style={{ flex: 1 }}>
+                <IncomingShareProvider>
+                  <Navigation linking={appLinking} theme={navigationTheme} />
+                </IncomingShareProvider>
+                <ConfirmDialogHost />
+                <ThreadArrangementHost />
+              </View>
+              {/* Anchored-menu overlays render here — in-window, so the
                 keyboard stays up while a dropdown is open. */}
-            <OverlayPortalHost />
+              <OverlayPortalHost />
+              <BackgroundPictureLayer />
+            </View>
           </SafeAreaProvider>
         </KeyboardProvider>
       </GestureHandlerRootView>
