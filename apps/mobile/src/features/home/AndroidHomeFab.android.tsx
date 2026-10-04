@@ -1,23 +1,15 @@
 import { useCallback, useRef, useState, type ComponentProps } from "react";
-import {
-  useWindowDimensions,
-  View,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-} from "react-native";
+import { View, type NativeScrollEvent, type NativeSyntheticEvent } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialNewThreadButton } from "../../components/MaterialNewThreadButton";
 import type { AndroidHomeFabLayout as SharedAndroidHomeFabLayout } from "./AndroidHomeFab.shared";
 import { useWorkspaceState } from "../../state/workspace";
 import { MaterialFabScrollContext } from "./MaterialFabScrollContext";
 import { updateMaterialFabScroll } from "./material-fab-scroll";
-import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
+import { resolveHomeFabPillBottom } from "./homeFabStack";
 
 export function AndroidHomeFabLayout(props: ComponentProps<typeof SharedAndroidHomeFabLayout>) {
   const insets = useSafeAreaInsets();
-  const { appearance } = useAppearancePreferences();
-  const { fontScale } = useWindowDimensions();
-  const [layoutWidth, setLayoutWidth] = useState<number | null>(null);
   const { state } = useWorkspaceState();
   const [expanded, setExpanded] = useState(true);
   const scrollState = useRef({ anchor: 0, expanded: true });
@@ -32,22 +24,16 @@ export function AndroidHomeFabLayout(props: ComponentProps<typeof SharedAndroidH
     scrollState.current = next;
   }, []);
 
-  // Remount only the FAB when its font or pane changes to clear the cached expanded width.
   return (
-    <View className="flex-1" onLayout={(event) => setLayoutWidth(event.nativeEvent.layout.width)}>
+    <View className="flex-1">
       <MaterialFabScrollContext value={onScroll}>{props.children}</MaterialFabScrollContext>
-      {state.hasConnections && layoutWidth !== null ? (
+      {state.hasConnections ? (
         <MaterialNewThreadButton
-          key={`${appearance.baseFontSize}:${fontScale}:${layoutWidth}`}
           extended
           expanded={expanded}
           onPress={props.onStartNewTask}
           className="absolute right-5"
-          style={{
-            bottom: props.sidebar
-              ? Math.max(insets.bottom, 12) + 6
-              : Math.max(insets.bottom, 16) + 16,
-          }}
+          style={{ bottom: resolveHomeFabPillBottom(insets.bottom, props.sidebar === true) }}
         />
       ) : null}
     </View>
