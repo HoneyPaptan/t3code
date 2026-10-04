@@ -80,18 +80,18 @@ describe("appearancePreferences", () => {
     });
   });
 
-  it("renders chat text at 15 over 23 and code at 14 over 22 by default and scales with the base size", () => {
+  it("renders chat text at 15 over 25 and code at 14 over 22 by default and scales with the base size", () => {
     expect(resolveChatMarkdownTypography(16)).toEqual({
       fontSize: 15,
-      assistantLineHeight: 23,
-      userLineHeight: 23,
+      assistantLineHeight: 25,
+      userLineHeight: 25,
       codeFontSize: 14,
       codeLineHeight: 22,
     });
     expect(resolveChatMarkdownTypography(22)).toEqual({
       fontSize: 21,
-      assistantLineHeight: 32,
-      userLineHeight: 32,
+      assistantLineHeight: 34,
+      userLineHeight: 34,
       codeFontSize: 19,
       codeLineHeight: 30,
     });
@@ -126,7 +126,7 @@ describe("appearancePreferences", () => {
     expect(variables["--text-lg"]).toBe(18);
     expect(variables["--text-3xl"]).toBe(30);
     expect(variables["--text-chat"]).toBe(15);
-    expect(variables["--text-chat--line-height"]).toBe(23);
+    expect(variables["--text-chat--line-height"]).toBe(25);
     expect(variables["--text-tool"]).toBe(13);
     expect(variables["--text-tool--line-height"]).toBe(20);
   });

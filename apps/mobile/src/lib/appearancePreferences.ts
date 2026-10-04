@@ -232,8 +232,8 @@ export function resolveScaledTextRole(role: keyof typeof MOBILE_TYPOGRAPHY, base
 }
 
 const CHAT_BODY_FONT_SIZE = 15;
-const CHAT_ASSISTANT_LINE_HEIGHT = 23;
-const CHAT_USER_LINE_HEIGHT = 23;
+const CHAT_ASSISTANT_LINE_HEIGHT = 25;
+const CHAT_USER_LINE_HEIGHT = 25;
 const CHAT_CODE_FONT_SIZE = 14;
 const CHAT_CODE_LINE_HEIGHT = 22;
 
