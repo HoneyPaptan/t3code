@@ -708,6 +708,8 @@ interface MarkdownStyleSets {
   readonly reasoning: MarkdownStyleSet;
 }
 
+const ITALIC_NATIVE_TEXT_STYLE = { italic: true };
+
 function mutedMarkdownStyleSet(
   base: MarkdownStyleSet,
   color: string,
@@ -720,9 +722,10 @@ function mutedMarkdownStyleSet(
       colors: { ...base.theme.colors, text: color },
       fontSizes: { ...base.theme.fontSizes, m: text.fontSize },
     },
-    styles: { ...base.styles, text: { lineHeight: text.lineHeight } },
+    styles: { ...base.styles, text: { lineHeight: text.lineHeight, fontStyle: "italic" } },
     nativeTextStyle: {
       ...base.nativeTextStyle,
+      ...ITALIC_NATIVE_TEXT_STYLE,
       color,
       mutedColor: color,
       fontSize: text.fontSize,
@@ -1095,12 +1098,12 @@ function useMarkdownStyles(
   const theme = useUniwindTheme();
   const markdownBodyColor = theme["--color-md-body"];
   const reasoningTextColor = flattenThemeColor(
-    themeColorWithAlpha(theme["--color-foreground"], 0.6),
+    theme["--color-foreground-muted"],
     theme["--color-screen"],
   );
   const reasoningTypography = useMemo(
-    () => resolveScaledTextRole("footnote", appearance.baseFontSize),
-    [appearance.baseFontSize],
+    () => ({ fontSize: chatTypography.fontSize, lineHeight: chatTypography.assistantLineHeight }),
+    [chatTypography],
   );
   const markdownStrongColor = theme["--color-md-strong"];
   const markdownLinkColor = theme["--color-md-link"];
@@ -1591,15 +1594,12 @@ function renderFeedEntry(
         accessibilityState={{ expanded: entry.expanded }}
         onPress={() => props.onToggleTurnFold(entry.runId)}
         hitSlop={4}
-        className={cn(
-          "mb-1 flex-row items-center gap-2 px-2",
-          entry.expanded && "border-b border-border-subtle",
-        )}
+        className="mb-1 flex-row items-center gap-2 px-2"
         style={{ minHeight: props.workRowSizing.estimatedRowHeight }}
       >
         <Text
           key={props.workRowSizing.textSizeKey}
-          className="text-xs tabular-nums text-foreground-muted/70"
+          className="text-chat tabular-nums text-foreground-muted"
         >
           {entry.label}
         </Text>

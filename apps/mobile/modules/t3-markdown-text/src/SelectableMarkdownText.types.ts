@@ -16,6 +16,7 @@ export interface NativeMarkdownTextStyle {
   readonly contextChipBorderColor?: string;
   readonly fontSize: number;
   readonly lineHeight: number;
+  readonly italic?: boolean;
   readonly fontFamily: string;
   readonly headingFontFamily: string;
   readonly boldFontFamily: string;
