@@ -4,7 +4,8 @@ import type { ThreadFeedEntry } from "../../lib/threadActivity";
 // These rows are pure timeline chrome whose rendered height is independent of
 // their content. Content-driven rows must be measured by LegendList: returning
 // a fixed size makes the list skip native measurement entirely.
-const TURN_FOLD_HEIGHT = 42;
+const TURN_FOLD_BOTTOM_MARGIN = 3.5;
+const TURN_FOLD_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT + TURN_FOLD_BOTTOM_MARGIN;
 const WORK_GROUP_TOGGLE_HEIGHT = THREAD_WORK_ROW_MIN_HEIGHT;
 
 export function resolveThreadFeedFixedItemSize(
