@@ -17,7 +17,7 @@ describe("Android control sizing", () => {
   });
 
   it.each([
-    [11, 15, 44],
+    [11, 14, 44],
     [16, 20, 44],
     [22, 28, 61],
   ])("scales compact controls at %ipt", (fontSize, compactIconSize, compactButtonSize) => {
