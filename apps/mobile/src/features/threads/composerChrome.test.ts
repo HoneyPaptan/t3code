@@ -8,14 +8,14 @@ import {
 } from "./composerChrome";
 
 describe("composer chrome", () => {
-  it("sums the resting composer: dock, border, one line editor row with send, controls strip", () => {
-    expect(COMPOSER_COLLAPSED_CHROME).toBe(6 * 2 + 1 * 2 + 8 + 36 + 36 + 8);
-    expect(COMPOSER_COLLAPSED_CHROME).toBe(102);
+  it("sums the resting composer: dock, pill border and padding, one line editor row, visible model strip", () => {
+    expect(COMPOSER_COLLAPSED_CHROME).toBe(6 * 2 + 1 * 2 + 8 * 2 + 32 + (20 + 36 + 4 + 1 - 16));
+    expect(COMPOSER_COLLAPSED_CHROME).toBe(107);
   });
 
-  it("sums the open composer: dock, border, body padding, editor, footer row and padding", () => {
-    expect(COMPOSER_EXPANDED_CHROME).toBe(8 * 2 + 1 * 2 + 16 + 72 + 8 + 36 + 16);
-    expect(COMPOSER_EXPANDED_CHROME).toBe(166);
+  it("sums the open composer: dock, pill border and padding, tall editor, visible model strip", () => {
+    expect(COMPOSER_EXPANDED_CHROME).toBe(8 * 2 + 1 * 2 + 14 + 72 + 8 + (20 + 36 + 4 + 1 - 16));
+    expect(COMPOSER_EXPANDED_CHROME).toBe(157);
   });
 
   it("keeps the resting composer shorter than the open one", () => {
