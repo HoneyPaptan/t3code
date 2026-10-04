@@ -72,7 +72,7 @@ function BannerAction(props: { readonly label: string; readonly onPress: () => v
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={props.label}
-      className="rounded-sm border border-border bg-background px-3 py-1.5"
+      className="rounded-sm border border-border bg-screen px-3 py-1.5"
       onPress={props.onPress}
     >
       <Text className="font-t3-medium text-xs">{props.label}</Text>
