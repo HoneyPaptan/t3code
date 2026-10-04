@@ -22,11 +22,6 @@ const COMPOSER_TOOLBAR_GAP = 8;
 const COMPOSER_TOOLBAR_FADE_WIDTH = 18;
 const COMPOSER_TOOLBAR_SCROLL_EPSILON = 4;
 
-/**
- * Quiet inline composer control used inside cards and their context rows.
- * Unlike ComposerToolbarButton, this does not draw another pill inside the
- * composer surface, so model and workspace controls read as part of the card.
- */
 export function ComposerInlineControl(props: {
   readonly accessibilityHint?: string;
   readonly accessibilityLabel?: string;
@@ -51,7 +46,7 @@ export function ComposerInlineControl(props: {
       accessibilityState={
         props.static ? undefined : { disabled: props.disabled, selected: props.selected }
       }
-      className="min-h-9 flex-row items-center gap-1.5 rounded-md px-2 active:bg-subtle"
+      className="min-h-9 flex-row items-center gap-1.5 rounded-md px-2.5 active:bg-subtle"
       disabled={props.disabled || props.static}
       hitSlop={{ top: 4, bottom: 4 }}
       onPress={props.onPress}
@@ -77,7 +72,7 @@ export function ComposerInlineControl(props: {
       <Text
         className={cn(
           "shrink text-xs font-t3-medium",
-          props.emphasized || props.selected ? "text-foreground" : "text-foreground-muted/60",
+          props.emphasized || props.selected ? "text-foreground" : "text-foreground/60",
         )}
         numberOfLines={1}
       >
