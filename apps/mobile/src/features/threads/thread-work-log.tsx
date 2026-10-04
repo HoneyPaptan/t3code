@@ -505,10 +505,7 @@ export function ThreadWorkLog(props: ThreadWorkLogProps) {
     props.activities.every((row) => row.projectedItem.item.type === "reasoning")
   ) {
     return (
-      <ScrollView
-        nestedScrollEnabled
-        className="ml-7 max-h-96 border-l border-border-subtle py-1 pl-3"
-      >
+      <ScrollView nestedScrollEnabled className="ml-7 mt-1 max-h-96 pl-0.5">
         {props.activities.map((row) => (
           <View key={row.id}>{props.renderReasoning(row.workEntry.detail ?? "")}</View>
         ))}
@@ -1119,7 +1116,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
           exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
           layout={WORK_LOG_LAYOUT_TRANSITION}
-          className={reasoning ? "ml-7 border-l border-border-subtle py-1 pl-3" : "mt-1.5 gap-1.5"}
+          className={reasoning ? "ml-7 mt-1 pl-0.5" : "mt-1.5 gap-1.5"}
         >
           {row.workEntry.questionAnswer ? (
             <QuestionAnswerHistory
@@ -1313,7 +1310,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
           props.onToggle();
         }}
         onLongPress={props.onCopy}
-        className="rounded-lg bg-grouped-card px-2.5 py-2 active:bg-subtle"
+        className="rounded-md bg-grouped-card px-2.5 py-2 active:bg-subtle"
       >
         <View className="flex-row items-center gap-2">
           <View className="size-5 shrink-0 items-center justify-center">
@@ -1328,7 +1325,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
           <View className="min-w-0 flex-1 gap-0.5">
             <Text
               key={props.rowSizing.textSizeKey}
-              className="font-t3-medium text-xs text-foreground/70"
+              className="text-xs text-foreground/80"
               numberOfLines={1}
             >
               {summary.title}
@@ -1344,7 +1341,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
                   showIcon={false}
                 />
               ) : (
-                <Text className="min-w-0 flex-1 text-xs text-foreground-muted/60" numberOfLines={1}>
+                <Text className="min-w-0 flex-1 text-xs text-foreground-muted" numberOfLines={1}>
                   {summary.status}
                 </Text>
               )}
@@ -1359,13 +1356,13 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
             entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
             exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
             layout={WORK_LOG_LAYOUT_TRANSITION}
-            className="ml-8 mt-1.5 gap-1.5 border-l border-border-subtle pl-3"
+            className="ml-7 mt-1.5 gap-1.5"
           >
             {summary.members.map((member) => (
               <View key={member.title} className="gap-px">
                 <View className="flex-row items-center gap-1.5">
                   <SubagentStatusDot tone={member.tone} />
-                  <Text className="min-w-0 flex-1 text-xs text-foreground/70" numberOfLines={1}>
+                  <Text className="min-w-0 flex-1 text-xs text-foreground/80" numberOfLines={1}>
                     {member.title}
                   </Text>
                   <Text className="shrink-0 text-2xs text-foreground-muted/60">

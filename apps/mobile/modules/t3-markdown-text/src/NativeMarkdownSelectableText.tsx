@@ -171,7 +171,7 @@ function runStyle(run: NativeMarkdownTextRun, textStyle: NativeMarkdownTextStyle
             : isCodeBlock
               ? Math.max(16, textStyle.lineHeight - 2)
               : textStyle.lineHeight,
-    fontStyle: run.italic ? "italic" : "normal",
+    fontStyle: run.italic || textStyle.italic ? "italic" : "normal",
     fontWeight: isHeading || run.bold || isFile || isSkill ? "700" : "400",
     textDecorationLine,
     backgroundColor: isCodeBlock
