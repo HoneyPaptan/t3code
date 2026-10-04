@@ -40,10 +40,10 @@ function ContextField(props: { label: string; value: string | null | undefined; 
   if (!props.value) return null;
   return (
     <View className="gap-1">
-      <Text className="text-xs text-foreground-muted">{props.label}</Text>
+      <Text className="text-xs text-foreground-muted/60">{props.label}</Text>
       {props.code && (props.label === "HTML" || props.label === "Styles") ? (
         <View
-          className="overflow-hidden rounded-xl border border-border"
+          className="overflow-hidden rounded-xl border border-border-subtle"
           style={{ height: Math.min(260, Math.max(100, props.value.split("\n").length * 22 + 36)) }}
         >
           <SourceFileSurface
@@ -217,13 +217,13 @@ export function ComposerContextSheet(props: {
           <ContextSheetSize height={measuredHeight} />
           <View
             onLayout={(event) => setHeaderHeight(event.nativeEvent.layout.height)}
-            className="flex-row items-center justify-between gap-3 border-b border-border px-4 pb-2 pt-4"
+            className="flex-row items-center justify-between gap-3 border-b border-border-subtle px-4 pb-2 pt-4"
           >
             {terminal ? (
               <SymbolView name="terminal" size={20} tintColor={terminalTheme.palette[2]} />
             ) : null}
             <View className="min-w-0 flex-1">
-              <Text className="text-base font-t3-semibold text-foreground" numberOfLines={2}>
+              <Text className="text-base font-t3-medium text-foreground" numberOfLines={2}>
                 {terminal?.terminalLabel ?? props.label}
               </Text>
               {terminal ? (
@@ -236,9 +236,9 @@ export function ComposerContextSheet(props: {
               accessibilityRole="button"
               accessibilityLabel="Close context"
               onPress={props.onClose}
-              className="p-3"
+              className="min-h-11 justify-center px-3"
             >
-              <Text className="text-foreground">Done</Text>
+              <Text className="text-sm font-t3-medium text-primary-text">Done</Text>
             </Pressable>
           </View>
           <ScrollView
@@ -251,12 +251,12 @@ export function ComposerContextSheet(props: {
             }}
           >
             {!record ? (
-              <Text className="text-foreground">
+              <Text className="text-sm text-foreground-muted">
                 Context unavailable. The reference was copied without its payload. Copy it again
                 from the original message or remove it.
               </Text>
             ) : "payload" in record ? (
-              <Text className="text-foreground">
+              <Text className="text-sm text-foreground-muted">
                 This context type is not supported by this version of the app. Its payload will be
                 preserved when sent.
               </Text>
@@ -264,7 +264,7 @@ export function ComposerContextSheet(props: {
               <>
                 {record.kind === "terminal" ? (
                   <View
-                    className="overflow-hidden rounded-xl border border-border"
+                    className="overflow-hidden rounded-xl border border-border-subtle"
                     style={{ backgroundColor: terminalTheme.background }}
                   >
                     <ScrollView
@@ -362,9 +362,9 @@ export function ComposerContextSheet(props: {
                             threadId: record.threadId,
                           })
                         }
-                        className="rounded-lg bg-subtle p-3"
+                        className="min-h-11 justify-center rounded-lg bg-subtle px-3"
                       >
-                        <Text className="text-foreground">Open thread</Text>
+                        <Text className="text-sm text-foreground">Open thread</Text>
                       </Pressable>
                     ) : null}
                   </View>
@@ -382,9 +382,9 @@ export function ComposerContextSheet(props: {
                       <Pressable
                         accessibilityRole="button"
                         onPress={props.onOpenSkill}
-                        className="rounded-lg bg-subtle p-3"
+                        className="min-h-11 justify-center rounded-lg bg-subtle px-3"
                       >
-                        <Text className="text-foreground">View instructions</Text>
+                        <Text className="text-sm text-foreground">View instructions</Text>
                       </Pressable>
                     ) : null}
                   </View>
@@ -414,36 +414,36 @@ export function ComposerContextSheet(props: {
                     Alert.alert("Could not open pull request", "Try again when connected."),
                   );
                 }}
-                className="rounded-lg bg-subtle p-3"
+                className="min-h-11 justify-center rounded-lg bg-subtle px-3"
               >
-                <Text className="text-foreground">Open pull request</Text>
+                <Text className="text-sm text-foreground">Open pull request</Text>
               </Pressable>
             ) : null}
             {props.onOpenAttachment ? (
               <Pressable
                 accessibilityRole="button"
                 onPress={props.onOpenAttachment}
-                className="rounded-lg bg-subtle p-3"
+                className="min-h-11 justify-center rounded-lg bg-subtle px-3"
               >
-                <Text className="text-foreground">Open attachment</Text>
+                <Text className="text-sm text-foreground">Open attachment</Text>
               </Pressable>
             ) : null}
             {props.onOpenPullRequest ? (
               <Pressable
                 accessibilityRole="button"
                 onPress={props.onOpenPullRequest}
-                className="rounded-lg bg-subtle p-3"
+                className="min-h-11 justify-center rounded-lg bg-subtle px-3"
               >
-                <Text className="text-foreground">Open pull request</Text>
+                <Text className="text-sm text-foreground">Open pull request</Text>
               </Pressable>
             ) : null}
             {props.onRemove ? (
               <Pressable
                 accessibilityRole="button"
                 onPress={props.onRemove}
-                className="rounded-lg bg-subtle p-3"
+                className="min-h-11 justify-center rounded-lg bg-subtle px-3"
               >
-                <Text className="text-foreground">Remove from draft</Text>
+                <Text className="text-sm text-foreground">Remove from draft</Text>
               </Pressable>
             ) : null}
           </ScrollView>

@@ -163,7 +163,7 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
         >
           <View className="flex-row items-center justify-between py-2">
             <Pressable
-              className="bg-subtle h-12 w-12 items-center justify-center rounded-lg"
+              className="h-11 w-11 items-center justify-center rounded-lg bg-subtle"
               onPress={dismissComposer}
             >
               <SymbolView
@@ -174,14 +174,14 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
               />
             </Pressable>
 
-            <Text className="text-lg font-t3-bold text-foreground">Add Comment</Text>
+            <Text className="text-base font-t3-medium text-foreground">Add Comment</Text>
 
-            <View className="h-12 w-12" />
+            <View className="h-11 w-11" />
           </View>
 
           {!target ? (
-            <View className="rounded-xl border border-border bg-card px-4 py-5">
-              <Text className="text-base font-t3-bold text-foreground">No selection</Text>
+            <View className="rounded-xl border border-border-subtle bg-grouped-card px-4 py-5">
+              <Text className="text-base font-t3-medium text-foreground">No selection</Text>
               <Text className="mt-1 text-sm leading-normal text-foreground-muted/60">
                 Select a diff line or range first.
               </Text>
@@ -189,7 +189,7 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
           ) : (
             <View className="min-h-0 flex-1 gap-4">
               <View className="gap-1 px-1">
-                <Text className="text-2xs font-t3-bold uppercase text-foreground-muted/70">
+                <Text className="text-2xs font-t3-medium uppercase text-foreground-muted/50">
                   {selectionLabel}
                 </Text>
                 <Text
@@ -201,7 +201,7 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
                 </Text>
               </View>
 
-              <View className="overflow-hidden rounded-xl border border-border bg-card">
+              <View className="overflow-hidden rounded-xl border border-border-subtle bg-grouped-card">
                 <ScrollView
                   horizontal
                   bounces={false}
@@ -250,8 +250,8 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
               </View>
 
               <View className="min-h-0 flex-1 gap-2">
-                <Text className="text-sm font-t3-bold text-foreground">Comment</Text>
-                <View className="min-h-[132px] flex-1 overflow-hidden rounded-xl border border-border bg-card">
+                <Text className="text-sm font-t3-medium text-foreground">Comment</Text>
+                <View className="min-h-[132px] flex-1 overflow-hidden rounded-xl border border-border-subtle bg-grouped-card">
                   <View className="min-h-0 flex-1 px-4 pt-3.5">
                     <TextInputWrapper onPaste={handleNativePaste} style={{ flex: 1, minHeight: 0 }}>
                       <TextInput
@@ -312,7 +312,7 @@ export function ReviewCommentComposerSheet(props: ReviewCommentComposerSheetProp
           offset={{ closed: 0, opened: 0 }}
         >
           <View
-            className="flex-row items-center gap-3 border-t border-border bg-sheet px-5 pt-2"
+            className="flex-row items-center gap-3 border-t border-border-subtle bg-sheet px-5 pt-2"
             style={{ paddingBottom: Math.max(insets.bottom, 10) }}
           >
             <ControlPill

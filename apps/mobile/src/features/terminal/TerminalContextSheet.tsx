@@ -63,13 +63,19 @@ export function TerminalContextSheet(props: {
             : undefined
         }
       >
-        <View className="flex-row items-center justify-between p-4">
-          <Text className="text-lg text-foreground">Visible terminal output</Text>
-          <Pressable accessibilityRole="button" onPress={props.onClose} className="p-3">
-            <Text className="text-foreground">Cancel</Text>
+        <View className="flex-row items-center justify-between gap-3 border-b border-border-subtle px-4 py-2">
+          <Text className="flex-1 text-base font-t3-medium text-foreground">
+            Visible terminal output
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={props.onClose}
+            className="min-h-11 justify-center px-3"
+          >
+            <Text className="text-sm font-t3-medium text-foreground-muted">Cancel</Text>
           </Pressable>
         </View>
-        <Text className="px-4 pb-3 text-foreground-muted">
+        <Text className="px-4 pb-3 pt-3 text-sm text-foreground-muted">
           Tap the first and last line to select a range.
         </Text>
         <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
@@ -100,7 +106,7 @@ export function TerminalContextSheet(props: {
           ))}
         </ScrollView>
         {tooLarge ? (
-          <Text className="px-4 text-foreground-muted">
+          <Text className="px-4 text-sm text-foreground-muted">
             Select fewer lines to fit the context limit.
           </Text>
         ) : null}
@@ -108,9 +114,11 @@ export function TerminalContextSheet(props: {
           accessibilityRole="button"
           disabled={!selectedText.trim() || tooLarge}
           onPress={attach}
-          className="m-4 mb-10 rounded-lg bg-subtle p-3"
+          className="m-4 mb-10 min-h-11 justify-center rounded-lg bg-subtle px-3"
         >
-          <Text className="text-center text-foreground">Attach selected output</Text>
+          <Text className="text-center text-sm font-t3-medium text-primary-text">
+            Attach selected output
+          </Text>
         </Pressable>
       </View>
     </Modal>
