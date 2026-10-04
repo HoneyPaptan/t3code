@@ -287,7 +287,7 @@ function VoiceActionButton(props: {
       accessibilityRole="button"
       accessibilityState={{ busy: props.loading, disabled: props.disabled }}
       className={cn(
-        "size-9 shrink-0 items-center justify-center rounded-full",
+        "size-8 shrink-0 items-center justify-center rounded-full",
         variant === "primary" ? "active:opacity-70" : "active:bg-subtle",
       )}
       disabled={props.disabled}
@@ -297,7 +297,7 @@ function VoiceActionButton(props: {
     >
       <View
         className={cn(
-          "size-9 items-center justify-center rounded-full",
+          "size-8 items-center justify-center rounded-full",
           variant === "primary" && "bg-subtle",
         )}
       >

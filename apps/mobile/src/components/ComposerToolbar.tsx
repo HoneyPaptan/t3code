@@ -279,7 +279,7 @@ export function ComposerActionButton(props: {
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
       className={cn(
-        "size-9 shrink-0 items-center justify-center rounded-full active:opacity-70",
+        "size-8 shrink-0 items-center justify-center rounded-full active:opacity-70",
         isDanger ? "bg-danger" : isQuiet ? "bg-subtle" : "bg-primary",
       )}
       disabled={props.disabled}
