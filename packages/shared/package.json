@@ -23,6 +23,10 @@
       "types": "./src/themePalettes.ts",
       "import": "./src/themePalettes.ts"
     },
+    "./drayThemes": {
+      "types": "./src/drayThemes.ts",
+      "import": "./src/drayThemes.ts"
+    },
     "./themePreview": {
       "types": "./src/themePreview.ts",
       "import": "./src/themePreview.ts"
