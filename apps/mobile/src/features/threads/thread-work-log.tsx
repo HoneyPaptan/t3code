@@ -108,8 +108,8 @@ const WORK_ICON_SIZE = 16;
 const WORK_ICON_COLOR_CLASS = "accent-foreground-muted/50";
 const REASONING_ICON_SIZE = 14;
 const REASONING_ICON_COLOR_CLASS = "accent-foreground-muted/50";
-const DISCLOSURE_CHEVRON_SIZE = 14;
-const DISCLOSURE_CHEVRON_COLOR_CLASS = "accent-foreground-muted/50";
+const DISCLOSURE_CHEVRON_SIZE = 12;
+const DISCLOSURE_CHEVRON_COLOR_CLASS = "accent-foreground-muted";
 type WorkContentIcon = AppSymbolName | "browser" | "device" | "t3-code" | "pull-request";
 
 function WorkLogIcon(props: {
@@ -158,6 +158,7 @@ export function ThreadDisclosureChevron(props: {
   }, [expandedAngle, props.expanded, rotation]);
 
   const rotationStyle = useAnimatedStyle(() => ({
+    opacity: rotation.value / expandedAngle,
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
 
@@ -1118,7 +1119,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
           entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
           exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
           layout={WORK_LOG_LAYOUT_TRANSITION}
-          className={reasoning ? "ml-7 border-l border-border-subtle py-1 pl-3" : "ml-7 py-1"}
+          className={reasoning ? "ml-7 border-l border-border-subtle py-1 pl-3" : "mt-1.5 gap-1.5"}
         >
           {row.workEntry.questionAnswer ? (
             <QuestionAnswerHistory
@@ -1127,9 +1128,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             />
           ) : null}
           {viewedImagePath ? (
-            <View className="pb-1.5">
-              {props.renderImage({ href: viewedImagePath, alt: null, title: null })}
-            </View>
+            <View>{props.renderImage({ href: viewedImagePath, alt: null, title: null })}</View>
           ) : null}
           {outputImages.map((resource) => (
             <View key={resource.index} className="pb-1.5">
@@ -1141,17 +1140,28 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
               />
             </View>
           ))}
-          <ScrollView
-            nestedScrollEnabled
-            directionalLockEnabled
-            showsVerticalScrollIndicator
-            className="max-h-60"
-            contentContainerStyle={{ paddingRight: 8 }}
-          >
-            {reasoning ? (
-              props.renderReasoning(reasoning.text)
-            ) : call || fullDetail || fetchedOutput || failedExitCode !== null ? (
-              <View className="rounded-lg bg-grouped-card px-3 py-2">
+          {reasoning ? (
+            <ScrollView
+              nestedScrollEnabled
+              directionalLockEnabled
+              showsVerticalScrollIndicator
+              className="max-h-60"
+              contentContainerStyle={{ paddingRight: 8 }}
+            >
+              {props.renderReasoning(reasoning.text)}
+            </ScrollView>
+          ) : call || fullDetail || fetchedOutput || failedExitCode !== null ? (
+            <>
+              <Text className="text-xs text-foreground-muted/70">
+                {row.status === "failure" ? "Error" : "Output"}
+              </Text>
+              <ScrollView
+                nestedScrollEnabled
+                directionalLockEnabled
+                showsVerticalScrollIndicator
+                className="max-h-40 overflow-hidden rounded-md bg-grouped-card"
+                contentContainerClassName="px-2.5 py-2"
+              >
                 {call ? (
                   [
                     call.command,
@@ -1163,13 +1173,19 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                       <Text
                         key={`${index}:${line}`}
                         selectable
-                        className="font-mono text-xs leading-normal text-foreground"
+                        className="font-mono text-tool text-foreground"
                       >
                         {line}
                       </Text>
                     ))
                 ) : fullDetail ? (
-                  <Text selectable className="font-mono text-xs leading-normal text-foreground-muted">
+                  <Text
+                    selectable
+                    className={cn(
+                      "font-mono text-tool",
+                      row.status === "failure" ? "text-danger-foreground" : "text-foreground-muted",
+                    )}
+                  >
                     {fullDetail}
                   </Text>
                 ) : null}
@@ -1177,7 +1193,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                   <Text
                     selectable
                     className={cn(
-                      "font-mono text-2xs leading-normal text-foreground-muted",
+                      "font-mono text-tool text-foreground-muted",
                       (!call || call.command || call.args || call.argsText) && "mt-1.5",
                     )}
                   >
@@ -1185,13 +1201,13 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
                   </Text>
                 ) : null}
                 {failedExitCode !== null ? (
-                  <Text className="mt-1.5 font-mono text-2xs leading-normal text-danger-foreground">
+                  <Text className="mt-1.5 font-mono text-tool text-danger-foreground">
                     exit {failedExitCode}
                   </Text>
                 ) : null}
-              </View>
-            ) : null}
-          </ScrollView>
+              </ScrollView>
+            </>
+          ) : null}
         </Animated.View>
       ) : null}
     </Animated.View>
