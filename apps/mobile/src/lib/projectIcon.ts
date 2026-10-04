@@ -79,3 +79,36 @@ const PROJECT_ICON_COLOR_CLASSES: Record<
 export function projectIconColorClassNames(color: ProjectIconColor) {
   return PROJECT_ICON_COLOR_CLASSES[color];
 }
+
+const PROJECT_CHIP_PALETTE: ReadonlyArray<ProjectIconColor> = [
+  "blue",
+  "emerald",
+  "amber",
+  "violet",
+  "rose",
+  "sky",
+  "teal",
+  "orange",
+  "indigo",
+  "pink",
+];
+
+function hashProjectTitle(projectTitle: string): number {
+  return Array.from(projectTitle).reduce(
+    (hash, character) => (hash * 31 + (character.codePointAt(0) ?? 0)) >>> 0,
+    0,
+  );
+}
+
+export function resolveProjectChipGlyph(
+  projectIcon: ProjectIconOverride | null | undefined,
+  projectTitle: string,
+): ProjectIconGlyph {
+  return (
+    resolveProjectIconGlyph(projectIcon, projectTitle) ?? {
+      kind: "monogram",
+      text: projectMonogram(projectTitle),
+      color: PROJECT_CHIP_PALETTE[hashProjectTitle(projectTitle) % PROJECT_CHIP_PALETTE.length]!,
+    }
+  );
+}
