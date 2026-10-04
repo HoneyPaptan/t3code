@@ -1,10 +1,12 @@
 import type {
   ModelCapabilities,
+  ModelSelection,
   ProviderOptionDescriptor,
   ProviderOptionSelection,
 } from "@t3tools/contracts";
 import {
   buildProviderOptionSelectionsFromDescriptors,
+  getProviderOptionCurrentLabel,
   getProviderOptionDescriptors,
 } from "@t3tools/shared/model";
 
@@ -19,6 +21,21 @@ export function resolveProviderOptionDescriptors(input: {
     caps: input.capabilities,
     selections: input.selections,
   });
+}
+
+const REASONING_EFFORT_OPTION_IDS = ["reasoningEffort", "effort", "reasoning", "variant"] as const;
+
+export function reasoningEffortLabel(
+  descriptors: ReadonlyArray<ProviderOptionDescriptor>,
+  selection: ModelSelection | null,
+): string | null {
+  for (const id of REASONING_EFFORT_OPTION_IDS) {
+    const descriptor = descriptors.find((candidate) => candidate.id === id);
+    if (descriptor?.type !== "select") continue;
+    const label = getProviderOptionCurrentLabel(descriptor, selection);
+    if (label) return label;
+  }
+  return null;
 }
 
 /**

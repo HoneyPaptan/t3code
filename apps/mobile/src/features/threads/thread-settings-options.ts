@@ -36,6 +36,10 @@ export const RUNTIME_MODE_CHOICES: ReadonlyArray<{
   },
 ];
 
+export function runtimeModeLabel(mode: RuntimeMode): string {
+  return RUNTIME_MODE_CHOICES.find((choice) => choice.mode === mode)?.label ?? mode;
+}
+
 export function runtimeModeChoicesForSupportedModes(
   supportedRuntimeModes: ReadonlyArray<RuntimeMode> | undefined,
 ) {
