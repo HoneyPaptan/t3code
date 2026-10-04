@@ -14,6 +14,14 @@ import {
 import { SelectButton } from "../ui/select";
 
 const DEFAULT_FONT_VALUE = "__default__";
+const NO_FAMILIES: ReadonlyArray<string> = [];
+
+function mergeFontFamilies(
+  local: ReadonlyArray<string>,
+  server: ReadonlyArray<string>,
+): ReadonlyArray<string> {
+  return [...new Set([...local, ...server])].sort((left, right) => left.localeCompare(right));
+}
 
 function supportsFontEnumeration(): boolean {
   return (
@@ -108,6 +116,7 @@ export function FontFamilyPicker({
   selectedFamily,
   requireMonospace = false,
   initialOpen = false,
+  serverFamilies = NO_FAMILIES,
   onSelect,
 }: {
   ariaLabel: string;
@@ -118,6 +127,7 @@ export function FontFamilyPicker({
   requireMonospace?: boolean;
   /** Open the popup on mount — set when the control upgrades under focus. */
   initialOpen?: boolean;
+  serverFamilies?: ReadonlyArray<string>;
   onSelect: (family: string) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -139,10 +149,15 @@ export function FontFamilyPicker({
     if (nextOpen) setQuery("");
   };
 
+  const localFamilies = enumeration.status === "granted" ? enumeration.families : NO_FAMILIES;
   const families = useMemo(() => {
-    if (enumeration.status !== "granted") return [];
-    return requireMonospace ? enumeration.families.filter(isMonospaceFamily) : enumeration.families;
-  }, [enumeration, requireMonospace]);
+    const merged = mergeFontFamilies(localFamilies, serverFamilies);
+    return requireMonospace ? merged.filter(isMonospaceFamily) : merged;
+  }, [localFamilies, requireMonospace, serverFamilies]);
+  const serverOnlyFamilies = useMemo(
+    () => new Set(serverFamilies.filter((family) => !localFamilies.includes(family))),
+    [localFamilies, serverFamilies],
+  );
 
   const items = useMemo(() => {
     const trimmedQuery = query.trim().toLowerCase();
@@ -174,6 +189,9 @@ export function FontFamilyPicker({
           </span>
           <span className="flex shrink-0 items-center gap-1.5">
             {isDefault ? <span className="text-3xs text-muted-foreground/60">default</span> : null}
+            {serverOnlyFamilies.has(item) ? (
+              <span className="text-3xs text-muted-foreground/60">server</span>
+            ) : null}
             {item === selectedValue ? (
               <CheckIcon className="size-3.5 text-muted-foreground" />
             ) : null}

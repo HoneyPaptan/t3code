@@ -125,6 +125,7 @@ import {
 } from "../../appearanceFonts";
 import { CodeFontPreview, PromptFontPreview, TerminalFontPreview } from "./SettingsFontPreviews";
 import { discoverInstalledFonts, FontFamilyPicker, useFontEnumeration } from "./FontFamilyPicker";
+import { useServerFontFamilyNames } from "../../state/fonts";
 import {
   NumberField,
   NumberFieldDecrement,
@@ -1917,19 +1918,21 @@ function FontFamilySettingsRow({
       <SettingResetButton label={title.toLowerCase()} onClick={resetToDefault} />
     ) : null;
   const fontEnumeration = useFontEnumeration();
+  const serverFamilies = useServerFontFamilyNames();
   // Everyone starts on the plain input; focusing it is the user gesture that
   // runs font discovery. Where the engine can enumerate, the control then
   // upgrades to the picker - popped open when the swap happens under focus,
   // so the interaction continues without a second click.
   const inputFocusedRef = useRef(false);
   const familyControl =
-    fontEnumeration.status === "granted" ? (
+    fontEnumeration.status === "granted" || serverFamilies.length > 0 ? (
       <FontFamilyPicker
         ariaLabel={`${title} family`}
         defaultFamily={defaultFamily}
         selectedFamily={trimmed}
         requireMonospace={requireMonospace}
         initialOpen={inputFocusedRef.current}
+        serverFamilies={serverFamilies}
         onSelect={onValueChange}
       />
     ) : (
