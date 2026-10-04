@@ -82,7 +82,7 @@ export function ServerFontSheet(props: {
       onDismiss={() => setQuery("")}
     >
       <View
-        className="flex-1 bg-background"
+        className="flex-1 bg-screen"
         style={{ paddingTop: Platform.OS === "ios" ? 0 : insets.top }}
       >
         <View className="flex-row items-center justify-between gap-3 px-5 pb-2 pt-4">
