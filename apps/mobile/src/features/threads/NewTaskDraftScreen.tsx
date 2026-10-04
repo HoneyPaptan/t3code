@@ -68,6 +68,7 @@ import { SymbolView } from "../../components/AppSymbol";
 import { AppText as Text } from "../../components/AppText";
 import { hasProviderUsageLimits, isUsageLimitsCommand } from "@t3tools/shared/usageLimits";
 import { COMPOSER_LAYOUT_TRANSITION, ComposerSurface } from "./ThreadComposer";
+import { shouldShowComposerCommandPopover } from "./composerPathMenu";
 import { ComposerCommandPopover } from "./ComposerCommandPopover";
 import { useComposerCommandMenu } from "./use-composer-command-menu";
 import {
@@ -1632,12 +1633,16 @@ export function NewTaskDraftScreen(props: {
     >
       {!voiceInput.isBusy &&
       composerMenu.trigger &&
-      (composerMenu.items.length > 0 || composerMenu.trigger.kind === "pull-request") ? (
+      shouldShowComposerCommandPopover({
+        triggerKind: composerMenu.trigger.kind,
+        itemCount: composerMenu.items.length,
+      }) ? (
         <View className="mb-2">
           <ComposerCommandPopover
             items={composerMenu.items}
             triggerKind={composerMenu.trigger.kind}
             isLoading={composerMenu.isLoading}
+            hasProject={composerMenu.hasProject}
             error={composerMenu.error}
             onSelect={composerMenu.onSelect}
           />

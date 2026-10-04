@@ -10,13 +10,15 @@ import type {
 } from "@t3tools/contracts";
 import type { ComposerTriggerKind } from "@t3tools/shared/composerTrigger";
 import { memo } from "react";
-import { Pressable, ScrollView, StyleSheet, View, type ViewStyle } from "react-native";
+import { Pressable, ScrollView, View, useWindowDimensions, type ViewStyle } from "react-native";
 
 import { SymbolView, type AppSymbolName } from "../../components/AppSymbol";
 import { AppText as Text } from "../../components/AppText";
 import { GlassSurface } from "../../components/GlassSurface";
 import { PierreEntryIcon } from "../../components/PierreEntryIcon";
 import { MOBILE_RADIUS } from "../../lib/radius";
+import { composerCommandEmptyText, composerPopoverMaxHeight } from "./composerPathMenu";
+
 export type ComposerCommandItem =
   | {
       readonly id: string;
@@ -66,13 +68,14 @@ interface ComposerCommandPopoverProps {
   readonly items: ReadonlyArray<ComposerCommandItem>;
   readonly triggerKind: ComposerTriggerKind | null;
   readonly isLoading: boolean;
+  readonly hasProject: boolean;
   readonly error?: string | null;
   readonly onSelect: (item: ComposerCommandItem) => void;
 }
 
 function PopoverSurface(props: { readonly children: React.ReactNode; readonly style?: ViewStyle }) {
   const baseStyle: ViewStyle = {
-    borderRadius: MOBILE_RADIUS.lg,
+    borderRadius: MOBILE_RADIUS.xl,
     overflow: "hidden",
     ...props.style,
   };
@@ -81,6 +84,7 @@ function PopoverSurface(props: { readonly children: React.ReactNode; readonly st
     <GlassSurface
       glassEffectStyle="clear"
       tintColorClassName="accent-glass-surface"
+      fallbackClassName="border-border-subtle"
       style={baseStyle}
     >
       {props.children}
@@ -128,28 +132,9 @@ function groupLabel(triggerKind: ComposerTriggerKind | null): string | null {
   }
 }
 
-function emptyText(triggerKind: ComposerTriggerKind | null, isLoading: boolean): string {
-  if (isLoading) {
-    return triggerKind === "path" ? "Searching files…" : "Loading…";
-  }
-  switch (triggerKind) {
-    case "pull-request":
-      return "No matching pull requests.";
-    case "path":
-      return "No matching files or folders.";
-    case "skill":
-      return "No skills found.";
-    case "slash-command":
-      return "No matching commands.";
-    default:
-      return "No results.";
-  }
-}
-
 const CommandRow = memo(function CommandRow(props: {
   readonly item: ComposerCommandItem;
   readonly onPress: () => void;
-  readonly isLast: boolean;
   readonly isSlashSkill: boolean;
 }) {
   const iconName = itemIcon(props.item);
@@ -158,8 +143,7 @@ const CommandRow = memo(function CommandRow(props: {
     <Pressable
       accessibilityRole="button"
       onPress={props.onPress}
-      className="flex-row items-center gap-2 border-border px-3 py-2 active:opacity-60"
-      style={{ borderBottomWidth: props.isLast ? 0 : StyleSheet.hairlineWidth }}
+      className="min-h-11 flex-row items-center gap-2 rounded-md px-2.5 active:bg-subtle"
     >
       {props.item.type === "path" ? (
         <PierreEntryIcon path={props.item.path} kind={props.item.kind} size={16} />
@@ -171,7 +155,7 @@ const CommandRow = memo(function CommandRow(props: {
           type="monochrome"
         />
       ) : null}
-      <Text className="shrink-0 text-[13.5px] font-t3-medium text-foreground" numberOfLines={1}>
+      <Text className="shrink-0 text-sm font-t3-medium text-foreground" numberOfLines={1}>
         {props.isSlashSkill && props.item.type === "skill" ? (
           <>
             <Text className="text-foreground-muted">skill:</Text>
@@ -182,7 +166,7 @@ const CommandRow = memo(function CommandRow(props: {
         )}
       </Text>
       {props.item.description ? (
-        <Text className="min-w-0 flex-1 text-xs text-foreground-muted" numberOfLines={1}>
+        <Text className="min-w-0 flex-1 text-xs text-foreground-muted/60" numberOfLines={1}>
           {props.item.description}
         </Text>
       ) : null}
@@ -194,6 +178,7 @@ export const ComposerCommandPopover = memo(function ComposerCommandPopover(
   props: ComposerCommandPopoverProps,
 ) {
   const label = groupLabel(props.triggerKind);
+  const { height: windowHeight } = useWindowDimensions();
 
   return (
     <PopoverSurface>
@@ -204,24 +189,31 @@ export const ComposerCommandPopover = memo(function ComposerCommandPopover(
       ) : null}
       {props.items.length > 0 ? (
         <ScrollView
-          className="max-h-[180px]"
+          className="px-1.5 pb-1.5"
+          keyboardDismissMode="none"
           keyboardShouldPersistTaps="always"
+          nestedScrollEnabled
           showsVerticalScrollIndicator={false}
+          style={{ maxHeight: composerPopoverMaxHeight(windowHeight) }}
         >
-          {props.items.map((item, index) => (
+          {props.items.map((item) => (
             <CommandRow
               key={item.id}
               item={item}
               onPress={() => props.onSelect(item)}
-              isLast={index === props.items.length - 1}
               isSlashSkill={props.triggerKind === "slash-command" && item.type === "skill"}
             />
           ))}
         </ScrollView>
       ) : (
-        <View className="px-3.5 py-2.5">
+        <View className="min-h-11 justify-center px-3.5 pb-1.5">
           <Text className="text-xs text-foreground-muted/60">
-            {props.error ?? emptyText(props.triggerKind, props.isLoading)}
+            {props.error ??
+              composerCommandEmptyText({
+                triggerKind: props.triggerKind,
+                isLoading: props.isLoading,
+                hasProject: props.hasProject,
+              })}
           </Text>
         </View>
       )}

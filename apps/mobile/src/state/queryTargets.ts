@@ -12,6 +12,23 @@ export function normalizeComposerPathSearchQuery(query: string | null): string {
   return query?.trim() ?? "";
 }
 
+export function buildComposerPathSearchTarget(
+  target: {
+    readonly environmentId: EnvironmentId | null;
+    readonly cwd: string | null;
+    readonly query: string | null;
+  },
+  limit: number,
+) {
+  if (target.environmentId === null || target.cwd === null || target.query === null) {
+    return null;
+  }
+  return {
+    environmentId: target.environmentId,
+    input: { cwd: target.cwd, query: target.query, limit },
+  } as const;
+}
+
 export function buildCheckpointDiffTargets(target: CheckpointDiffTarget) {
   if (
     target.environmentId === null ||
