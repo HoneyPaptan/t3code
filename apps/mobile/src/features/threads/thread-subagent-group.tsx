@@ -43,7 +43,7 @@ function SubagentElapsed({ agents }: { readonly agents: ReadonlyArray<AgentTimin
   }, [appActive, focused, live]);
   const elapsed = subagentCardElapsed(agents, nowMs);
   return elapsed ? (
-    <Text className="shrink-0 text-xs tabular-nums text-foreground-muted">{elapsed}</Text>
+    <Text className="shrink-0 text-xs tabular-nums text-foreground-muted/60">{elapsed}</Text>
   ) : null;
 }
 
@@ -143,7 +143,7 @@ export function ThreadSubagentGroup(props: {
         </Pressable>
       ) : null}
       {!grouped || expanded ? (
-        <View className="mb-1 gap-px rounded-xl bg-grouped-card p-1">
+        <View className="mb-1 gap-px rounded-lg bg-grouped-card p-1">
           {agents.map((agent) => {
             const threadId = agent.childThreadId;
             return (

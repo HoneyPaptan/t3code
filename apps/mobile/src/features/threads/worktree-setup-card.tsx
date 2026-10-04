@@ -64,7 +64,7 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
 
   return (
     <View accessibilityLabel="Worktree setup" className="py-1">
-      <View className="min-h-11 flex-row items-center gap-2 border-b border-border px-1">
+      <View className="min-h-11 flex-row items-center gap-2 border-b border-border-subtle px-1">
         <HeaderLabel
           label={label}
           active={(running || working) && !detailsOpen}
@@ -92,7 +92,7 @@ export function WorktreeSetupCard(props: WorktreeSetupCardProps) {
           <View
             className={
               backgroundSetup
-                ? "min-w-0 flex-row items-center gap-1 rounded-sm border border-border px-2 py-1"
+                ? "min-w-0 flex-row items-center gap-1 rounded-sm border border-border-subtle px-2 py-1"
                 : "flex-row items-center gap-1"
             }
           >
@@ -145,7 +145,7 @@ export function WorktreeWorkingHeader({ startedAt }: { startedAt: string }) {
   const now = useSetupClock(true);
   return (
     <View className="py-1">
-      <View className="min-h-11 flex-row items-center border-b border-border px-1">
+      <View className="min-h-11 flex-row items-center border-b border-border-subtle px-1">
         <HeaderLabel label={`Working for ${elapsed(startedAt, null, now) ?? "0s"}`} active />
       </View>
     </View>
@@ -233,7 +233,7 @@ function SetupDetailsSheet({
           </Text>
         ) : null}
         {canCancel ? (
-          <View className="mt-3 flex-row items-center justify-end gap-4 border-t border-border pt-1">
+          <View className="mt-3 flex-row items-center justify-end gap-4 border-t border-border-subtle pt-1">
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Cancel worktree setup"
@@ -357,7 +357,7 @@ function OutputTail({ lines, failed }: { lines: ReadonlyArray<string>; failed: b
       className={
         failed
           ? "mb-2 ml-8 rounded-md border border-danger-border bg-danger px-3 py-2"
-          : "mb-2 ml-8 rounded-md border border-border bg-card-alt px-3 py-2"
+          : "mb-2 ml-8 rounded-md border border-border-subtle bg-grouped-card px-3 py-2"
       }
     >
       {OUTPUT_TAIL_SLOTS.map((slot) => (
