@@ -80,6 +80,7 @@ interface HomeScreenProps {
   readonly searchQuery: string;
   readonly selectedEnvironmentId: EnvironmentId | null;
   readonly selectedProjectKey: string | null;
+  readonly selectedThreadKey?: string | null;
   readonly projectSortOrder: HomeProjectSortOrder;
   readonly projectGroupingMode: SidebarProjectGroupingMode;
   readonly onSearchQueryChange: (query: string) => void;
@@ -549,7 +550,7 @@ export function HomeScreen(props: HomeScreenProps) {
       now: new Date().toISOString(),
       snoozedShelfExpanded,
       settledShelfExpanded,
-      selectedThreadKey: null,
+      selectedThreadKey: props.selectedThreadKey ?? null,
     });
   }, [
     pendingOrder,
@@ -563,6 +564,7 @@ export function HomeScreen(props: HomeScreenProps) {
     snoozeEnvironmentIds,
     props.searchQuery,
     props.selectedEnvironmentId,
+    props.selectedThreadKey,
     props.threads,
     matchedThreadKeys,
     v2ScopedProjectGroup,
@@ -691,6 +693,7 @@ export function HomeScreen(props: HomeScreenProps) {
           hasQueuedMessages={item.hasQueuedMessages}
           snoozed={item.item.snoozed}
           pinned={item.item.pinned}
+          selected={props.selectedThreadKey === `${thread.environmentId}:${thread.id}`}
           snoozePresetMinute={item.snoozePresetMinute ?? ""}
           snoozeWakeLabelText={item.snoozeWakeLabelText}
           timeLabel={item.timeLabel}
@@ -784,6 +787,7 @@ export function HomeScreen(props: HomeScreenProps) {
       toggleSnoozedShelf,
       v2ProjectTitleByProjectKey,
       props.searchQuery,
+      props.selectedThreadKey,
     ],
   );
   const v2KeyExtractor = useCallback((item: ThreadListV2ListItem) => item.key, []);
@@ -799,11 +803,13 @@ export function HomeScreen(props: HomeScreenProps) {
       listEnvironments,
       savedConnectionsById: props.savedConnectionsById,
       searchQuery: props.searchQuery,
+      selectedThreadKey: props.selectedThreadKey,
       threadSearchMatchByKey,
     }),
     [
       projectByKey,
       props.searchQuery,
+      props.selectedThreadKey,
       props.savedConnectionsById,
       listEnvironments,
       threadSearchMatchByKey,
