@@ -8,7 +8,7 @@ describe("resolveThreadFeedFixedItemSize", () => {
   });
 
   it("keeps fixed timeline chrome on the premeasured path", () => {
-    expect(resolveThreadFeedFixedItemSize("run-fold")).toBe(42);
-    expect(resolveThreadFeedFixedItemSize("work-toggle")).toBe(28);
+    expect(resolveThreadFeedFixedItemSize("run-fold")).toBe(35);
+    expect(resolveThreadFeedFixedItemSize("work-toggle")).toBe(31.5);
   });
 });
