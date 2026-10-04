@@ -8,7 +8,12 @@ import {
   WorkLogIconSlot,
   WorkLogPressable,
 } from "./work-log-layout";
-import { resolveWorkRowLabelRole, shouldShowWorkRowFailureGlyph } from "./work-row-presentation";
+import {
+  LIVE_THINKING_ROW_PRESENTATION,
+  resolveWorkGroupHeaderPresentation,
+  resolveWorkRowLabelRole,
+  shouldShowWorkRowFailureGlyph,
+} from "./work-row-presentation";
 import { QuestionAnswerHistory } from "./QuestionAnswerHistory";
 import {
   getQuestionAnswerPreview,
@@ -1065,7 +1070,6 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             textClassName={WORK_LABEL_ROLE_STYLE[labelRole].text}
             idleTextClassName={WORK_LABEL_ROLE_STYLE[labelRole].color}
             label={displayText}
-            orbState={reasoning ? "composing" : undefined}
             showIcon
             themeAppearance={props.themeAppearance}
             toolIcon={toolIcon}
@@ -1252,12 +1256,6 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
   );
 });
 
-const WORKING_LABELS = ["Working", "Cooking", "Brewing", "Thinking"] as const;
-
-function pickWorkingLabel(): string {
-  return WORKING_LABELS[Math.floor(Math.random() * WORKING_LABELS.length)] ?? "Working";
-}
-
 export function ThreadWorkGroupToggle(props: {
   readonly environmentId: EnvironmentId;
   readonly rowSizing: ReturnType<typeof deriveThreadWorkLogSizing>;
@@ -1273,10 +1271,11 @@ export function ThreadWorkGroupToggle(props: {
   readonly shimmer: boolean;
   readonly onToggle: () => void;
 }) {
-  const [workingLabel] = useState(pickWorkingLabel);
-  const accessibilityLabel = props.hasFailure
-    ? `${props.summary}, tool call failed`
-    : props.summary;
+  const header = resolveWorkGroupHeaderPresentation({
+    live: props.shimmer,
+    summary: props.summary,
+    hasFailure: props.hasFailure,
+  });
   const icon =
     props.summaryToolIcon ??
     (props.toolSurface
@@ -1288,7 +1287,7 @@ export function ThreadWorkGroupToggle(props: {
       <WorkLogPressable
         accessibilityRole="button"
         accessibilityState={{ expanded: props.expanded }}
-        accessibilityLabel={accessibilityLabel}
+        accessibilityLabel={header.accessibilityLabel}
         accessibilityHint={`Double tap to ${props.expanded ? "hide" : "show"} ${props.hiddenCount} tool ${props.hiddenCount === 1 ? "call" : "calls"}.`}
         onPress={() => {
           void Haptics.selectionAsync();
@@ -1296,19 +1295,22 @@ export function ThreadWorkGroupToggle(props: {
         }}
         rowSizing={props.rowSizing}
       >
-        {props.shimmer ? (
-          <ShimmeringWorkContent
-            key={props.rowSizing.textSizeKey}
-            environmentId={props.environmentId}
-            icon={icon}
-            textClassName={WORK_LABEL_ROLE_STYLE.heading.text}
-            idleTextClassName={WORK_LABEL_ROLE_STYLE.heading.color}
-            label={workingLabel}
-            orbState="listening"
-            showIcon
-            themeAppearance={props.themeAppearance}
-            toolIcon={props.toolIcon}
-          />
+        {header.title !== null ? (
+          <>
+            {header.orbState ? <ThinkingOrb state={header.orbState} size={WORK_SLOT_SIZE} /> : null}
+            <ShimmeringWorkContent
+              key={props.rowSizing.textSizeKey}
+              className="flex-none shrink-0"
+              icon={icon}
+              textClassName={WORK_LABEL_ROLE_STYLE.heading.text}
+              idleTextClassName={WORK_LABEL_ROLE_STYLE.heading.color}
+              label={header.title}
+              showIcon={false}
+            />
+            <Text className="min-w-0 flex-1 text-chat text-foreground-muted/60" numberOfLines={1}>
+              {header.summary}
+            </Text>
+          </>
         ) : (
           <>
             <WorkLogIconSlot>
@@ -1446,7 +1448,7 @@ export function ThreadThinkingRow(props: {
   return (
     <View
       accessible
-      accessibilityLabel="Thinking"
+      accessibilityLabel={LIVE_THINKING_ROW_PRESENTATION.label}
       className="-mx-1 mb-[12px] min-h-9 flex-row items-center px-1.5 py-0"
       style={{ minHeight: props.rowSizing.estimatedRowHeight }}
     >
@@ -1455,9 +1457,8 @@ export function ThreadThinkingRow(props: {
         icon="brain"
         textClassName={WORK_LABEL_ROLE_STYLE.group.text}
         idleTextClassName={WORK_LABEL_ROLE_STYLE.group.color}
-        label="Thinking"
-        orbState="composing"
-        showIcon
+        label={LIVE_THINKING_ROW_PRESENTATION.label}
+        showIcon={LIVE_THINKING_ROW_PRESENTATION.showIcon}
       />
     </View>
   );
