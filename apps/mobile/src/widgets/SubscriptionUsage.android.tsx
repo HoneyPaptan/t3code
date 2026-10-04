@@ -1,11 +1,14 @@
 import {
+  Box,
   Button,
   Column,
-  getMaterialColors,
   LinearProgressIndicator,
+  Spacer,
   Text,
 } from "@expo/ui/jetpack-compose";
 import {
+  background,
+  cornerRadius,
   fillMaxSize,
   fillMaxWidth,
   height,
@@ -13,102 +16,135 @@ import {
   paddingAll,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { createWidget, type WidgetEnvironment } from "expo-widgets";
+import type { ReactNode } from "react";
 
-import type { SubscriptionUsageSnapshot as SubscriptionUsageProps } from "./subscriptionUsageSnapshot";
+import {
+  SUBSCRIPTION_USAGE_FALLBACK_PALETTES,
+  type SubscriptionUsageFallbackPalettes,
+} from "./subscriptionUsagePalette";
+import type { SubscriptionUsageSnapshot } from "./subscriptionUsageSnapshot";
+
+type SubscriptionUsageProps = SubscriptionUsageSnapshot & {
+  palettes?: SubscriptionUsageFallbackPalettes;
+};
 
 export function SubscriptionUsage(props: SubscriptionUsageProps, environment: WidgetEnvironment) {
   "widget";
-  // The widget runtime evaluates this function without the app's module scope.
-  // Android has no timeline, so freshness is decided on every render; the
-  // expiry alarm and each tap trigger one while the app is closed.
   const now = Date.now();
-  // The 4x3 default cell fits two quotas per provider with their reset text.
   const limit = 2;
-  const colors = getMaterialColors({
-    scheme: environment.colorScheme === "dark" ? "dark" : "light",
-  });
-  const muted = colors.onSurfaceVariant;
-  const providers = props.providers ?? [
-    { name: "Codex", detail: "Open T3 to connect", windows: [], expiresAt: 0, totalWindows: 0 },
-    { name: "Claude", detail: "Open T3 to connect", windows: [], expiresAt: 0, totalWindows: 0 },
-  ];
+  const palette =
+    props.palette ?? props.palettes?.[environment.colorScheme === "dark" ? "dark" : "light"];
+  if (!palette) {
+    return (
+      <Button modifiers={[fillMaxSize()]} onClick={() => {}}>
+        <Text>Open T3 to connect</Text>
+      </Button>
+    );
+  }
+  const apart = (key: string, start: ReactNode, end: ReactNode) => (
+    <Box key={key} modifiers={[fillMaxWidth()]}>
+      <Box contentAlignment="centerStart" modifiers={[fillMaxWidth()]}>
+        {start}
+      </Box>
+      <Box contentAlignment="centerEnd" modifiers={[fillMaxWidth()]}>
+        {end}
+      </Box>
+    </Box>
+  );
+  const asOf = props.checkedAt
+    ? `As of ${new Date(props.checkedAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`
+    : "";
   return (
-    // The card is one Button so a tap reaches the app's interaction listener,
-    // which opens props.url. expo-widgets has no Android counterpart to widgetURL.
     <Button
-      colors={{ containerColor: colors.surface }}
-      modifiers={[fillMaxSize()]}
+      colors={{ containerColor: palette.surface }}
+      modifiers={[fillMaxSize(), cornerRadius(14)]}
       onClick={() => {}}
     >
       <Column modifiers={[fillMaxSize(), paddingAll(16)]}>
-        {providers.map((provider, index) => {
+        {apart(
+          "header",
+          <Text
+            color={palette.foregroundMuted}
+            maxLines={1}
+            style={{ fontSize: 13, fontWeight: "500" }}
+          >
+            Subscription usage
+          </Text>,
+          asOf ? (
+            <Text color={palette.foregroundMuted} maxLines={1} style={{ fontSize: 11 }}>
+              {asOf}
+            </Text>
+          ) : null,
+        )}
+        {props.providers.map((provider, index) => {
           const stale =
             provider.windows.length > 0 && provider.expiresAt > 0 && now >= provider.expiresAt;
           const shown = stale ? [] : provider.windows.slice(0, limit);
           const hidden = stale ? 0 : (provider.totalWindows ?? provider.windows.length) - limit;
           return (
-            <Column
-              key={provider.name}
-              modifiers={[fillMaxWidth(), padding(0, index === 0 ? 0 : 10, 0, 0)]}
-            >
-              <Text
-                color={colors.onSurface}
-                maxLines={1}
-                style={{ fontSize: 13, fontWeight: "bold" }}
-              >
-                {provider.name}
-              </Text>
-              {shown.length === 0 ? (
-                <Text color={muted} maxLines={1} style={{ fontSize: 11 }}>
-                  {stale ? "Open T3 to refresh" : provider.detail}
-                </Text>
+            <Column key={provider.name} modifiers={[fillMaxWidth(), padding(0, 12, 0, 0)]}>
+              {index > 0 ? (
+                <Spacer modifiers={[fillMaxWidth(), height(1), background(palette.hairline)]} />
               ) : null}
-              {shown.map((window) => {
-                const low = window.remaining <= 10;
-                return (
-                  <Column key={window.label} modifiers={[fillMaxWidth(), padding(0, 4, 0, 0)]}>
-                    <Text
-                      color={low ? colors.error : colors.onSurface}
-                      maxLines={1}
-                      style={{ fontSize: 11 }}
-                    >
-                      {`${window.label} · ${window.remaining}% left`}
-                    </Text>
-                    <Column modifiers={[fillMaxWidth(), padding(0, 3, 0, 3)]}>
+              <Column modifiers={[fillMaxWidth(), padding(0, index > 0 ? 12 : 0, 0, 0)]}>
+                <Text color={palette.foreground} maxLines={1} style={{ fontSize: 15 }}>
+                  {provider.name}
+                </Text>
+                {shown.length === 0 ? (
+                  <Text color={palette.foregroundMuted} maxLines={1} style={{ fontSize: 13 }}>
+                    {stale ? "Open T3 to refresh" : provider.detail}
+                  </Text>
+                ) : null}
+                {shown.map((window) => (
+                  <Column key={window.label} modifiers={[fillMaxWidth(), padding(0, 8, 0, 0)]}>
+                    {apart(
+                      window.label,
+                      <Text color={palette.foregroundMuted} maxLines={1} style={{ fontSize: 13 }}>
+                        {window.label}
+                      </Text>,
+                      <Text color={palette.foreground} maxLines={1} style={{ fontSize: 13 }}>
+                        {`${window.remaining}% left`}
+                      </Text>,
+                    )}
+                    <Column modifiers={[fillMaxWidth(), padding(0, 6, 0, 6)]}>
                       <LinearProgressIndicator
                         progress={window.remaining / 100}
-                        color={low ? colors.error : colors.primary}
-                        trackColor={colors.surfaceVariant}
-                        modifiers={[fillMaxWidth(), height(6)]}
+                        color={window.remaining < 10 ? palette.danger : palette.fill}
+                        trackColor={palette.track}
+                        modifiers={[fillMaxWidth(), height(4)]}
                       />
                     </Column>
-                    <Text color={muted} maxLines={1} style={{ fontSize: 10 }}>
+                    <Text color={palette.foregroundMuted} maxLines={1} style={{ fontSize: 11 }}>
                       {window.reset}
                     </Text>
                   </Column>
-                );
-              })}
-              {hidden > 0 ? (
-                <Text color={muted} maxLines={1} style={{ fontSize: 10 }}>
-                  {`${hidden} more in T3`}
-                </Text>
-              ) : null}
+                ))}
+                {hidden > 0 ? (
+                  <Text color={palette.foregroundMuted} maxLines={1} style={{ fontSize: 11 }}>
+                    {`${hidden} more in T3`}
+                  </Text>
+                ) : null}
+              </Column>
             </Column>
           );
         })}
-        <Text
-          color={muted}
-          maxLines={1}
-          style={{ fontSize: 10 }}
-          modifiers={[padding(0, 10, 0, 0)]}
-        >
-          {props.checkedAt
-            ? `As of ${new Date(props.checkedAt).toLocaleString(undefined, { hour: "numeric", minute: "2-digit", month: "short", day: "numeric" })}`
-            : "Tap to connect in T3"}
-        </Text>
+        {props.checkedAt ? null : (
+          <Column modifiers={[fillMaxWidth(), padding(0, 12, 0, 0)]}>
+            <Text color={palette.foregroundMuted} maxLines={1} style={{ fontSize: 13 }}>
+              Tap to connect in T3
+            </Text>
+          </Column>
+        )}
       </Column>
     </Button>
   );
 }
 
-export default createWidget("SubscriptionUsage", SubscriptionUsage);
+export default createWidget("SubscriptionUsage", SubscriptionUsage, {
+  checkedAt: 0,
+  providers: [
+    { name: "Codex", detail: "Open T3 to connect", windows: [], expiresAt: 0, totalWindows: 0 },
+    { name: "Claude", detail: "Open T3 to connect", windows: [], expiresAt: 0, totalWindows: 0 },
+  ],
+  palettes: SUBSCRIPTION_USAGE_FALLBACK_PALETTES,
+});
