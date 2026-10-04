@@ -30,8 +30,8 @@ function workLogBlockClassName(
   continues: boolean,
   opensRows: boolean,
 ): string {
-  if (layout === "group-header") return opensRows ? "-mx-1 mb-3 px-1" : "-mx-1 px-1";
-  return continues ? "-mx-1 px-1" : "-mx-1 mb-1.5 px-1";
+  if (layout === "group-header") return opensRows ? "-mx-1 mb-[6px] px-1" : "-mx-1 mb-[12px] px-1";
+  return continues ? "-mx-1 px-1" : "-mx-1 mb-[12px] px-1";
 }
 
 export function WorkLogBlock({
@@ -49,7 +49,7 @@ export function WorkLogBlock({
 }
 
 export function WorkLogRows({ children }: { children: ReactNode }) {
-  return <View className="gap-1.5">{children}</View>;
+  return <View className="gap-[6px]">{children}</View>;
 }
 
 export function WorkLogIconSlot({ children }: { children: ReactNode }) {

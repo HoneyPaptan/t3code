@@ -21,6 +21,10 @@ const SPLIT_SIDEBAR_DEFAULT_MAX_WIDTH = 380;
 export const AUXILIARY_PANE_MIN_CONTENT_WIDTH = 960;
 export const CHAT_CONTENT_MAX_WIDTH = 960;
 export const THREAD_WORK_ROW_MIN_HEIGHT = 36;
+export const THREAD_FEED_EDGE_PADDING = 16;
+export const THREAD_FEED_TURN_GAP = 16;
+export const THREAD_FEED_BLOCK_GAP = 12;
+export const THREAD_FEED_GROUP_CHILD_GAP = 6;
 
 export function deriveThreadWorkLogSizing(input: {
   readonly baseFontSize: number;
