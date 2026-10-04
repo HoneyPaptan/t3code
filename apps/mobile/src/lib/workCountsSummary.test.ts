@@ -35,13 +35,15 @@ describe("workCountsSummary", () => {
   it("appends the failed count last and ignores reasoning rows", () => {
     expect(
       workCountsSummary([
-        activity({ itemType: "reasoning" }, { toolLike: false }),
+        activity({ itemType: "reasoning", detail: "Weighing the options" }),
         activity({ itemType: "command_execution", command: "false" }, { status: "failure" }),
       ]),
     ).toBe("1 command · 1 failed");
   });
 
   it("returns an empty string when nothing tool like ran", () => {
-    expect(workCountsSummary([activity({ itemType: "reasoning" }, { toolLike: false })])).toBe("");
+    expect(workCountsSummary([activity({ itemType: "reasoning", detail: "Only thinking" })])).toBe(
+      "",
+    );
   });
 });

@@ -45,7 +45,7 @@ export function workCountsSummary(activities: ReadonlyArray<CountedActivity>): s
   const counts: Record<WorkCountCategory, number> = { edit: 0, read: 0, command: 0, other: 0 };
   let failed = 0;
   for (const activity of activities) {
-    if (!activity.toolLike) continue;
+    if (!activity.toolLike || activity.workEntry.itemType === "reasoning") continue;
     const category = workCountCategory(toolGroupAction(activity.workEntry));
     if (category !== null) counts[category] += 1;
     if (activity.status === "failure") failed += 1;
