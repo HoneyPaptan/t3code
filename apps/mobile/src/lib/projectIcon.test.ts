@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { resolveProjectChipGlyph } from "./projectIcon";
+import { projectChipColor, projectMonogram, resolveProjectChipGlyph } from "./projectIcon";
 
 describe("resolveProjectChipGlyph", () => {
   it("derives a two letter monogram with a stable colour from the project title", () => {
@@ -32,5 +32,35 @@ describe("resolveProjectChipGlyph", () => {
       }),
     );
     expect(colours.size).toBeGreaterThan(1);
+  });
+});
+
+describe("projectChipColor", () => {
+  it("ignores case and surrounding whitespace so the colour matches web", () => {
+    expect(projectChipColor("  Dizzaract OS ")).toBe(projectChipColor("dizzaract os"));
+  });
+
+  it("falls back to a stable colour for an empty title", () => {
+    expect(projectChipColor("   ")).toBe(projectChipColor(""));
+  });
+});
+
+describe("projectMonogram", () => {
+  it.each([
+    ["Dizzaract OS", "DO"],
+    ["t3code", "T3"],
+    ["synara", "SA"],
+    ["   ", "PR"],
+    ["éclair", "ÉR"],
+  ])("derives %s as %s", (title, monogram) => {
+    expect(projectMonogram(title)).toBe(monogram);
+  });
+
+  it("always yields upper case text of at most two letters", () => {
+    for (const title of ["a", "ab cd ef", "x-y-z", "123", "日本語プロジェクト"]) {
+      const text = projectMonogram(title);
+      expect(text).toBe(text.toUpperCase());
+      expect(Array.from(text).length).toBeLessThanOrEqual(2);
+    }
   });
 });

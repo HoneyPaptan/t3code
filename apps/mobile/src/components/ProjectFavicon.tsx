@@ -1,7 +1,7 @@
 import { SymbolView } from "./AppSymbol";
 import { AppText } from "./AppText";
 import { Image } from "expo-image";
-import { memo, useLayoutEffect, useMemo, useState } from "react";
+import { memo, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 import { View } from "react-native";
 import type { EnvironmentId, ProjectIconOverride } from "@t3tools/contracts";
 import {
@@ -38,6 +38,7 @@ export const ProjectFavicon = memo(function ProjectFavicon(props: {
   readonly workspaceRoot?: string | null;
   readonly faviconPath?: string | null;
   readonly projectIcon?: ProjectIconOverride | null;
+  readonly fallback?: ReactNode;
 }) {
   const size = props.size ?? 42;
   const glyph = resolveProjectIconGlyph(props.projectIcon, props.projectTitle);
@@ -83,6 +84,7 @@ export const ProjectFavicon = memo(function ProjectFavicon(props: {
       key={cacheKey}
       cacheKey={cacheKey}
       faviconUrl={renderableFaviconUrl}
+      fallback={props.fallback}
       open={props.open}
       projectTitle={props.projectTitle}
       size={size}
@@ -143,6 +145,7 @@ function ProjectIconGlyphView(props: { readonly glyph: ProjectIconGlyph; readonl
 function ProjectFaviconImage(props: {
   readonly cacheKey: string | null;
   readonly faviconUrl: string | null;
+  readonly fallback?: ReactNode;
   readonly open?: boolean;
   readonly projectTitle: string;
   readonly size: number;
@@ -178,15 +181,16 @@ function ProjectFaviconImage(props: {
         justifyContent: "center",
       }}
     >
-      {/* Folder icon fallback (matches web's FolderIcon) */}
-      {!showImage ? (
-        <SymbolView
-          name={{ ios: "folder.fill", android: props.open ? "folder_open" : "folder" }}
-          size={props.size}
-          tintColorClassName={"accent-icon-subtle"}
-          type="monochrome"
-        />
-      ) : null}
+      {!showImage
+        ? (props.fallback ?? (
+            <SymbolView
+              name={{ ios: "folder.fill", android: props.open ? "folder_open" : "folder" }}
+              size={props.size}
+              tintColorClassName={"accent-icon-subtle"}
+              type="monochrome"
+            />
+          ))
+        : null}
 
       {/* Favicon image (hidden until loaded) */}
       {requestIsActive ? (
