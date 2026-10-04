@@ -40,6 +40,7 @@ import { toolActivityFaviconUrl } from "@t3tools/shared/favicon";
 
 import { AppText as Text } from "../../components/AppText";
 import { T3Wordmark } from "../../components/T3Wordmark";
+import { ThinkingOrb, type ThinkingOrbState } from "../../components/ThinkingOrb";
 import { cn } from "../../lib/cn";
 import {
   THREAD_FEED_BLOCK_GAP,
@@ -84,14 +85,19 @@ import { useAssetUrl } from "../../state/assets";
 const SHIMMER_WIDTH = 72;
 const SHIMMER_SWEEP_MS = 1_350;
 const SHIMMER_PAUSE_MS = 1_450;
-const SHIMMER_ICON_AND_GAP_WIDTH = 28;
+const WORK_SLOT_SIZE = 20;
+const WORK_SLOT_GAP = 8;
+const ORB_SLOT_GAP = 6;
+
+function shimmerLeadingWidth(orbState: ThinkingOrbState | undefined): number {
+  return WORK_SLOT_SIZE + (orbState ? ORB_SLOT_GAP : WORK_SLOT_GAP);
+}
 export const THREAD_DISCLOSURE_TRANSITION_MS = 180;
 const WORK_LOG_LAYOUT_TRANSITION = LinearTransition.duration(THREAD_DISCLOSURE_TRANSITION_MS);
 const WORK_LOG_DETAIL_ENTER_TRANSITION = FadeIn.duration(140);
 const WORK_LOG_DETAIL_EXIT_TRANSITION = FadeOut.duration(120);
 const WORK_ICON_SIZE = 16;
 const WORK_ICON_COLOR_CLASS = "accent-foreground-muted/50";
-const REASONING_ICON_SIZE = 14;
 const REASONING_ICON_COLOR_CLASS = "accent-foreground-muted/50";
 const DISCLOSURE_CHEVRON_SIZE = 12;
 const DISCLOSURE_CHEVRON_COLOR_CLASS = "accent-foreground-muted";
@@ -120,7 +126,7 @@ function WorkLogIcon(props: {
               ? { ios: "iphone", android: "smartphone" }
               : props.icon
       }
-      size={isReasoning ? REASONING_ICON_SIZE : WORK_ICON_SIZE}
+      size={WORK_ICON_SIZE}
       weight="medium"
       tintColorClassName={colorClassName}
       type="monochrome"
@@ -173,16 +179,25 @@ function ShimmerWorkContent(props: {
   readonly idleTextClassName?: string;
   readonly icon: WorkContentIcon;
   readonly label: string;
+  readonly orbState?: ThinkingOrbState | undefined;
   readonly onTextLayout?: ComponentProps<typeof Text>["onTextLayout"];
   readonly showIcon: boolean;
   readonly themeAppearance?: "light" | "dark";
   readonly toolIcon?: ToolActivityIcon;
 }) {
   return (
-    <View className="flex-row items-center gap-[8px]">
+    <View
+      className={
+        props.orbState ? "flex-row items-center gap-[6px]" : "flex-row items-center gap-[8px]"
+      }
+    >
       {props.showIcon ? (
         <View className="size-[20px] shrink-0 items-center justify-center">
-          {props.toolIcon && props.environmentId ? (
+          {props.orbState ? (
+            props.highlighted ? null : (
+              <ThinkingOrb state={props.orbState} size={WORK_SLOT_SIZE} />
+            )
+          ) : props.toolIcon && props.environmentId ? (
             <ToolActivityIconView
               environmentId={props.environmentId}
               icon={props.toolIcon}
@@ -220,6 +235,7 @@ export function ShimmeringWorkContent(props: {
   readonly environmentId?: EnvironmentId;
   readonly icon: WorkContentIcon;
   readonly label: string;
+  readonly orbState?: ThinkingOrbState | undefined;
   readonly showIcon: boolean;
   readonly themeAppearance?: "light" | "dark";
   readonly toolIcon?: ToolActivityIcon;
@@ -233,7 +249,7 @@ export function ShimmeringWorkContent(props: {
   const gradientId = `work-shimmer-${useId().replaceAll(":", "")}`;
   const contentWidth = Math.min(
     availableWidth,
-    (props.showIcon ? SHIMMER_ICON_AND_GAP_WIDTH : 0) + Math.ceil(textWidth),
+    (props.showIcon ? shimmerLeadingWidth(props.orbState) : 0) + Math.ceil(textWidth),
   );
 
   useEffect(() => {
@@ -297,6 +313,7 @@ export function ShimmeringWorkContent(props: {
         icon={props.icon}
         idleTextClassName={props.idleTextClassName}
         label={props.label}
+        orbState={props.orbState}
         showIcon={props.showIcon}
         themeAppearance={props.themeAppearance}
         toolIcon={props.toolIcon}
@@ -338,6 +355,7 @@ export function ShimmeringWorkContent(props: {
                 highlighted
                 icon={props.icon}
                 label={props.label}
+                orbState={props.orbState}
                 showIcon={props.showIcon}
                 themeAppearance={props.themeAppearance}
                 toolIcon={props.toolIcon}
@@ -674,7 +692,10 @@ function ThreadWorkGroupList(props: {
   );
 
   return (
-    <View style={{ height, overflow: "hidden" }}>
+    <View
+      className="border-l border-border-subtle pl-[12px]"
+      style={{ height, overflow: "hidden" }}
+    >
       <AnimatedLegendList
         ref={subscribeToContentSize}
         data={props.activities}
@@ -928,6 +949,7 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
             textClassName={WORK_LABEL_ROLE_STYLE[labelRole].text}
             idleTextClassName={WORK_LABEL_ROLE_STYLE[labelRole].color}
             label={displayText}
+            orbState={reasoning ? "composing" : undefined}
             showIcon
             themeAppearance={props.themeAppearance}
             toolIcon={toolIcon}
@@ -1255,6 +1277,7 @@ export function ThreadThinkingRow(props: {
         textClassName={WORK_LABEL_ROLE_STYLE.group.text}
         idleTextClassName={WORK_LABEL_ROLE_STYLE.group.color}
         label="Thinking"
+        orbState="composing"
         showIcon
       />
     </View>
