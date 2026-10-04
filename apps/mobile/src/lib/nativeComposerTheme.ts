@@ -2,10 +2,10 @@ import { flattenThemeColor, themeColorWithAlpha, type MobileThemeVariables } fro
 
 const PLACEHOLDER_ALPHA = 0.5;
 
-/** Native chip parsers need opaque hex instead of CSS rgba or platform-specific alpha order. */
 export function createNativeComposerTheme(theme: MobileThemeVariables) {
   const surface = flattenThemeColor(theme["--color-grouped-card"], theme["--color-screen"]);
-  const chipBackground = flattenThemeColor(theme["--color-subtle"], surface);
+  const chipBackground = flattenThemeColor(theme["--color-update"], surface);
+  const chipText = flattenThemeColor(theme["--color-update-foreground"], chipBackground);
   const skillBackground = flattenThemeColor(theme["--color-inline-skill-background"], surface);
   return {
     text: flattenThemeColor(theme["--color-foreground"], surface),
@@ -14,11 +14,11 @@ export function createNativeComposerTheme(theme: MobileThemeVariables) {
       surface,
     ),
     chipBackground,
-    chipBorder: flattenThemeColor(theme["--color-border"], chipBackground),
-    chipText: flattenThemeColor(theme["--color-foreground"], chipBackground),
+    chipBorder: chipBackground,
+    chipText,
     skillBackground,
     skillBorder: flattenThemeColor(theme["--color-inline-skill-border"], skillBackground),
     skillText: flattenThemeColor(theme["--color-inline-skill-foreground"], skillBackground),
-    fileTint: flattenThemeColor(theme["--color-icon-muted"], chipBackground),
+    fileTint: chipText,
   };
 }
