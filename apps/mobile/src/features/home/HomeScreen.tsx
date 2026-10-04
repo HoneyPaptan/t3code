@@ -82,6 +82,7 @@ interface HomeScreenProps {
   readonly searchQuery: string;
   readonly selectedEnvironmentId: EnvironmentId | null;
   readonly selectedProjectKey: string | null;
+  readonly selectedThreadKey?: string | null;
   readonly projectSortOrder: HomeProjectSortOrder;
   readonly projectGroupingMode: SidebarProjectGroupingMode;
   readonly onSearchQueryChange: (query: string) => void;
@@ -563,7 +564,7 @@ export function HomeScreen(props: HomeScreenProps) {
       inboxReturnAt: threadListInboxReturns.returnedAt,
       snoozedShelfExpanded,
       settledShelfExpanded,
-      selectedThreadKey: null,
+      selectedThreadKey: props.selectedThreadKey ?? null,
     });
   }, [
     workingShelfEnabled,
@@ -579,6 +580,7 @@ export function HomeScreen(props: HomeScreenProps) {
     snoozeEnvironmentIds,
     props.searchQuery,
     props.selectedEnvironmentId,
+    props.selectedThreadKey,
     props.threads,
     matchedThreadKeys,
     v2ScopedProjectGroup,
@@ -721,6 +723,7 @@ export function HomeScreen(props: HomeScreenProps) {
           hasQueuedMessages={item.hasQueuedMessages}
           snoozed={item.item.snoozed}
           pinned={item.item.pinned}
+          selected={props.selectedThreadKey === `${thread.environmentId}:${thread.id}`}
           snoozePresetMinute={item.snoozePresetMinute ?? ""}
           snoozeWakeLabelText={item.snoozeWakeLabelText}
           timeLabel={item.timeLabel}
@@ -816,6 +819,7 @@ export function HomeScreen(props: HomeScreenProps) {
       v2ProjectTitleByProjectKey,
       props.searchQuery,
       workingShelfEnabled,
+      props.selectedThreadKey,
     ],
   );
   const v2KeyExtractor = useCallback((item: ThreadListV2ListItem) => item.key, []);
@@ -831,6 +835,7 @@ export function HomeScreen(props: HomeScreenProps) {
       listEnvironments,
       savedConnectionsById: props.savedConnectionsById,
       searchQuery: props.searchQuery,
+      selectedThreadKey: props.selectedThreadKey,
       threadSearchMatchByKey,
       // Rows read it for their reorder menu items.
       workingShelfEnabled,
@@ -838,6 +843,7 @@ export function HomeScreen(props: HomeScreenProps) {
     [
       projectByKey,
       props.searchQuery,
+      props.selectedThreadKey,
       props.savedConnectionsById,
       listEnvironments,
       threadSearchMatchByKey,

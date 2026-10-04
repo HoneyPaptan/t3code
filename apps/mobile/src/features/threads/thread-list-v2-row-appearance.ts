@@ -4,8 +4,7 @@ import { MONO_FONT_FAMILY } from "../../lib/useFontFamily";
 import { MOBILE_RADIUS } from "../../lib/radius";
 
 export const THREAD_LIST_V2_MONO_FONT = MONO_FONT_FAMILY;
-export const THREAD_LIST_V2_ROW_CONTENT_CLASS_NAME = "px-5 py-2.5";
-export const THREAD_LIST_V2_ROW_DIVIDERS = true;
+export const THREAD_LIST_V2_ROW_CONTENT_CLASS_NAME = "min-h-16 justify-center px-4 py-3";
 
 export const selectedThreadRowColors = {
   foregroundClassName: "text-thread-selected-foreground",
@@ -30,12 +29,17 @@ export function getThreadListV2RowAppearance(
         borderRadius: MOBILE_RADIUS.md,
       }
     : undefined;
-  const swipeContainerStyle: ViewStyle | undefined = sidebarPane
+  const swipeContainerStyle: ViewStyle = sidebarPane
     ? { borderRadius: MOBILE_RADIUS.md, overflow: "hidden" }
-    : undefined;
+    : {
+        borderRadius: MOBILE_RADIUS.xl,
+        overflow: "hidden",
+        marginHorizontal: 8,
+        marginVertical: 2,
+      };
 
   return {
-    className: sidebarPane ? undefined : "bg-screen",
+    className: sidebarPane ? undefined : selected ? "bg-grouped-card rounded-xl" : "bg-screen",
     interactionClassName: sidebarPane ? "bg-thread-hover" : "bg-row-hover",
     interactionOpacity: selected ? 0 : 1,
     foregroundClassName: sidebarPane ? "text-drawer-foreground" : "text-foreground",
@@ -55,11 +59,12 @@ export function getThreadListV2RowAppearance(
     cardStyle: sidebarPane ? { ...style, paddingHorizontal: 12, paddingVertical: 10 } : undefined,
     swipeContainerStyle,
     swipeBackgroundColor: theme[sidebarPane ? "--color-drawer" : "--color-screen"],
-    // Provider badges blend into the surface beneath them.
     providerIconSurfaceColor: sidebarPane
       ? selected
         ? selectedBackgroundColor
         : theme["--color-drawer"]
-      : theme["--color-screen"],
+      : selected
+        ? theme["--color-grouped-card"]
+        : theme["--color-screen"],
   };
 }
