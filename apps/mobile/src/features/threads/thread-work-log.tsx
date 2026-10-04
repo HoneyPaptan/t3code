@@ -212,7 +212,7 @@ function ShimmerWorkContent(props: {
       <Text
         className={cn(
           "min-w-0 shrink",
-          props.compact ? "text-xs" : "text-chat",
+          props.compact ? "text-tool" : "text-chat",
           props.highlighted
             ? "text-foreground"
             : (props.idleTextClassName ?? "text-foreground-muted"),
@@ -1085,6 +1085,12 @@ const ThreadWorkLogRow = memo(function ThreadWorkLogRow(
   );
 });
 
+const WORKING_LABELS = ["Working", "Cooking", "Brewing", "Thinking"] as const;
+
+function pickWorkingLabel(): string {
+  return WORKING_LABELS[Math.floor(Math.random() * WORKING_LABELS.length)] ?? "Working";
+}
+
 export function ThreadWorkGroupToggle(props: {
   readonly environmentId: EnvironmentId;
   readonly rowSizing: ReturnType<typeof deriveThreadWorkLogSizing>;
@@ -1100,6 +1106,7 @@ export function ThreadWorkGroupToggle(props: {
   readonly shimmer: boolean;
   readonly onToggle: () => void;
 }) {
+  const [workingLabel] = useState(pickWorkingLabel);
   const accessibilityLabel = props.hasFailure
     ? `${props.summary}, tool call failed`
     : props.summary;
@@ -1129,7 +1136,8 @@ export function ThreadWorkGroupToggle(props: {
             icon={icon}
             textClassName={WORK_LABEL_ROLE_STYLE.heading.text}
             idleTextClassName={WORK_LABEL_ROLE_STYLE.heading.color}
-            label={props.summary}
+            label={workingLabel}
+            orbState="listening"
             showIcon
             themeAppearance={props.themeAppearance}
             toolIcon={props.toolIcon}
@@ -1184,22 +1192,26 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
           props.onToggle();
         }}
         onLongPress={props.onCopy}
-        className="rounded-md bg-grouped-card px-2.5 py-2 active:bg-subtle"
+        className="rounded-md bg-grouped-card px-[10px] py-[8px] active:bg-subtle"
       >
         <View className="flex-row items-center gap-2">
           <View className="size-[20px] shrink-0 items-center justify-center">
-            <SymbolView
-              name={{ ios: "sparkles", android: "auto_awesome" }}
-              size={WORK_ICON_SIZE}
-              weight="medium"
-              tintColorClassName={WORK_ICON_COLOR_CLASS}
-              type="monochrome"
-            />
+            {working ? (
+              <ThinkingOrb state="working" size={WORK_SLOT_SIZE} />
+            ) : (
+              <SymbolView
+                name={{ ios: "sparkles", android: "auto_awesome" }}
+                size={WORK_ICON_SIZE}
+                weight="medium"
+                tintColorClassName={WORK_ICON_COLOR_CLASS}
+                type="monochrome"
+              />
+            )}
           </View>
           <View className="min-w-0 flex-1 gap-0.5">
             <Text
               key={props.rowSizing.textSizeKey}
-              className="text-xs text-foreground/80"
+              className="text-chat text-foreground/80"
               numberOfLines={1}
             >
               {summary.title}
@@ -1215,7 +1227,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
                   showIcon={false}
                 />
               ) : (
-                <Text className="min-w-0 flex-1 text-xs text-foreground-muted" numberOfLines={1}>
+                <Text className="min-w-0 flex-1 text-tool text-foreground-muted" numberOfLines={1}>
                   {summary.status}
                 </Text>
               )}
@@ -1230,13 +1242,13 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
             entering={WORK_LOG_DETAIL_ENTER_TRANSITION}
             exiting={WORK_LOG_DETAIL_EXIT_TRANSITION}
             layout={WORK_LOG_LAYOUT_TRANSITION}
-            className="ml-7 mt-1.5 gap-1.5"
+            className="ml-[28px] mt-[6px] gap-[6px]"
           >
             {summary.members.map((member) => (
               <View key={member.title} className="gap-px">
                 <View className="flex-row items-center gap-1.5">
                   <SubagentStatusDot tone={member.tone} />
-                  <Text className="min-w-0 flex-1 text-xs text-foreground/80" numberOfLines={1}>
+                  <Text className="min-w-0 flex-1 text-tool text-foreground/80" numberOfLines={1}>
                     {member.title}
                   </Text>
                   <Text className="shrink-0 text-2xs text-foreground-muted/60">
@@ -1246,7 +1258,7 @@ export const ThreadAgentSpawnCard = memo(function ThreadAgentSpawnCard(props: {
                 {member.detail ? (
                   <Text
                     selectable
-                    className="pl-3 font-mono text-xs leading-normal text-foreground-muted/60"
+                    className="pl-3 font-mono text-tool text-foreground-muted/60"
                     numberOfLines={expanded ? 6 : 1}
                   >
                     {member.detail}

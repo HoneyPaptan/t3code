@@ -3,7 +3,6 @@ import { formatDuration } from "@t3tools/shared/orchestrationTiming";
 import { GlassContainer, GlassView } from "expo-glass-effect";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   type LayoutChangeEvent,
   Pressable,
   Text as SystemText,
@@ -25,6 +24,7 @@ import { withUniwind } from "uniwind";
 import { AppText as Text } from "../../components/AppText";
 import { SymbolView } from "../../components/AppSymbol";
 import { ControlPill } from "../../components/ControlPill";
+import { ThinkingOrb } from "../../components/ThinkingOrb";
 import { NATIVE_LIQUID_GLASS_SUPPORTED } from "../../native/native-glass";
 import { DevicePreviewButton } from "../devices/device-preview-button";
 import type { FloatingWorkingStatus } from "./floating-working-status";
@@ -209,10 +209,7 @@ export function FloatingWorkingControl(props: {
             <View className="mr-1 h-4 w-px bg-border-subtle" />
           ) : null}
           <SymbolView name="person.2" size={14} tintColorClassName="accent-foreground-muted/60" />
-          <Text
-            className="font-t3-medium text-xs tabular-nums text-foreground/70"
-            numberOfLines={1}
-          >
+          <Text className="text-chat tabular-nums text-foreground/80" numberOfLines={1}>
             {agents.label}
           </Text>
         </Pressable>
@@ -235,10 +232,7 @@ export function FloatingWorkingControl(props: {
             size={14}
             tintColorClassName="accent-foreground-muted/60"
           />
-          <Text
-            className="shrink font-t3-medium text-xs tabular-nums text-foreground/70"
-            numberOfLines={1}
-          >
+          <Text className="shrink text-chat tabular-nums text-foreground/80" numberOfLines={1}>
             {props.queuedCount} queued
           </Text>
         </Pressable>
@@ -344,7 +338,7 @@ function CompactingLabel(props: { readonly onLayout: (event: LayoutChangeEvent) 
         tintColorClassName="accent-foreground-muted/60"
         type="monochrome"
       />
-      <Text className="font-t3-medium text-xs text-foreground/70">Compacting…</Text>
+      <Text className="text-chat text-foreground/80">Compacting…</Text>
     </StatusLabelRow>
   );
 }
@@ -363,8 +357,8 @@ function FloatingStatusLabel(props: {
         className="gap-2"
         onLayout={props.onLayout}
       >
-        <ActivityIndicator size="small" colorClassName="accent-foreground-muted/60" />
-        <Text className="shrink font-t3-medium text-xs text-foreground/70" numberOfLines={1}>
+        <ThinkingOrb state="listening" size={20} />
+        <Text className="shrink text-chat text-foreground/80" numberOfLines={1}>
           {props.status.label}
         </Text>
       </StatusLabelRow>
@@ -384,14 +378,11 @@ function FloatingStatusLabel(props: {
         onPress={props.status.onPress}
       >
         {props.status.tone === "reconnecting" ? (
-          <ActivityIndicator size="small" colorClassName="accent-foreground-muted/60" />
+          <ThinkingOrb state="listening" size={20} />
         ) : (
           <View className="h-2 w-2 rounded-full bg-danger-foreground" />
         )}
-        <Text
-          className="max-w-[260px] shrink font-t3-medium text-xs text-foreground/70"
-          numberOfLines={1}
-        >
+        <Text className="max-w-[260px] shrink text-chat text-foreground/80" numberOfLines={1}>
           {props.status.label}
         </Text>
       </StatusLabelRow>
@@ -413,7 +404,7 @@ function FloatingStatusLabel(props: {
           tintColorClassName="accent-foreground-muted/60"
           type="monochrome"
         />
-        <Text className="shrink font-t3-medium text-xs text-foreground/70" numberOfLines={1}>
+        <Text className="shrink text-chat text-foreground/80" numberOfLines={1}>
           {props.status.label}
         </Text>
       </StatusLabelRow>
@@ -435,8 +426,6 @@ function FloatingStatusLabel(props: {
         />
         <ShimmeringWorkContent
           className="flex-none"
-          textClassName="font-t3-medium"
-          compact
           icon="arrow.triangle.branch"
           label={props.status.label}
           showIcon={false}
@@ -489,7 +478,8 @@ function WorkingDuration(props: {
   readonly onLayout: (event: LayoutChangeEvent) => void;
 }) {
   return (
-    <StatusLabelRow onLayout={props.onLayout}>
+    <StatusLabelRow className="gap-2" onLayout={props.onLayout}>
+      <ThinkingOrb state="listening" size={20} />
       <WorkingTimer startedAt={props.startedAt} />
     </StatusLabelRow>
   );
@@ -503,9 +493,9 @@ export function WorkingTimer(props: { readonly startedAt: string }) {
   }, []);
   return (
     <SystemText
-      className="shrink text-xs text-foreground/70"
+      className="shrink text-chat tabular-nums text-foreground-muted/60"
       numberOfLines={1}
-      style={{ fontVariant: ["tabular-nums"], fontWeight: "500" }}
+      style={{ fontVariant: ["tabular-nums"] }}
     >
       Working {formatWorkingDuration(props.startedAt, nowMs)}
     </SystemText>
