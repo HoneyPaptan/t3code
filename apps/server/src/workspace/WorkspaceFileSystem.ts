@@ -323,19 +323,25 @@ export const make = Effect.gen(function* () {
           }),
       ),
     );
-    yield* fileSystem.writeFileString(target.absolutePath, input.contents).pipe(
-      Effect.mapError(
-        (cause) =>
-          new WorkspaceFileSystemOperationError({
-            workspaceRoot: input.cwd,
-            relativePath: input.relativePath,
-            resolvedPath: target.absolutePath,
-            operationPath: target.absolutePath,
-            operation: "write-file",
-            cause,
-          }),
-      ),
-    );
+    yield* fileSystem
+      .writeFileString(
+        target.absolutePath,
+        input.contents,
+        input.createOnly ? { flag: "wx" } : undefined,
+      )
+      .pipe(
+        Effect.mapError(
+          (cause) =>
+            new WorkspaceFileSystemOperationError({
+              workspaceRoot: input.cwd,
+              relativePath: input.relativePath,
+              resolvedPath: target.absolutePath,
+              operationPath: target.absolutePath,
+              operation: "write-file",
+              cause,
+            }),
+        ),
+      );
     yield* workspaceEntries.refresh(input.cwd);
     return { relativePath: target.relativePath };
   });

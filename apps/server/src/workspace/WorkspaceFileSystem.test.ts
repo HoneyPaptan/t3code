@@ -269,6 +269,33 @@ it.layer(layerTest, { excludeTestServices: true })("WorkspaceFileSystemLive", (i
       }),
     );
 
+    it.effect("refuses to overwrite an existing file when createOnly is set", () =>
+      Effect.gen(function* () {
+        const workspaceFileSystem = yield* WorkspaceFileSystem.WorkspaceFileSystem;
+        const fileSystem = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const cwd = yield* makeTempDir;
+        yield* writeTextFile(cwd, "notes/idea.md", "# Keep me\n");
+
+        const error = yield* workspaceFileSystem
+          .writeFile({ cwd, relativePath: "notes/idea.md", contents: "# New\n", createOnly: true })
+          .pipe(Effect.flip);
+        const created = yield* workspaceFileSystem.writeFile({
+          cwd,
+          relativePath: "notes/fresh.md",
+          contents: "# Fresh\n",
+          createOnly: true,
+        });
+        const kept = yield* fileSystem
+          .readFileString(path.join(cwd, "notes/idea.md"))
+          .pipe(Effect.orDie);
+
+        expect(error).toBeInstanceOf(WorkspaceFileSystem.WorkspaceFileSystemOperationError);
+        expect(created).toEqual({ relativePath: "notes/fresh.md" });
+        expect(kept).toBe("# Keep me\n");
+      }),
+    );
+
     it.effect("rejects writes by absolute path", () =>
       Effect.gen(function* () {
         const workspaceFileSystem = yield* WorkspaceFileSystem.WorkspaceFileSystem;
