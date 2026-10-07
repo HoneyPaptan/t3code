@@ -47,7 +47,7 @@ export function BranchNamingSettings(props: {
       ))}
       {props.mode === "static" ? (
         <View className="gap-2 px-4 py-3">
-          <Text className="text-sm text-foreground-muted">
+          <Text className="text-sm text-foreground-muted/60">
             Use t3 or t3/ for t3/add-search. Leave empty for no prefix.
           </Text>
           <AppTextInput
