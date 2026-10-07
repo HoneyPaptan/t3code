@@ -579,8 +579,7 @@ export const ThreadListV2Row = memo(function ThreadListV2Row(props: {
     // A native /goal keeps the agent going across turns until it is met.
     (status === "working" && workingLabel !== undefined && thread.goal?.status === "active"
       ? { ...workingLabel, label: "Goal" }
-      : workingLabel) ??
-    (isUnread ? { label: "Done", className: "text-success" } : undefined);
+      : workingLabel) ?? (isUnread ? { label: "Done", className: "text-success" } : undefined);
   const timeLabel = props.timeLabel;
 
   const handleDelete = useCallback(() => onDeleteThread(thread), [onDeleteThread, thread]);

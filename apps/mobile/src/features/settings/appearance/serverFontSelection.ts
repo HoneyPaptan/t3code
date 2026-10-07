@@ -1,6 +1,6 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { useCallback, useMemo } from "react";
-import { AsyncResult } from "effect/unstable/reactivity";
+import { AsyncResult } from "effect/reactivity";
 
 import { createExternalStore } from "../../../lib/externalStore";
 import { withFontChoice, type FontPreferences } from "../../../lib/fontPreferences";

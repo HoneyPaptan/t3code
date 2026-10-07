@@ -1019,7 +1019,7 @@ describe("AssetAccess", () => {
         resource: { _tag: "server-font", fontId: "fedcba9876543210" },
       }).pipe(Effect.flip);
       expect(unknown._tag).toBe("AssetServerFontNotFoundError");
-    }).pipe(Effect.provide(Layer.provideMerge(catalogLayer, testLayer)));
+    }).pipe(Effect.provide(Layer.provideMerge(catalogLayer, layerTest)));
   });
 
   it.effect("serves document attachments inline when a viewer requests it", () =>

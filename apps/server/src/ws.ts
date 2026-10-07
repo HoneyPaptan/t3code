@@ -2677,8 +2677,7 @@ const layerWsRpc = (
         [WS_METHODS.agentSessionsScan]: () => agentSessionScanner.scan,
         [WS_METHODS.agentSessionsImport]: (input) =>
           agentSessionImporter.importRecentAgentThreads(input),
-        [WS_METHODS.fontsList]: () =>
-          Effect.map(serverFontCatalog.list, (fonts) => ({ fonts })),
+        [WS_METHODS.fontsList]: () => Effect.map(serverFontCatalog.list, (fonts) => ({ fonts })),
         [WS_METHODS.assetsCreateUrl]: (input) =>
           Effect.gen(function* () {
             const path = yield* Path.Path;

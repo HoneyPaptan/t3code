@@ -2,7 +2,7 @@ import { PermissionUpdateNotice } from "./components/PermissionUpdateNotice";
 import * as Linking from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -90,11 +90,11 @@ function AppContent() {
                 the system is in dark mode. */}
               <View collapsable={false} style={{ flex: 1 }}>
                 <GlobalVoiceInputControl>
-                <IncomingShareProvider>
-                  <Navigation linking={appLinking} theme={navigationTheme} />
-                </IncomingShareProvider>
-                <ConfirmDialogHost />
-                <ThreadArrangementHost />
+                  <IncomingShareProvider>
+                    <Navigation linking={appLinking} theme={navigationTheme} />
+                  </IncomingShareProvider>
+                  <ConfirmDialogHost />
+                  <ThreadArrangementHost />
                 </GlobalVoiceInputControl>
                 {/* Anchored-menu overlays render here — in-window, so the
                   keyboard stays up while a dropdown is open. */}

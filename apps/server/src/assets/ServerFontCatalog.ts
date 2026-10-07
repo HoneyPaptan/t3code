@@ -1,10 +1,11 @@
+// @effect-diagnostics nodeBuiltinImport:off
 import * as NodeCrypto from "node:crypto";
 import { SERVER_FONT_ID_LENGTH, type ServerFont, type ServerFontFormat } from "@t3tools/contracts";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Path from "effect/Path";
-import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
+import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 const FC_LIST_TIMEOUT = "10 seconds";
 const FC_LIST_FORMAT = "%{family}\t%{style}\t%{file}\t%{weight}\t%{slant}\n";
