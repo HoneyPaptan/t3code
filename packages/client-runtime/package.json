@@ -394,6 +394,10 @@
     "./device/duo-control": {
       "types": "./src/device/duoControl.ts",
       "default": "./src/device/duoControl.ts"
+    },
+    "./docEditor": {
+      "types": "./src/docEditor.ts",
+      "default": "./src/docEditor.ts"
     }
   },
   "scripts": {
