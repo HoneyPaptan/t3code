@@ -1,12 +1,18 @@
 import { resolveFilesystemReadAccess } from "@t3tools/client-runtime/state/filesystem";
-import { environmentSession } from "../../state/session";
+import { isDocEditablePath } from "@t3tools/client-runtime/docEditor";
+import { environmentSession, useEnvironmentScope } from "../../state/session";
 import { NativeStackScreenOptions } from "../../native/StackHeader";
 import { StackActions, useNavigation, type StaticScreenProps } from "@react-navigation/native";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { EnvironmentId, type ProjectReadFileResult, ThreadId } from "@t3tools/contracts";
+import {
+  AuthFilesystemWriteScope,
+  EnvironmentId,
+  type ProjectReadFileResult,
+  ThreadId,
+} from "@t3tools/contracts";
 import { videoMimeType } from "@t3tools/shared/video";
 import {
   isWorkspaceBrowserPreviewPath,
@@ -42,9 +48,11 @@ import {
 import { useAppearancePreferences } from "../settings/appearance/AppearancePreferencesProvider";
 import { ThreadRouteScreen } from "../threads/ThreadRouteScreen";
 import { FilePreviewLoading, FilePreviewNotice } from "./FilePreviewFeedback";
+import { DocEditorSurface } from "./DocEditorSurface";
 import { FileMarkdownPreview } from "./FileMarkdownPreview";
 import { FileTreeBrowser } from "./FileTreeBrowser";
 import { useFileTreeEntries } from "./useFileTreeEntries";
+import { useNewDocFilePrompt } from "./useNewDocFilePrompt";
 import { preloadWorkspaceFileContents } from "./preload-workspace-file";
 import { SourceFileSurface } from "./SourceFileSurface";
 import { ThreadFileNavigatorPane } from "./thread-file-navigator-pane";
@@ -68,8 +76,15 @@ function FilesBrowserHeader(props: {
   readonly searchQuery: string;
   readonly onSearchQueryChange: (query: string) => void;
   readonly onRefresh: () => void;
+  readonly onNewFile: (() => void) | null;
   readonly onBack: () => void;
 }) {
+  const items = [
+    ...(props.onNewFile ? [{ id: "new-file", title: "New file", onPress: props.onNewFile }] : []),
+    ...(Platform.OS === "android"
+      ? [{ id: "refresh", title: "Refresh files", onPress: props.onRefresh }]
+      : []),
+  ];
   return (
     <ScreenHeader
       title="Files"
@@ -84,17 +99,7 @@ function FilesBrowserHeader(props: {
         closeAccessibilityLabel: "Close file search",
         clearAccessibilityLabel: "Clear file search",
       }}
-      menus={
-        Platform.OS === "android"
-          ? [
-              {
-                title: "File options",
-                icon: "ellipsis",
-                items: [{ id: "refresh", title: "Refresh files", onPress: props.onRefresh }],
-              },
-            ]
-          : undefined
-      }
+      menus={items.length > 0 ? [{ title: "File options", icon: "ellipsis", items }] : undefined}
     />
   );
 }
@@ -173,7 +178,7 @@ function FileHeader(props: {
   );
 }
 
-type FileViewMode = "preview" | "source";
+type FileViewMode = "preview" | "source" | "edit";
 
 // A blank param (a hand-typed deep link) is treated as missing, since branded
 // IDs reject whitespace-only values.
@@ -225,6 +230,7 @@ function FileContent(props: {
   readonly initialLine: number | null;
   readonly truncated: boolean;
   readonly onRefresh?: () => Promise<void> | void;
+  readonly onSaved: () => void;
 }) {
   // Reopening a mutable host file must not reuse a poster from an earlier visit.
   const thumbnailInstanceId = useId();
@@ -296,6 +302,18 @@ function FileContent(props: {
 
   if (props.fileContents === null) {
     return <FilePreviewLoading message="Loading file..." />;
+  }
+
+  if (props.activeMode === "edit") {
+    return (
+      <DocEditorSurface
+        environmentId={props.environmentId}
+        cwd={props.cwd}
+        relativePath={props.relativePath}
+        initialContents={props.fileContents}
+        onSaved={props.onSaved}
+      />
+    );
   }
 
   return (
@@ -477,6 +495,17 @@ export function ThreadFilesTreeScreen(props: ThreadFilesRouteScreenProps) {
     },
     [environmentId, fileInspector.supported, navigation, threadId],
   );
+  const handleNewFile = useNewDocFilePrompt({
+    environmentId,
+    cwd,
+    onCreated: useCallback(
+      (path: string) => {
+        entriesQuery.refresh();
+        handleSelectFile(path);
+      },
+      [entriesQuery, handleSelectFile],
+    ),
+  });
   const renderInspector = useCallback(
     (headerInset: number) =>
       environmentId !== null && cwd !== null ? (
@@ -554,6 +583,7 @@ export function ThreadFilesTreeScreen(props: ThreadFilesRouteScreenProps) {
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         onRefresh={entriesQuery.refresh}
+        onNewFile={handleNewFile}
         onBack={handleReturnToThread}
       />
       <MaterialScreenContent insetHorizontal={layout.usesSplitView}>
@@ -615,8 +645,18 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
     relativePath !== null && modeOverride?.path === relativePath
       ? modeOverride.mode
       : defaultViewMode(relativePath);
+  const canWriteFiles = useEnvironmentScope(environmentId, AuthFilesystemWriteScope);
+  const canEdit = relativePath !== null && canWriteFiles && isDocEditablePath(relativePath);
   const resolvedActiveMode =
-    isVideoFile || isAudioFile ? "preview" : canPreview ? activeMode : "source";
+    isVideoFile || isAudioFile
+      ? "preview"
+      : activeMode === "edit"
+        ? canEdit
+          ? "edit"
+          : "source"
+        : canPreview
+          ? activeMode
+          : "source";
   const assetPreviewPath =
     isBrowserFile || isImageFile || isVideoFile || isAudioFile ? relativePath : null;
   const assetPreview = useWorkspaceFileAssetUrlState({
@@ -679,7 +719,7 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
     relativePath !== null &&
     !isVideoFile &&
     !isAudioFile &&
-    (resolvedActiveMode === "source" || isMarkdownPreviewFile(relativePath));
+    (resolvedActiveMode !== "preview" || isMarkdownPreviewFile(relativePath));
   const fileAccessSession = useEnvironmentQuery(
     environmentId !== null ? environmentSession.sessionStateAtom(environmentId) : null,
   );
@@ -760,6 +800,15 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
     if (relativePath === null) return [];
     const canToggleMode = canPreview && !isImageFile && !isVideoFile && !isAudioFile;
     return [
+      canEdit && fileData?.truncated !== true
+        ? ({
+            id: "edit",
+            title: "Edit",
+            icon: "pencil",
+            inline: true,
+            onPress: () => setModeOverride({ path: relativePath, mode: "edit" }),
+          } as const)
+        : null,
       canToggleMode
         ? ({
             id: "preview",
@@ -769,7 +818,7 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
             onPress: () => setModeOverride({ path: relativePath, mode: "preview" }),
           } as const)
         : null,
-      canToggleMode
+      canToggleMode || canEdit
         ? ({
             id: "source",
             title: "Source",
@@ -863,6 +912,7 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
     assetPreview.refresh,
     previewUri,
     canPreview,
+    canEdit,
     isAudioFile,
     isBrowserFile,
     isImageFile,
@@ -954,6 +1004,7 @@ export function ThreadFileScreen(props: ThreadFileRouteScreenProps) {
           threadId={threadId}
           truncated={fileData?.truncated ?? false}
           onRefresh={() => fileQuery.refresh()}
+          onSaved={fileQuery.refresh}
         />
       </MaterialScreenContent>
       <FilePreviewModal
