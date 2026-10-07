@@ -1,13 +1,16 @@
 import {
   toolGroupAction,
   type ToolGroupAction,
+  type WorkLogPresentationEntry,
 } from "@t3tools/client-runtime/work-log/presentation";
-
-import type { ThreadFeedActivity } from "./threadActivity";
 
 type WorkCountCategory = "edit" | "read" | "command" | "other";
 
-type CountedActivity = Pick<ThreadFeedActivity, "toolLike" | "status" | "workEntry">;
+type CountedActivity = {
+  readonly toolLike: boolean;
+  readonly status: "success" | "failure" | "neutral" | null;
+  readonly workEntry: WorkLogPresentationEntry;
+};
 
 const WORK_COUNT_ORDER: ReadonlyArray<WorkCountCategory> = ["edit", "read", "command", "other"];
 

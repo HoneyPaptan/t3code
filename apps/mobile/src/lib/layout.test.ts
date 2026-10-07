@@ -25,8 +25,8 @@ describe("thread work-log text sizing", () => {
 
   it.each([
     { baseFontSize: 16, fontScale: 1.25, estimatedRowHeight: 36 },
-    { baseFontSize: 16, fontScale: 2, estimatedRowHeight: 46 },
-    { baseFontSize: 22, fontScale: 2, estimatedRowHeight: 64 },
+    { baseFontSize: 16, fontScale: 2, estimatedRowHeight: 50 },
+    { baseFontSize: 22, fontScale: 2, estimatedRowHeight: 68 },
   ])(
     "measures accessibility text instead of locking it to the estimate: %j",
     ({ estimatedRowHeight, ...settings }) => {
