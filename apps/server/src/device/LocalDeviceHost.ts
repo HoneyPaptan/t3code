@@ -398,6 +398,8 @@ export const make = Effect.fn("LocalDeviceHost.make")(function* () {
               "127.0.0.1",
               "--hide-sidebar",
               "--hide-boot-device",
+              "--stream-source",
+              "scrcpy",
             ],
             {
               detached: false,
