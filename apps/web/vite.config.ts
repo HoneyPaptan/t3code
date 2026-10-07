@@ -285,6 +285,12 @@ export default defineConfig(() => {
       emptyOutDir: true,
       manifest: true,
       sourcemap: buildSourcemap,
+      rolldownOptions: {
+        input: {
+          main: new URL("./index.html", import.meta.url).pathname,
+          docEditor: new URL("./doc-editor.html", import.meta.url).pathname,
+        },
+      },
     },
     test: {
       projects: [defineProject(unitTestProject)],

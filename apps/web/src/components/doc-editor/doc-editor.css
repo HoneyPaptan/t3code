@@ -1,0 +1,161 @@
+[data-doc-editor] {
+  --doc-fg: var(--foreground, #ebdbb2);
+  --doc-muted: var(--muted-foreground, #a89984);
+  --doc-border: var(--border, #504945);
+  --doc-accent: var(--primary, #fe8019);
+  --doc-code-bg: color-mix(in oklab, var(--doc-fg) 8%, transparent);
+  display: flex;
+  min-height: 100%;
+  flex: 1;
+  flex-direction: column;
+  color: var(--doc-fg);
+}
+
+[data-doc-editor-body],
+[data-doc-editor-plain] {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 46rem;
+  min-height: 100%;
+  flex: 1;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 40vh;
+}
+
+[data-doc-editor-plain] {
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font:
+    0.875rem/1.7 ui-monospace,
+    "JetBrains Mono",
+    "SFMono-Regular",
+    Menlo,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+[data-doc-editor-prose] {
+  min-height: 60vh;
+  outline: none;
+  font-size: 1rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  caret-color: var(--doc-accent);
+}
+
+[data-doc-editor-prose] > * + * {
+  margin-top: 0.75em;
+}
+
+[data-doc-editor-prose] h1,
+[data-doc-editor-prose] h2,
+[data-doc-editor-prose] h3,
+[data-doc-editor-prose] h4 {
+  margin-top: 1.4em;
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+[data-doc-editor-prose] h1 {
+  font-size: 1.75em;
+}
+
+[data-doc-editor-prose] h2 {
+  font-size: 1.4em;
+}
+
+[data-doc-editor-prose] h3 {
+  font-size: 1.15em;
+}
+
+[data-doc-editor-prose] > :first-child {
+  margin-top: 0;
+}
+
+[data-doc-editor-prose] a {
+  color: var(--doc-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+[data-doc-editor-prose] ul,
+[data-doc-editor-prose] ol {
+  padding-left: 1.4em;
+}
+
+[data-doc-editor-prose] ul {
+  list-style: disc;
+}
+
+[data-doc-editor-prose] ol {
+  list-style: decimal;
+}
+
+[data-doc-editor-prose] ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0.2em;
+}
+
+[data-doc-editor-prose] ul[data-type="taskList"] li {
+  display: flex;
+  gap: 0.5em;
+  align-items: flex-start;
+}
+
+[data-doc-editor-prose] ul[data-type="taskList"] li > label {
+  margin-top: 0.3em;
+  flex: none;
+}
+
+[data-doc-editor-prose] ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+[data-doc-editor-prose] ul[data-type="taskList"] input[type="checkbox"] {
+  accent-color: var(--doc-accent);
+}
+
+[data-doc-editor-prose] blockquote {
+  border-left: 3px solid var(--doc-border);
+  padding-left: 1em;
+  color: var(--doc-muted);
+}
+
+[data-doc-editor-prose] code {
+  border-radius: 0.3em;
+  background: var(--doc-code-bg);
+  padding: 0.1em 0.35em;
+  font-family: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  font-size: 0.875em;
+}
+
+[data-doc-editor-prose] pre {
+  overflow-x: auto;
+  border-radius: 0.5em;
+  background: var(--doc-code-bg);
+  padding: 0.85em 1em;
+}
+
+[data-doc-editor-prose] pre code {
+  background: none;
+  padding: 0;
+}
+
+[data-doc-editor-prose] hr {
+  border: 0;
+  border-top: 1px solid var(--doc-border);
+  margin: 1.5em 0;
+}
+
+[data-doc-editor-prose] p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--doc-muted);
+  pointer-events: none;
+}

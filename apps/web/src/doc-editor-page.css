@@ -1,0 +1,62 @@
+:root {
+  --background: #1d2021;
+  --foreground: #ebdbb2;
+  --muted-foreground: #a89984;
+  --border: #504945;
+  --primary: #fe8019;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    "Inter Variable",
+    Inter,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-doc-page] {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}
+
+[data-doc-page-toggle] {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 1;
+  align-self: flex-end;
+  margin: 0.5rem 0.75rem -2.25rem 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--background);
+  color: var(--muted-foreground);
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+[data-doc-page] [data-doc-editor-body],
+[data-doc-page] [data-doc-editor-plain] {
+  padding-top: 3rem;
+}
+
+[data-doc-page-loading] {
+  padding: 2rem;
+  color: var(--muted-foreground);
+  text-align: center;
+}

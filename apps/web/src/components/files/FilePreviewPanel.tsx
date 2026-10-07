@@ -77,6 +77,7 @@ import { DelimitedTablePreview } from "./DelimitedTablePreview";
 import FileBrowserPanel from "./FileBrowserPanel";
 import { FileBreadcrumbs } from "./FileBreadcrumbs";
 import { FileMarkdownPreview } from "./FileMarkdownPreview";
+import { DocEditor } from "../doc-editor/DocEditor";
 import {
   type FileCommentAnnotationEntry,
   type FileCommentAnnotationGroup,
@@ -961,6 +962,20 @@ function RenderedMarkdownSurface({
     onPendingChange,
   });
 
+  if (!readOnly) {
+    return (
+      <ScrollArea className="min-h-0 flex-1">
+        <DocEditor
+          value={contents}
+          onChange={(nextContents) => {
+            setProjectFileQueryData(environmentId, cwd, relativePath, nextContents);
+            saveCoordinator.change(nextContents);
+          }}
+        />
+      </ScrollArea>
+    );
+  }
+
   return (
     <ScrollArea className="min-h-0 flex-1">
       <FileMarkdownPreview
@@ -1407,7 +1422,7 @@ export default function FilePreviewPanel({
                 relativePath={relativePath}
                 threadRef={threadRef}
                 contents={file.data.contents}
-                readOnly={isHostFile || !canWriteFiles}
+                readOnly={isHostFile || !canWriteFiles || file.data.truncated}
                 onPendingChange={onPendingChange}
               />
             ) : tableDelimiter && renderTable ? (
